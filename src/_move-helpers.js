@@ -32,7 +32,7 @@
         );
         
         // close enough to be considered hitting the wall
-        if(fTestDistanceToWall < 0.5){
+        if(fTestDistanceToWall < 1){
 
           // if this wall we are hitting is considered a portal
           if(currentWall[2] != false){
