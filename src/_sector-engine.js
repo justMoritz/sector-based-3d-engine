@@ -283,10 +283,14 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
-    for (var j = 0; j < nScreenHeight; j++) {
-        
+    var bScreenStartSet = false;
+    var nNewScreenStart = 0;
+    var nNewScreenEnd   = 0;
+
+    for (var j = start; j < end; j++) {
+      
       // sky
       if (j < nCeiling) {
           screen[j * nScreenWidth + i] = "a";
@@ -295,12 +299,23 @@ var gameEngineJS = (function () {
       // solid block
       else if (j > nCeiling && j <= nFloor) {
 
+        // sets the new screen start (but only the first screen-height-pixel is a wall) 
+        if(!bScreenStartSet){
+          nNewScreenStart = j;
+          bScreenStartSet = true;
+        }
+        // this is the new screen end variable, it's whatever last screen-height-pixel of wall we found
+        nNewScreenEnd =j+1;
+
+
         // Render Texture with Shading
         var sPixelToRender = "0";
 
         // Don't render if Portal
         if(sWallDirection == "X"){
-          return
+          // return
+          continue;
+          sPixelToRender = "d"
         }
         else{
 
@@ -324,9 +339,16 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        screen[j * nScreenWidth + i] = sectorFloorColor;
+        // Don't render if Portal
+        // if(sWallDirection == "X"){
+        //   // return
+        //   screen[j * nScreenWidth + i] = "a"
+        // }else{
+          screen[j * nScreenWidth + i] = sectorFloorColor;
+        // }
       }
     } // end draw column loop
+    return [nNewScreenStart, nNewScreenEnd]
   }
 
 
@@ -349,6 +371,13 @@ var gameEngineJS = (function () {
     // Queue to store sectors to be checked
     var sectorQueue = [currentSector];
     var visitedSectors = {}; // Object to track visited sectors
+
+    // These variables determine where the renderer starts and ends the drawing of each column.
+    // These are in screen-space
+    // The reason these exist is because when we check each sector in the while loop, 
+    // we want the renderer to only draw those columns that are visible through each portal
+    var nDrawStart = 0;
+    var nDrawEnd   = nScreenHeight;
 
     while (sectorQueue.length > 0) {
       // Dequeue the first sector from the queue
@@ -378,7 +407,6 @@ var gameEngineJS = (function () {
         // Calculate if the lines of the current eye-vector and the testline variable above intersect,
         // If so, at which point, and then use the distance between that point and the player position (fPlayerX and fPlayerY)
         // to set the fDistanceToWall variable :) 
-
         var currentWall = sectorWalls[w];
         var wallSamplePosition = null;
         var fSampleXScale = null;
@@ -398,7 +426,6 @@ var gameEngineJS = (function () {
             Math.pow(fPlayerX - intersection.x, 2) +
             Math.pow(fPlayerY - intersection.y, 2)
           );
-
 
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
@@ -424,37 +451,68 @@ var gameEngineJS = (function () {
             fSampleYScale = currentWall[5];
           }
 
+
+          // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
+          wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
+          fDepthBuffer[i] = fDistanceToWall;  
+
+
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // don't draw that wall
-          // TODO: Need to determine, if the sector we are looking into has a larger ceiling or floor, draw the wall for the section that's obstructed
           if(currentWall[2] != false){
             sWallDirection = "X";
             nextSector = currentWall[2];
 
-            // if(typeof sectorMeta[nextSector] !== 'undefined'){
-            //   nextSectorFloorFactor = sectorMeta[currentSector][0];
-            //   nextSectorCeilingFactor = sectorMeta[currentSector][1];
-
-            //   if(nextSectorFloorFactor < 1){
-            //     console.log('looking at a higher floor')
-            //   }
-            // }
-
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
               sectorQueue.push(nextSector);
+
+              if(i === 200){
+                console.log(`${nDrawStart}, ${nDrawEnd}`)
+              }
+              // determine the new start and end screen-coordinates for the next sector to be drawn in. 
+              // These are essentially a “window” through we we are looking into the new sector
+              var newStartAndEnd = drawSectorInformation(
+                i , 
+                fDistanceToWall, 
+                sWallType, 
+                sWallDirection, 
+                nCeiling, 
+                nFloor, 
+                wallSamplePosition, 
+                fSampleXScale, 
+                fSampleYScale, 
+                sectorFloorColor,
+                nDrawStart,
+                nDrawEnd,
+              );
+
+              nDrawStart = newStartAndEnd[0];
+              nDrawEnd = newStartAndEnd[1];
+
+              if(i === 200){
+                console.log( newStartAndEnd );
+                console.log(`${nDrawStart}, ${nDrawEnd}`)
+              }
+
             }
+
+            // drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition, fSampleXScale, fSampleYScale, sectorFloorColor,nDrawStart,nDrawEnd,);
+            
+
+
+
           }
           else{
             // Regular wall
 
-           
-            // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
-            wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
-            var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
-            var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
-            fDepthBuffer[i] = fDistanceToWall;      
+            // if(i === 300){
+            //   console.log(`${nDrawStart}, ${nDrawEnd}`)
+            // }
+
             drawSectorInformation(
               i , 
               fDistanceToWall, 
@@ -465,15 +523,29 @@ var gameEngineJS = (function () {
               wallSamplePosition, 
               fSampleXScale, 
               fSampleYScale, 
-              sectorFloorColor
-            )
-          }
+              sectorFloorColor,
+              nDrawStart,
+              nDrawEnd,
+            );
 
+            // if(i === 300){
+            //   console.log( newStartAndEnd );
+            // }
 
-        }
+            // nDrawStart = newStartAndEnd[0];
+            // nDrawEnd = newStartAndEnd[1];
+
+            // if(i === 300){
+            //   console.log(`${nDrawStart}, ${nDrawEnd}`)
+            //   console.log(currentSector)
+            //   console.log('---')
+            // }
+
+          } // end non-portal/portal found
+
+        } // end wall found
         
-        
-
+  
       } // end iterate over all walls
 
     }
