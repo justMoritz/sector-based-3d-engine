@@ -214,7 +214,7 @@ map = {
 sectorMeta = {
   "sector1" : [
     0.5, // Floor Height
-    1.5, // Ceiling Height
+    3, // Ceiling Height
     "i"  // floor color/TODO: Texture
   ],
   // "sector5" : [
@@ -223,12 +223,13 @@ sectorMeta = {
   // ],
   "sector4":[
     1,
-    1,
+    0.5,
     's'
   ],
   "sector6": [
-    1.5,
+    2.5,
     0.5,
+    'g'
   ]
 }
 
@@ -283,7 +284,7 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end, nNextSectorCeiling, nNextSectorFloor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -296,38 +297,45 @@ var gameEngineJS = (function () {
           screen[j * nScreenWidth + i] = "a";
       }
 
-      // solid block
-      else if (j > nCeiling && j <= nFloor) {
-
-        // sets the new screen start (but only the first screen-height-pixel is a wall) 
+      // draws in the wall portion that's above or below the ‘window’ through which we are looking into the next sector
+      else if (j > nNextSectorCeiling && j <= nNextSectorFloor) {
+        screen[j * nScreenWidth + i] = "1";
+        // as well as
+        // sets the new screen start (the first screen-height-pixel is a wall) 
+        // and new screen end variable (whatever last screen-height-pixel of wall we found)
         if(!bScreenStartSet){
           nNewScreenStart = j;
           bScreenStartSet = true;
         }
-        // this is the new screen end variable, it's whatever last screen-height-pixel of wall we found
         nNewScreenEnd =j+1;
+      }
 
+      // solid block
+      else if (j > nCeiling && j <= nFloor) {
 
-        // Render Texture with Shading
+        // Default Pixel (probably don't need)
         var sPixelToRender = "0";
 
         // Don't render if Portal
-        if(sWallDirection == "X"){
-          // return
-          continue;
-          sPixelToRender = "d"
-        }
-        else{
-
-          var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-          // var currentPixel = _getSamplePixel( textures["T"], intersection, fSampleY )
-
-          sPixelToRender = _rh.renderWall(
-            fDistanceToWall,
-            sWallDirection,
-            _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
-          );
-        }
+        // if(sWallDirection == "X"){
+        //   var sPixelToRender = "n";
+        //   // continue;
+        //   var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
+        //   wallRenderDirection = "N"
+        //   sPixelToRender = _rh.renderWall(
+        //     fDistanceToWall,
+        //     wallRenderDirection,
+        //     _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
+        //   );
+        // }
+        // else{
+        var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
+        sPixelToRender = _rh.renderWall(
+          fDistanceToWall,
+          sWallDirection,
+          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
+        );
+        // }
 
         // Does not draw out of bounds pixels
         if( fDistanceToWall < fDepth ){
@@ -339,16 +347,10 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        // Don't render if Portal
-        // if(sWallDirection == "X"){
-        //   // return
-        //   screen[j * nScreenWidth + i] = "a"
-        // }else{
-          screen[j * nScreenWidth + i] = sectorFloorColor;
-        // }
+        screen[j * nScreenWidth + i] = sectorFloorColor;
       }
     } // end draw column loop
-    return [nNewScreenStart, nNewScreenEnd]
+    return [nNewScreenStart, nNewScreenEnd];
   }
 
 
@@ -461,20 +463,36 @@ var gameEngineJS = (function () {
 
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
-          // don't draw that wall
+          // instead of drawing that wall, draw the sector behind the portal where the wall would have been
           if(currentWall[2] != false){
-            sWallDirection = "X";
+            // sWallDirection = "X";
             nextSector = currentWall[2];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
               sectorQueue.push(nextSector);
 
-              if(i === 200){
-                console.log(`${nDrawStart}, ${nDrawEnd}`)
+              var nNextSectorCeiling = nCeiling;
+              var nNextSectorFloor = nFloor;
+
+              if(typeof sectorMeta[nextSector] !== 'undefined'){
+
+                nextSectorFloorFactor = sectorMeta[nextSector][0]
+                nextSectorCeilingFactor = sectorMeta[nextSector][1]
+
+                // only recalculate if the next sector floor is higher than the previous
+                // TODO: Maybe the same for ceilings?
+                if( nextSectorFloorFactor < sectorFloorFactor ){
+                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (nextSectorFloorFactor + fPlayerH);
+                }
+                  nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (nextSectorCeilingFactor - fPlayerH);
+                // }
+
               }
+         
               // determine the new start and end screen-coordinates for the next sector to be drawn in. 
               // These are essentially a “window” through we we are looking into the new sector
+              // This routine otherwise doesn't actually draw anything, so we might consider refactoring
               var newStartAndEnd = drawSectorInformation(
                 i , 
                 fDistanceToWall, 
@@ -488,31 +506,19 @@ var gameEngineJS = (function () {
                 sectorFloorColor,
                 nDrawStart,
                 nDrawEnd,
+                nNextSectorCeiling,
+                nNextSectorFloor
               );
-
               nDrawStart = newStartAndEnd[0];
               nDrawEnd = newStartAndEnd[1];
 
-              if(i === 200){
-                console.log( newStartAndEnd );
-                console.log(`${nDrawStart}, ${nDrawEnd}`)
-              }
-
             }
-
-            // drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition, fSampleXScale, fSampleYScale, sectorFloorColor,nDrawStart,nDrawEnd,);
-            
-
-
 
           }
           else{
             // Regular wall
 
-            // if(i === 300){
-            //   console.log(`${nDrawStart}, ${nDrawEnd}`)
-            // }
-
+            // We don't actually need the return array from this function instance
             drawSectorInformation(
               i , 
               fDistanceToWall, 
@@ -526,20 +532,9 @@ var gameEngineJS = (function () {
               sectorFloorColor,
               nDrawStart,
               nDrawEnd,
+              false,
+              false
             );
-
-            // if(i === 300){
-            //   console.log( newStartAndEnd );
-            // }
-
-            // nDrawStart = newStartAndEnd[0];
-            // nDrawEnd = newStartAndEnd[1];
-
-            // if(i === 300){
-            //   console.log(`${nDrawStart}, ${nDrawEnd}`)
-            //   console.log(currentSector)
-            //   console.log('---')
-            // }
 
           } // end non-portal/portal found
 
