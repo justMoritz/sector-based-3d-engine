@@ -41,7 +41,7 @@
             sPlayerSector = collisionSector;
             console.log(sPlayerSector)
 
-            // sets the player Height when a sector is changed
+            // sets the player height when a sector is changed
             if(typeof sectorMeta[sPlayerSector] !== 'undefined'){
               fPlayerH = 1 - sectorMeta[sPlayerSector][0]
             }else{

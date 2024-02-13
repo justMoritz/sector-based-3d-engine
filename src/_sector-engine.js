@@ -215,11 +215,17 @@ sectorMeta = {
   "sector1" : [
     0.5, // Floor Height
     1.5, // Ceiling Height
+    "i"  // floor color/TODO: Texture
   ],
   // "sector5" : [
   //   1.25, // Floor Height
   //   0.75, // Ceiling Height
   // ],
+  "sector4":[
+    1,
+    1,
+    's'
+  ],
   "sector6": [
     1.5,
     0.5,
@@ -277,7 +283,7 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     for (var j = 0; j < nScreenHeight; j++) {
         
@@ -318,7 +324,7 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        screen[j * nScreenWidth + i] = "f";
+        screen[j * nScreenWidth + i] = sectorFloorColor;
       }
     } // end draw column loop
   }
@@ -355,11 +361,16 @@ var gameEngineJS = (function () {
 
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
+      var sectorFloorColor = "f";
 
       // per-sector overrides for floor and ceiling heights
       if(typeof sectorMeta[currentSector] !== 'undefined'){
         sectorFloorFactor = sectorMeta[currentSector][0]
         sectorCeilingFactor = sectorMeta[currentSector][1]
+
+        if(typeof sectorMeta[currentSector][2] !== 'undefined'){
+          sectorFloorColor = sectorMeta[currentSector][2];
+        }
       }
 
       // for each wall in a sector
@@ -444,7 +455,18 @@ var gameEngineJS = (function () {
             var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
             var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
             fDepthBuffer[i] = fDistanceToWall;      
-            drawSectorInformation(i , fDistanceToWall, sWallType, sWallDirection, nCeiling, nFloor, wallSamplePosition, fSampleXScale, fSampleYScale)
+            drawSectorInformation(
+              i , 
+              fDistanceToWall, 
+              sWallType, 
+              sWallDirection, 
+              nCeiling, 
+              nFloor, 
+              wallSamplePosition, 
+              fSampleXScale, 
+              fSampleYScale, 
+              sectorFloorColor
+            )
           }
 
 
