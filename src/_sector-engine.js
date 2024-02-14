@@ -217,14 +217,25 @@ sectorMeta = {
     3, // Ceiling Height
     "i"  // floor color/TODO: Texture
   ],
-  // "sector5" : [
-  //   1.25, // Floor Height
-  //   0.75, // Ceiling Height
-  // ],
+  "sector2" : [
+    1, 
+    1, 
+    "a",
+  ],
+  "sector3" : [
+    1, 
+    1, 
+    "b",
+  ],
   "sector4":[
     1,
     0.5,
-    's'
+    'c'
+  ],
+  "sector4":[
+    1,
+    1,
+    's',
   ],
   "sector6": [
     2.5,
@@ -477,8 +488,14 @@ var gameEngineJS = (function () {
 
               if(typeof sectorMeta[nextSector] !== 'undefined'){
 
-                nextSectorFloorFactor = sectorMeta[nextSector][0]
-                nextSectorCeilingFactor = sectorMeta[nextSector][1]
+                nextSectorFloorFactor = sectorMeta[nextSector][0];
+                nextSectorCeilingFactor = sectorMeta[nextSector][1];
+
+                
+                if(i === 400){
+                  // console.log( JSON.stringify((visitedSectors)) )
+                  console.log(`${currentSector}-FH: ${sectorFloorFactor},  ${nextSector}-FH:: ${nextSectorFloorFactor} `);
+                }
 
                 // only recalculate if the next sector floor is higher than the previous
                 // TODO: Maybe the same for ceilings?
@@ -579,10 +596,11 @@ var gameEngineJS = (function () {
       
 
       // falling back down after jump
-      if (bFalling && nJumptimer > 1) {
+      if (bFalling && nJumptimer > 0) {
         nJumptimer--;
         fPlayerH -= 0.1;
-      }else{
+      }
+      else{
         bFalling = false;
       }
 
