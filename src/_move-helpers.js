@@ -6,6 +6,18 @@
 
 
 
+  function testPlayerSector(){
+    // TODO:
+    // Check for player in current sector
+    // else
+    // check walls for connecting sectors.
+    // Check for player in all those sectors
+    // else
+    // check for player in all sectors via linear search in level data
+    //
+    // consider running this function only every 30-60 frames or so
+  }
+
 
   // TODO: has some bugs
   // takes a vector from current position to requested new position (maybe x2?)
@@ -43,11 +55,10 @@
 
             // sets the player height when a sector is changed
             if(typeof sectorMeta[sPlayerSector] !== 'undefined'){
-              fPlayerH = 1 - sectorMeta[sPlayerSector][0]
+              nNewHeight = 1 - sectorMeta[sPlayerSector][0]
             }else{
               fPlayerH = 0;
             }
-            console.log(fPlayerH)
 
             // and allow moving
             return false;

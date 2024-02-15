@@ -44,6 +44,8 @@ var bPlayerMayMoveForward = true;
 
 var nJumptimer = 0;
 var fLooktimer = 0;
+var fHeighttimer = 0;
+var nNewHeight = 0;
 
 var fDepthBuffer = [];
 

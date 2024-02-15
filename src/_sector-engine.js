@@ -603,6 +603,16 @@ var gameEngineJS = (function () {
         bFalling = false;
       }
 
+
+      // adjust sector height to new sector height:
+      if( Math.abs( fPlayerH - nNewHeight) < 0.2 ) {
+        fPlayerH = nNewHeight;
+      }
+      else if( fPlayerH > nNewHeight ){
+        fPlayerH -= 0.2;
+      }else if( fPlayerH < nNewHeight  ){
+        fPlayerH += 0.4;
+      }
     
 
       // Some constants for each loop
