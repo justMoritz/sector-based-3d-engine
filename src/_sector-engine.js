@@ -59,7 +59,6 @@ map = {
       6
     ]
   ],
-
   "sector2" : [
     [
       [4,2],
@@ -86,7 +85,6 @@ map = {
       "Y"
     ]     
   ],
-  
   "sector3" : [
     [
       [7, 2.1],
@@ -147,7 +145,6 @@ map = {
       8
     ]        
   ],
-
   "sector5" : [
     [
       [4.5, 10],
@@ -174,7 +171,6 @@ map = {
       "o"
     ]        
   ],
-
   "sector6" : [
     [
       [6, 14],
@@ -232,7 +228,7 @@ sectorMeta = {
     0.5,
     'c'
   ],
-  "sector4":[
+  "sector5":[
     1,
     1,
     's',
@@ -245,13 +241,12 @@ sectorMeta = {
 }
 
 testmap = {
-  nMapHeight: 15,
-  nMapWidth: 15,
   map: map,
   sectorMeta: sectorMeta,
   fPlayerX: 7.7,
   fPlayerY: 3.9,
   fPlayerA: 3.4,
+  fPlayerH: 0,
   fDepth: 30,
   startingSector: 'sector3',
 };
@@ -279,8 +274,6 @@ var gameEngineJS = (function () {
 
     // updates the level map, dimensions and textures
     oMap = testmap.map;
-    nMapHeight = testmap.nMapHeight;
-    nMapWidth = testmap.nMapWidth;
     fDepth = testmap.fDepth || fDepth;
     sPlayerSector = testmap.startingSector || startingSector;
 
@@ -288,6 +281,7 @@ var gameEngineJS = (function () {
     fPlayerX = testmap.fPlayerX;
     fPlayerY = testmap.fPlayerY;
     fPlayerA = testmap.fPlayerA;
+    fPlayerH = testmap.fPlayerH;
 
     main();
   };
