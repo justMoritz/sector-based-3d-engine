@@ -631,12 +631,13 @@ var gameEngineJS = (function () {
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
         
         fAngleDifferences =  fPlayerA - fRayAngle ;
-        
-        // TODO: reimplement
+        var angleCorrection = 0;
+
         // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
         // This corrects for this perspective
-        // var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
-        var angleCorrection = 0;
+        if( bUseSkew ){
+          var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
+        }
 
         if( angleCorrection == 1 ){
           angleCorrection = 0;
@@ -657,7 +658,12 @@ var gameEngineJS = (function () {
 
       } // end column loop
 
-      _fDrawFrame(screen);
+      if( bUseSkew ){
+        _fDrawFrameWithSkew(screen);
+      }else{
+        _fDrawFrame(screen);
+      }
+
     }
   };
 
