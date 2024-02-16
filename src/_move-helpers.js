@@ -6,24 +6,39 @@
 
 
 
-  function testPlayerSector(){
-    // TODO:
-    // Check for player in current sector
-    // else
-    // check walls for connecting sectors.
-    // Check for player in all those sectors
-    // else
-    // check for player in all sectors via linear search in level data
-    //
-    // consider running this function only every 30-60 frames or so
-  }
+  // function testPlayerSector(){
+  //   // TODO:
+  //   // Check for player in current sector
+  //   // else
+  //   // check walls for connecting sectors.
+  //   // Check for player in all those sectors
+  //   // else
+  //   // check for player in all sectors via linear search in level data
+  //   //
+  //   // consider running this function only every 30-60 frames or so
+  // }
 
 
-  // TODO: has some bugs
+
+
+
+// keyboard and mouse
+var _moveHelpers = {
+
+  setNewPlayerHeight: function ( input ){
+    // sets the player height when a sector is changed
+    if(typeof input !== 'undefined'){
+      nNewHeight = 1 - input[0]
+    }else{
+      fPlayerH = 0;
+    }
+  },
+
+
   // takes a vector from current position to requested new position (maybe x2?)
   // check all the walls in the current sector for intersection against that vector
   // If the vector collides with any wall EXCEPT a portal
-  function testWallCollision( testX, testY ){
+  testWallCollision: function( testX, testY ){
 
     // look at all walls in the current player sector
     var allCurrentWalls = oMap[sPlayerSector];
@@ -49,16 +64,12 @@
           // if this wall we are hitting is considered a portal
           if(currentWall[2] != false){
             var collisionSector = currentWall[2];
+            
             // set new global sector
             sPlayerSector = collisionSector;
-            console.log(sPlayerSector)
-
-            // sets the player height when a sector is changed
-            if(typeof sectorMeta[sPlayerSector] !== 'undefined'){
-              nNewHeight = 1 - sectorMeta[sPlayerSector][0]
-            }else{
-              fPlayerH = 0;
-            }
+            
+            // set new player Height
+            _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
 
             // and allow moving
             return false;
@@ -68,19 +79,11 @@
             return true;
           }
         }
-        
-        // has collided with any wall
-        // return true;
       }
     }
     return false;
-  }
+  },
 
-
-
-
-// keyboard and mouse
-var _moveHelpers = {
   // keystroke listening engine
   keylisten: function () {
     window.onkeydown = function (e) {
@@ -167,8 +170,7 @@ var _moveHelpers = {
     };
   },
 
-  //
-  //
+
   /**
    * Y-Movement
    * @param  {float}  fMoveInput   the movement from touch or mouse-input
@@ -382,7 +384,7 @@ var _moveHelpers = {
       var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
       var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;    
 
-      if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
+      if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
       }
@@ -393,7 +395,7 @@ var _moveHelpers = {
       var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
       var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
 
-      if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
+      if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
       }
@@ -404,7 +406,7 @@ var _moveHelpers = {
       var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
       var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
 
-      if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
+      if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
       }
@@ -415,7 +417,7 @@ var _moveHelpers = {
       var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
       var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
 
-      if( !testWallCollision(fNewPlayerX, fNewPlayerY) ){
+      if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
       }

@@ -485,12 +485,6 @@ var gameEngineJS = (function () {
                 nextSectorFloorFactor = sectorMeta[nextSector][0];
                 nextSectorCeilingFactor = sectorMeta[nextSector][1];
 
-                
-                if(i === 400){
-                  // console.log( JSON.stringify((visitedSectors)) )
-                  console.log(`${currentSector}-FH: ${sectorFloorFactor},  ${nextSector}-FH:: ${nextSectorFloorFactor} `);
-                }
-
                 // only recalculate if the next sector floor is higher than the previous
                 // TODO: Maybe the same for ceilings?
                 if( nextSectorFloorFactor < sectorFloorFactor ){
@@ -551,7 +545,6 @@ var gameEngineJS = (function () {
 
         } // end wall found
         
-  
       } // end iterate over all walls
 
     }
