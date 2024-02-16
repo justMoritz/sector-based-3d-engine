@@ -362,7 +362,9 @@ var gameEngineJS = (function () {
 
 
   /**
-   * 
+   * This function checks and renders a given sector. Then it checks if there are any portals to adjacent sectors
+   * It prepares the “window” through which to look into the next sector, and then queues that sector up for rendering
+   * The while loop does this semi-recursively until there are no more portals/sectors that need to be rendered
    * @param {string} startingSector 
    * @param {*} i 
    * @param {*} fDistanceToWall 
@@ -375,9 +377,9 @@ var gameEngineJS = (function () {
     
     var currentSector = startingSector;
 
-    // Queue to store sectors to be checked
+    // Queue to store sectors to be checked, and visited sectors
     var sectorQueue = [currentSector];
-    var visitedSectors = {}; // Object to track visited sectors
+    var visitedSectors = {};
 
     // These variables determine where the renderer starts and ends the drawing of each column.
     // These are in screen-space
@@ -393,7 +395,8 @@ var gameEngineJS = (function () {
       // Mark the current sector as visited
       visitedSectors[currentSector] = true;
 
-      var sectorWalls = oMap[currentSector]; // the actual sector object from the level file
+      // the actual sector object from the level file
+      var sectorWalls = oMap[currentSector]; 
 
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
@@ -437,7 +440,7 @@ var gameEngineJS = (function () {
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
           
-          // preliminary wall shading:
+          // preliminary wall shading: different shade every other wall
           if(w % 2 == 0){
             sWallDirection = "S";
           }else{
@@ -457,7 +460,6 @@ var gameEngineJS = (function () {
           if(typeof currentWall[5] !== 'undefined' && currentWall[5]){
             fSampleYScale = currentWall[5];
           }
-
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
           wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
@@ -523,7 +525,7 @@ var gameEngineJS = (function () {
           else{
             // Regular wall
 
-            // We don't actually need the return array from this function instance
+            // We don't actually need the return array from this function call
             drawSectorInformation(
               i , 
               fDistanceToWall, 
@@ -562,6 +564,7 @@ var gameEngineJS = (function () {
 
       _moveHelpers.move();
 
+
       // normalize player angle
       if (fPlayerA < 0) {
         fPlayerA += PIx2;
@@ -571,7 +574,7 @@ var gameEngineJS = (function () {
       }
 
 
-      // allows for jumping a certain amount of time
+      // Jumping
       if (bJumping) {
         nJumptimer++;
         fPlayerH += 0.1;
@@ -580,7 +583,7 @@ var gameEngineJS = (function () {
         bFalling = true;
         bJumping = false;
       }
-      
+
 
       // falling back down after jump
       if (bFalling && nJumptimer > 0) {
@@ -591,13 +594,14 @@ var gameEngineJS = (function () {
         bFalling = false;
       }
 
+
       // stop falling
       if (nJumptimer < 1) {
         bFalling = false;
       }
 
 
-      // smoothly adjust sector height to new sector height:
+      // smoothly adjust sector height to new sector height
       if( !bJumping && !bFalling ){
         if( Math.abs( fPlayerH - nNewHeight) < 0.2 ) {
           fPlayerH = nNewHeight;
@@ -614,19 +618,9 @@ var gameEngineJS = (function () {
       var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
-      // fscreenHeightFactor = fscreenHeightFactor * fPlayerH
-      // TODO: factor in fPlayerH
-
-
 
       // for the length of the screenwidth (one frame)
-      // One screen-width-pixel at a time, cast a ray
       for (var i = 0; i < nScreenWidth; i++) {
-        // calculates the ray angle into the world space
-        // take the current player angle, subtract half the field of view
-
-        // var fDistanceToWall = 0;
-
               
         // Calculate the direction of the current ray
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
@@ -635,8 +629,7 @@ var gameEngineJS = (function () {
         var rayLength = fDepth;
         fPlayerEndX = fPlayerX + fEyeX * rayLength;
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
-
-
+        
         fAngleDifferences =  fPlayerA - fRayAngle ;
         
         // TODO: reimplement
@@ -660,9 +653,7 @@ var gameEngineJS = (function () {
 
 
         // checks the current sector, and potentially updates the sector the player might be in
-        // TODO: Consider not passing fDistanceToWall
         checkSectors(sPlayerSector, i);
-
 
       } // end column loop
 
