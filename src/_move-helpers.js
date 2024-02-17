@@ -6,24 +6,60 @@
 
 
 
-  // function testPlayerSector(){
-  //   // TODO:
-  //   // Check for player in current sector
-  //   // else
-  //   // check walls for connecting sectors.
-  //   // Check for player in all those sectors
-  //   // else
-  //   // check for player in all sectors via linear search in level data
-  //   //
-  //   // consider running this function only every 30-60 frames or so
-  // }
-
+    // TODO:
+    // Check for player in current sector
+    // else
+    // check walls for connecting sectors.
+    // Check for player in all those sectors
+    // else
+    // check for player in all sectors via linear search in level data
+    //
+    // consider running this function only every 30-60 frames or so
 
 
 
 
 // keyboard and mouse
 var _moveHelpers = {
+  
+  testPlayerSector: function ( sectorName ){
+    var allCurrentWalls = oMap[sectorName];
+
+    // get a vector from the wall points
+
+    for( var w = 0; w < allCurrentWalls.length; w++ ){
+      var currentWall = allCurrentWalls[w];
+
+      // for both wall points, get a vector to the player position,
+      for( var wp = 0; wp < currentWall.length; wp++ ){
+        var currentPoint = currentWall[wp];
+
+        // check against every Wall in the sector
+        for( var sw = 0; sw < allCurrentWalls.length; sw++ ){
+
+          var testAgainstWall = allCurrentWalls[sw];
+
+          if( testAgainstWall !== currentWall ){
+
+            var intersection = intersectionPoint(
+              { x: fPlayerX, y: fPlayerY },
+              { x: currentPoint[0], y: currentPoint[1] },
+              { x: testAgainstWall[0][0], y: testAgainstWall[0][1] },
+              { x: testAgainstWall[1][0], y: testAgainstWall[1][1] }
+            );
+            if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+              // if an intersection is found, the player is NOT in that sector
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    // if the player is inside the sector, no intersection should be found
+    return true;
+  },
+
 
   setNewPlayerHeight: function ( input ){
     // sets the player height when a sector is changed

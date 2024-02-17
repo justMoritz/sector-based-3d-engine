@@ -564,6 +564,8 @@ var gameEngineJS = (function () {
 
       _moveHelpers.move();
 
+      // console.log( _moveHelpers.testPlayerSector( 'sector1' ) );
+
 
       // normalize player angle
       if (fPlayerA < 0) {
