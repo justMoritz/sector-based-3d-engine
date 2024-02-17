@@ -69,8 +69,8 @@ var _moveHelpers = {
   },
 
 
+  // sets the player height when a sector is changed
   setNewPlayerHeight: function ( input ){
-    // sets the player height when a sector is changed
     if(typeof input !== 'undefined'){
       nNewHeight = 1 - input[0]
     }else{

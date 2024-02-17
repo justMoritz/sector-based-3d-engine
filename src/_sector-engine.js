@@ -243,12 +243,12 @@ sectorMeta = {
 testmap = {
   map: map,
   sectorMeta: sectorMeta,
-  fPlayerX: 0.7,
-  fPlayerY: 1.9,
-  fPlayerA: 0,
+  fPlayerX: 7,
+  fPlayerY: 3.5,
+  fPlayerA: 3.2,
   fPlayerH: 0,
   fDepth: 30,
-  startingSector: 'sector1',
+  startingSector: 'sector3',
 };
 
 
@@ -277,6 +277,7 @@ var gameEngineJS = (function () {
     fDepth = testmap.fDepth || fDepth;
     sPlayerSector = testmap.startingSector || startingSector;
     sLastKnownSector = sPlayerSector;
+    _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
 
     // places the player at the map starting point
     fPlayerX = testmap.fPlayerX;
