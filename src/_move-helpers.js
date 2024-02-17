@@ -6,58 +6,66 @@
 
 
 
-    // TODO:
-    // Check for player in current sector
-    // else
-    // check walls for connecting sectors.
-    // Check for player in all those sectors
-    // else
-    // check for player in all sectors via linear search in level data
-    //
-    // consider running this function only every 30-60 frames or so
-
-
 
 
 // keyboard and mouse
 var _moveHelpers = {
-  
-  testPlayerSector: function ( sectorName ){
-    var allCurrentWalls = oMap[sectorName];
 
-    // get a vector from the wall points
+  // Simple test: If we hit an even number of walls (incl. 0), 
+  // we are NOT in the sector, odd number means we ARE
+  testPlayerInSector: function ( sectorName ){
+    var allCurrentWalls = oMap[sectorName];
+    var nWallsHit = 0;
+
+    // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
+    fPlayerEndX = fPlayerX + 1 * fDepth;  // fEyeX = Math.cos(0) === 1
+    fPlayerEndY = fPlayerY + 0 * fDepth;  // fEyeY = Math.sin(0) === 0
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var currentWall = allCurrentWalls[w];
 
-      // for both wall points, get a vector to the player position,
-      for( var wp = 0; wp < currentWall.length; wp++ ){
-        var currentPoint = currentWall[wp];
+      var intersection = intersectionPoint(
+        { x: fPlayerX, y: fPlayerY },
+        { x: fPlayerEndX, y: fPlayerEndY },
+        { x: currentWall[0][0], y: currentWall[0][1] },
+        { x: currentWall[1][0], y: currentWall[1][1] }
+      );
 
-        // check against every Wall in the sector
-        for( var sw = 0; sw < allCurrentWalls.length; sw++ ){
-
-          var testAgainstWall = allCurrentWalls[sw];
-
-          if( testAgainstWall !== currentWall ){
-
-            var intersection = intersectionPoint(
-              { x: fPlayerX, y: fPlayerY },
-              { x: currentPoint[0], y: currentPoint[1] },
-              { x: testAgainstWall[0][0], y: testAgainstWall[0][1] },
-              { x: testAgainstWall[1][0], y: testAgainstWall[1][1] }
-            );
-            if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
-              // if an intersection is found, the player is NOT in that sector
-              return false;
-            }
-          }
-        }
+      if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+        nWallsHit++
       }
+    
     }
 
-    // if the player is inside the sector, no intersection should be found
-    return true;
+    return ( nWallsHit % 2 )
+  },
+
+
+  // This function checks if the player is still in the sector they are supposed to 
+  // Sectors are updated as the player walks through them in testWallCollision(), 
+  // but it could have missed the player in especially small sectors
+  playerSectorCheck: function () {
+    // Check for player in last known sector
+    if( _moveHelpers.testPlayerInSector( sLastKnownSector ) ){
+      console.log('player in last known sector');
+      return;
+    }
+
+    // TODO:
+    // check walls for connecting sectors.
+    // Check for player in all those sectors
+    
+    // else check for player in all sectors via linear search in level data
+    for (let sector in oMap) {
+      if ( _moveHelpers.testPlayerInSector( sector )){
+        // set new global sector
+        sPlayerSector = collisionSector;
+        sLastKnownSector = sPlayerSector;
+        // set new player Height
+        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        return;
+      }
+    }
   },
 
 
@@ -103,6 +111,7 @@ var _moveHelpers = {
             
             // set new global sector
             sPlayerSector = collisionSector;
+            sLastKnownSector = sPlayerSector;
             
             // set new player Height
             _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );

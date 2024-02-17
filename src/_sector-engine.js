@@ -35,19 +35,19 @@ map = {
       [5,4],
       [2,5],
       false,
-      "#"
+      "$"
     ],     
     [
       [2, 5],
       [0.5, 4],
       false,
-      "#"
+      "Y"
     ],     
     [
       [0.5, 4],
       [0.2, 0.2],
       false,
-      "#",
+      "T",
       10,
       4
     ],     
@@ -55,7 +55,7 @@ map = {
       [0.2, 0.2],
       [4, 2],
       false,
-      "#",
+      "U",
       6
     ]
   ],
@@ -243,12 +243,12 @@ sectorMeta = {
 testmap = {
   map: map,
   sectorMeta: sectorMeta,
-  fPlayerX: 7.7,
-  fPlayerY: 3.9,
-  fPlayerA: 3.4,
+  fPlayerX: 0.7,
+  fPlayerY: 1.9,
+  fPlayerA: 0,
   fPlayerH: 0,
   fDepth: 30,
-  startingSector: 'sector3',
+  startingSector: 'sector1',
 };
 
 
@@ -276,6 +276,7 @@ var gameEngineJS = (function () {
     oMap = testmap.map;
     fDepth = testmap.fDepth || fDepth;
     sPlayerSector = testmap.startingSector || startingSector;
+    sLastKnownSector = sPlayerSector;
 
     // places the player at the map starting point
     fPlayerX = testmap.fPlayerX;
@@ -559,12 +560,20 @@ var gameEngineJS = (function () {
    * The basic game loop
    */
   var main = function () {
+    var gameTimer = 0;
     gameRun = setInterval(gameLoop, 33);
     function gameLoop() {
+      gameTimer++
 
       _moveHelpers.move();
 
-      // console.log( _moveHelpers.testPlayerSector( 'sector1' ) );
+      // about every second or so, check that the player is still in the correct sector.
+      // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
+      // but it could have missed the player in especially small sectors
+      if( gameTimer % 33 === 0 ){
+        _moveHelpers.playerSectorCheck();
+        gameTimer= 0;
+      }
 
 
       // normalize player angle

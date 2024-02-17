@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Canvas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="gridCanvas"></canvas>
+    <div id="coordinates"></div>
+
+    <script>
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Grid parameters
+        const gridSize = 25; // Size of grid squares
+        const mainRuleInterval = 100; // Main rule interval (1 unit)
+        const subRuleInterval = 25; // Sub rule interval (0.25 units)
+        let scale = 1; // Initial scale
+        let offsetX = 0; // Initial offset X
+        let offsetY = 0; // Initial offset Y
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+        let vertices = []; // Array to store vertices
+
+        // Output coordinates
+        const coordinatesOutput = document.getElementById('coordinates');
+
+        // Draw grid
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate visible grid range
+            const visibleWidth = canvas.width / scale;
+            const visibleHeight = canvas.height / scale;
+            const startX = -offsetX / scale;
+            const startY = -offsetY / scale;
+            const endX = startX + visibleWidth;
+            const endY = startY + visibleHeight;
+
+            // Apply transformations
+            ctx.save();
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+
+            // Draw sub-rules
+            ctx.beginPath();
+            ctx.strokeStyle = '#ccc'; // Lighter color for sub-rules
+            for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
+                ctx.moveTo(x, startY);
+                ctx.lineTo(x, endY);
+            }
+            for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
+                ctx.moveTo(startX, y);
+                ctx.lineTo(endX, y);
+            }
+            ctx.stroke();
+
+            // Draw main rules
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
+                ctx.moveTo(x, startY);
+                ctx.lineTo(x, endY);
+            }
+            for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
+                ctx.moveTo(startX, y);
+                ctx.lineTo(endX, y);
+            }
+            ctx.stroke();
+
+            // Draw vertices
+            ctx.fillStyle = 'red';
+            for (const vertex of vertices) {
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw lines
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < vertices.length; i += 2) {
+                if (i + 1 < vertices.length) {
+                    ctx.beginPath();
+                    ctx.moveTo(vertices[i].x, vertices[i].y);
+                    ctx.lineTo(vertices[i + 1].x, vertices[i + 1].y);
+                    ctx.stroke();
+                }
+            }
+
+            // Restore transformations
+            ctx.restore();
+        }
+
+        // Zoom in and out on scroll
+        function handleScroll(event) {
+            event.preventDefault();
+            const scaleFactor = 0.01;
+            if (event.deltaY < 0) {
+                // Zoom in
+                scale += scaleFactor;
+            } else {
+                // Zoom out
+                scale -= scaleFactor;
+            }
+            scale = Math.max(0.1, scale); // Limit minimum scale
+            drawGrid();
+        }
+
+        // Pan on mouse drag
+        function handleMouseDown(event) {
+            if (event.button === 0) { // Left mouse button
+                isDragging = true;
+                lastX = event.clientX;
+                lastY = event.clientY;
+            }
+        }
+
+        function handleMouseMove(event) {
+            if (isDragging) {
+                const deltaX = event.clientX - lastX;
+                const deltaY = event.clientY - lastY;
+                lastX = event.clientX;
+                lastY = event.clientY;
+                offsetX += deltaX / scale;
+                offsetY += deltaY / scale;
+                drawGrid();
+            }
+        }
+
+        function handleMouseUp(event) {
+            if (event.button === 0) { // Left mouse button
+                isDragging = false;
+            }
+        }
+
+        // Handle click to add vertices or move existing vertices
+        function handleMouseClick(event) {
+            const clickX = (event.clientX - offsetX) / scale;
+            const clickY = (event.clientY - offsetY) / scale;
+
+            // Check if clicked on an existing vertex
+            for (const vertex of vertices) {
+                const distance = Math.sqrt((clickX - vertex.x) ** 2 + (clickY - vertex.y) ** 2);
+                if (distance <= 3) {
+                    // Move existing vertex
+                    vertex.x = clickX;
+                    vertex.y = clickY;
+                    drawGrid();
+                    return;
+                }
+            }
+
+            // Add new vertex
+            vertices.push({ x: clickX, y: clickY });
+            drawGrid();
+        }
+
+        // Attach event listeners
+        window.addEventListener('wheel', handleScroll, { passive: false });
+        window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('click', handleMouseClick);
+
+        // Redraw grid when window is resized
+        window.addEventListener('resize', drawGrid);
+
+        // Initial draw
+        drawGrid();
+    </script>
+</body>
+
+</html>
