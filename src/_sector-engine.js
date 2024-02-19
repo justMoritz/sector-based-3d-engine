@@ -39,7 +39,7 @@ map = {
     ],     
     [
       [2, 5],
-      [0.5, 4],
+      [0.5, 4], 
       false,
       "Y"
     ],     
@@ -55,7 +55,7 @@ map = {
       [0.2, 0.2],
       [4, 2],
       false,
-      "U",
+      "#",
       6
     ]
   ],
@@ -289,6 +289,34 @@ var gameEngineJS = (function () {
   };
 
 
+  function drawFloor( i, j,  fDistanceToWall, fSampleX ){
+
+    // var fSampleX = i / nScreenWidth;
+    // var fSampleY = j / nScreenHeight;
+
+    // var fSampleX = nScreenWidth / i;
+    // var fSampleY = nScreenHeight / j;
+
+    distPlayer = 0;
+
+    currentDist = nScreenHeight / (2.0 * j - nScreenHeight); //you could make a small lookup table for this instead
+    
+    var weight = (currentDist - distPlayer) / (fDistanceToWall - distPlayer);
+    // console.log(weight)
+
+    var currentFloorX = weight * i + (1.0 - weight) * fPlayerX;
+    var currentFloorY = weight * j + (1.0 - weight) * fPlayerY;
+    
+         
+  
+    sFloorPixelToRender = _rh.renderWall(
+      1,
+      "N",
+      _getSamplePixel( textures["#"], currentFloorX,  currentFloorY  , 0.1, 0.1)
+    );
+    return sFloorPixelToRender;
+  }
+
 
   // TODO:
   function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end, nNextSectorCeiling, nNextSectorFloor){
@@ -323,19 +351,6 @@ var gameEngineJS = (function () {
         // Default Pixel (probably don't need)
         var sPixelToRender = "0";
 
-        // Don't render if Portal
-        // if(sWallDirection == "X"){
-        //   var sPixelToRender = "n";
-        //   // continue;
-        //   var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        //   wallRenderDirection = "N"
-        //   sPixelToRender = _rh.renderWall(
-        //     fDistanceToWall,
-        //     wallRenderDirection,
-        //     _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
-        //   );
-        // }
-        // else{
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
         sPixelToRender = _rh.renderWall(
           fDistanceToWall,
@@ -355,6 +370,7 @@ var gameEngineJS = (function () {
       // floor
       else {
         screen[j * nScreenWidth + i] = sectorFloorColor;
+        // screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -494,8 +510,7 @@ var gameEngineJS = (function () {
                 if( nextSectorFloorFactor < sectorFloorFactor ){
                   nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (nextSectorFloorFactor + fPlayerH);
                 }
-                  nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (nextSectorCeilingFactor - fPlayerH);
-                // }
+                nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (nextSectorCeilingFactor - fPlayerH);
 
               }
          
@@ -518,6 +533,7 @@ var gameEngineJS = (function () {
                 nNextSectorCeiling,
                 nNextSectorFloor
               );
+              // for the next iteration of non-portal walls seen through this window.
               nDrawStart = newStartAndEnd[0];
               nDrawEnd = newStartAndEnd[1];
 
@@ -615,13 +631,14 @@ var gameEngineJS = (function () {
 
       // smoothly adjust sector height to new sector height
       if( !bJumping && !bFalling ){
-        if( Math.abs( fPlayerH - nNewHeight) < 0.2 ) {
+        if( Math.abs( fPlayerH - nNewHeight) < 0.2  ) {
           fPlayerH = nNewHeight;
         }
         else if( fPlayerH > nNewHeight ){
           fPlayerH -= 0.2;
         }else if( fPlayerH < nNewHeight  ){
           fPlayerH += 0.4;
+          nJumptimer = 0;
         }
       }
     

@@ -47,7 +47,7 @@ var _moveHelpers = {
   playerSectorCheck: function () {
     // Check for player in last known sector
     if( _moveHelpers.testPlayerInSector( sLastKnownSector ) ){
-      console.log('player in last known sector');
+      // console.log('player in last known sector');
       return;
     }
 
@@ -101,13 +101,18 @@ var _moveHelpers = {
           Math.pow(fPlayerX - intersection.x, 2) +
           Math.pow(fPlayerY - intersection.y, 2)
         );
-        
         // close enough to be considered hitting the wall
         if(fTestDistanceToWall < 1){
 
           // if this wall we are hitting is considered a portal
           if(currentWall[2] != false){
             var collisionSector = currentWall[2];
+
+
+            // Doesn't allow player to move over an incline that is too large (player needs to jump)
+            if( fPlayerH - (1- sectorMeta[collisionSector][0]) < -1 ){
+              return true; // don't allow move
+            }
             
             // set new global sector
             sPlayerSector = collisionSector;

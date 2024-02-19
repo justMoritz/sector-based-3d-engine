@@ -53,6 +53,37 @@ var _rh = {
     x: [152, 248, 240],
     // Add more entries as needed
   },
+  pixelToAscii : {
+    0: "b0",
+    1: "b25",
+    2: "b50",
+    3: "b75",
+    4: "b100",
+    a: "b25", // 4 Blues
+    b: "b50",
+    c: "b75",
+    d: "b100",
+    e: "b25", // 4 pinks (consider replacing with orange/brown)
+    f: "b50",
+    g: "b75",
+    h: "b100",
+    i: "b25", // 4 reds
+    j: "b50",
+    k: "b75",
+    l: "b100",
+    m: "b25", // 4 oranges (really yellow)
+    n: "b50",
+    o: "b75",
+    p: "b100",
+    q: "b25", // 4 greens
+    r: "b50",
+    s: "b75",
+    t: "b100",
+    u: "b25", // 4 teals
+    v: "b50",
+    w: "b75",
+    x: "b100",
+  },
   renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
 
     var pixel = pixelArray[0];
@@ -543,6 +574,28 @@ var _fPrepareFrame = function (oInput, eTarget) {
 };
 
 
+var _convertPixelToAscii = function( input ){
+  // var b0   = ".";
+  // var b20  = "&#9617;"; // ░
+  // var b40  = "&#9618;"; // ▒
+  // var b60  = "&#9618;"; // ▒
+  // var b80  = "&#9619;"; // ▓
+  // var b100 = "&#9608;"; // █
+  pixelToRender = _rh.pixelToAscii[input];
+  switch (pixelToRender) {
+    case "b0":
+      return "&nbsp;";
+    case "b25":
+      return "&#9617;";
+    case "b50":
+      return "&#9618;";
+    case "b75":
+      return "&#9619;";
+    case "b100":
+      return "&#9608;";
+  }
+};
+
 
 var _drawToCanvas = function ( pixels ) {
   // Assuming your canvas has a width and height
@@ -584,6 +637,7 @@ var _fDrawFrame = function (screen, target) {
       if (printIndex % nScreenWidth == 0) {
         sOutput += "<br>";
       }
+      // sOutput += _convertPixelToAscii(frame[printIndex]);
       sOutput += frame[printIndex];
       sCanvasOutput += frame[printIndex];
       printIndex++;
