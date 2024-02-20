@@ -376,8 +376,8 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        // screen[j * nScreenWidth + i] = sectorFloorColor;
-        screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
+        screen[j * nScreenWidth + i] = sectorFloorColor;
+        // screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -622,8 +622,15 @@ var gameEngineJS = (function () {
 
       // falling back down after jump
       if (bFalling && nJumptimer > 0) {
-        nJumptimer--;
-        fPlayerH -= 0.1;
+        if( Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
+          fPlayerH = nNewHeight;
+          nJumptimer = 0;
+          bFalling = false;
+        }
+        else{
+          nJumptimer--;
+          fPlayerH -= 0.1;
+        }
       }
       else{
         bFalling = false;
