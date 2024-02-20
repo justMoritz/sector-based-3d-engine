@@ -249,6 +249,20 @@ testmap = {
   fPlayerH: 0,
   fDepth: 30,
   startingSector: 'sector3',
+  sprites: {
+    "1": {
+      "x": 3,
+      "y": 3,
+      "r": 2.0,
+      "name": "P",
+    },
+    "2": {
+      "x": 6,
+      "y": 4,
+      "r": 2.0,
+      "name": "chair",
+    },
+  },
 };
 
 
@@ -278,6 +292,9 @@ var gameEngineJS = (function () {
     sPlayerSector = testmap.startingSector || startingSector;
     sLastKnownSector = sPlayerSector;
     _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+
+    // load sprites
+    oLevelSprites = testmap.sprites;
 
     // places the player at the map starting point
     fPlayerX = testmap.fPlayerX;
@@ -622,6 +639,7 @@ var gameEngineJS = (function () {
 
       // falling back down after jump
       if (bFalling && nJumptimer > 0) {
+        // handles cases if jumping between different sector heights
         if( fPlayerH < nNewHeight && Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
           fPlayerH = nNewHeight;
           nJumptimer = 0;
@@ -635,7 +653,7 @@ var gameEngineJS = (function () {
       else{
         bFalling = false;
       }
-
+      
 
       // stop falling
       if (nJumptimer < 1) {
@@ -700,6 +718,7 @@ var gameEngineJS = (function () {
         checkSectors(sPlayerSector, i);
 
       } // end column loop
+
 
       if( bUseSkew ){
         _fDrawFrameWithSkew(screen);

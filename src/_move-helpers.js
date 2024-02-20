@@ -36,7 +36,6 @@ var _moveHelpers = {
       }
     
     }
-
     return ( nWallsHit % 2 )
   },
 
@@ -47,7 +46,6 @@ var _moveHelpers = {
   playerSectorCheck: function () {
     // Check for player in last known sector
     if( _moveHelpers.testPlayerInSector( sLastKnownSector ) ){
-      // console.log('player in last known sector');
       return;
     }
 
