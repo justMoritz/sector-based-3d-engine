@@ -622,7 +622,7 @@ var gameEngineJS = (function () {
 
       // falling back down after jump
       if (bFalling && nJumptimer > 0) {
-        if( Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
+        if( fPlayerH < nNewHeight && Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
           fPlayerH = nNewHeight;
           nJumptimer = 0;
           bFalling = false;
