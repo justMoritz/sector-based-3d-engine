@@ -297,22 +297,29 @@ var gameEngineJS = (function () {
     // var fSampleX = nScreenWidth / i;
     // var fSampleY = nScreenHeight / j;
 
-    distPlayer = 0;
+    // distPlayer = 0;
 
-    currentDist = nScreenHeight / (2.0 * j - nScreenHeight); //you could make a small lookup table for this instead
+    // currentDist = nScreenHeight / (2.0 * j - nScreenHeight); //you could make a small lookup table for this instead
     
-    var weight = (currentDist - distPlayer) / (fDistanceToWall - distPlayer);
-    // console.log(weight)
+    // var weight = (currentDist - distPlayer) / (fDistanceToWall - distPlayer);
+    // // console.log(weight)
 
-    var currentFloorX = weight * i + (1.0 - weight) * fPlayerX;
-    var currentFloorY = weight * j + (1.0 - weight) * fPlayerY;
+    // var currentFloorX = weight * i + (1.0 - weight) * fPlayerX;
+    // var currentFloorY = weight * j + (1.0 - weight) * fPlayerY;
     
-         
+      
+    var distanceToPlayer = (nScreenHeight / 2) / (j - nScreenHeight);
+
+    // Find the direction of the floor texture based on the player's current position and angle
+    var floorTextureX = Math.floor((fPlayerX + distanceToPlayer * Math.cos(fPlayerA)) * 8) % 8;
+    var floorTextureY = Math.floor((fPlayerY + distanceToPlayer * Math.sin(fPlayerA)) * 8) % 8;
+
+
   
     sFloorPixelToRender = _rh.renderWall(
       1,
       "N",
-      _getSamplePixel( textures["#"], currentFloorX,  currentFloorY  , 0.1, 0.1)
+      _getSamplePixel( textures["#"], floorTextureX,  floorTextureY  , 0.1, 0.1)
     );
     return sFloorPixelToRender;
   }
@@ -369,8 +376,8 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        screen[j * nScreenWidth + i] = sectorFloorColor;
-        // screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
+        // screen[j * nScreenWidth + i] = sectorFloorColor;
+        screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
