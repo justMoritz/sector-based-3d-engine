@@ -318,37 +318,38 @@ var gameEngineJS = (function () {
   };
 
 
-  function drawFloor( i, j,  fDistanceToWall, fSampleX ){
+  function drawFloor( i, j,  fDistanceToWall ){
 
-    // var fSampleX = i / nScreenWidth;
-    // var fSampleY = j / nScreenHeight;
-
-    // var fSampleX = nScreenWidth / i;
-    // var fSampleY = nScreenHeight / j;
-
-    // distPlayer = 0;
-
-    // currentDist = nScreenHeight / (2.0 * j - nScreenHeight); //you could make a small lookup table for this instead
+    // Some constants for each loop
+    var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+    fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+ 
+   // Define the height of the player above the floor (adjust as needed)
+   var fPlayerHeight = 2; // Example value, adjust based on your game's scale
     
-    // var weight = (currentDist - distPlayer) / (fDistanceToWall - distPlayer);
-    // // console.log(weight)
+   // Calculate the direct distance from the player to the floor pixel
+   var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
 
-    // var currentFloorX = weight * i + (1.0 - weight) * fPlayerX;
-    // var currentFloorY = weight * j + (1.0 - weight) * fPlayerY;
-    
-      
-    var distanceToPlayer = (nScreenHeight / 2) / (j - nScreenHeight);
+   // Calculate the angle for the current ray
+   var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
-    // Find the direction of the floor texture based on the player's current position and angle
-    var floorTextureX = Math.floor((fPlayerX + distanceToPlayer * Math.cos(fPlayerA)) * 8) % 8;
-    var floorTextureY = Math.floor((fPlayerY + distanceToPlayer * Math.sin(fPlayerA)) * 8) % 8;
+   // Calculate real-world distance with the angle relative to the player
+  //  var realDistance = directDistFloor / Math.cos(rayAngle);
+   var realDistance = directDistFloor / Math.cos(fRayAngleGlob);
 
+   // Calculate real-world coordinates with the player angle
+   var floorPointX = fPlayerX + Math.cos(rayAngle) * realDistance;
+   var floorPointY = fPlayerY + Math.sin(rayAngle) * realDistance;
 
-  
+   // Map the texture coordinates based on the floor texture
+   // Adjust this mapping based on your actual texture size and coordinates
+  //  var textureX = Math.floor(floorPointX); // Adjust texture mapping according to your texture size
+  //  var textureY = Math.floor(floorPointY); // Adjust texture mapping according to your texture size
+
     sFloorPixelToRender = _rh.renderWall(
       1,
       "N",
-      _getSamplePixel( textures["#"], floorTextureX,  floorTextureY  , 0.1, 0.1)
+      _getSamplePixel( textures["#"], floorPointX,  floorPointY  , 0.5, 0.5)
     );
     return sFloorPixelToRender;
   }
@@ -405,8 +406,8 @@ var gameEngineJS = (function () {
 
       // floor
       else {
-        screen[j * nScreenWidth + i] = sectorFloorColor;
-        // screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall , nFloor, nCeiling,fSampleX );
+        // screen[j * nScreenWidth + i] = sectorFloorColor;
+        screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -621,8 +622,8 @@ var gameEngineJS = (function () {
 
       _moveHelpers.move();
 
-      _updateSpriteBuffer();
-      _moveSprites();
+      // _updateSpriteBuffer();
+      // _moveSprites();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -728,6 +729,8 @@ var gameEngineJS = (function () {
         if (fAngleDifferences > PIx2) {
           fAngleDifferences -= PIx2;
         }
+        
+        fRayAngleGlob = fRayAngle;
 
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
