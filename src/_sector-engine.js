@@ -736,6 +736,10 @@ var gameEngineJS = (function () {
         // Namely, let's test the distance to the sprite-center at every ray. 
         // If we hit the sprite, draw the portion of the visible sprite
         // We can make use of the same fDepthBuffer
+
+        // If this doesn't work, the current drawing sprite method works, but it doesn't work with the angle correction.
+        // This is because the angle correction is dependent on correcting on a per-column basis, and we don't have that
+        // column information anymore once we are done casting the ray.
         
 
 
