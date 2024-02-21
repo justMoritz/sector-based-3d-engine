@@ -256,9 +256,21 @@ testmap = {
       "r": 2.0,
       "name": "P",
     },
+    "3": {
+      "x": 5.5,
+      "y": 12.5,
+      "r": 2.0,
+      "name": "O",
+    },
     "2": {
       "x": 6,
       "y": 4,
+      "r": 2.0,
+      "name": "P",
+    },
+    "4": {
+      "x": 9.5,
+      "y": 11.4,
       "r": 2.0,
       "name": "chair",
     },
@@ -507,7 +519,7 @@ var gameEngineJS = (function () {
           wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
           var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
-          fDepthBuffer[i] = fDistanceToWall;  
+          
 
 
           // PORTAL FOUND
@@ -567,6 +579,7 @@ var gameEngineJS = (function () {
           else{
             // Regular wall
 
+            fDepthBuffer[i] = fDistanceToWall;  
             // We don't actually need the return array from this function call
             drawSectorInformation(
               i , 
@@ -607,6 +620,9 @@ var gameEngineJS = (function () {
       gameTimer++
 
       _moveHelpers.move();
+
+      _updateSpriteBuffer();
+      _moveSprites();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -713,11 +729,22 @@ var gameEngineJS = (function () {
           fAngleDifferences -= PIx2;
         }
 
-
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
+        // TODO: There's got to be a better way to render sprites
+        // Namely, let's test the distance to the sprite-center at every ray. 
+        // If we hit the sprite, draw the portion of the visible sprite
+        // We can make use of the same fDepthBuffer
+        
+
+
       } // end column loop
+
+
+
+      // RENDER SPRITES, DRAW SPRITES
+      // _drawSprites();
 
 
       if( bUseSkew ){
