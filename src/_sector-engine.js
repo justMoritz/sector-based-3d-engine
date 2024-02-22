@@ -318,57 +318,41 @@ var gameEngineJS = (function () {
   };
 
 
-  function drawFloor( i, j,  fDistanceToWall ){
+  function drawFloor( i, j, sectorFloorFactor ){
+
 
     // Some constants for each loop
     var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
     fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
- 
-   // Define the height of the player above the floor (adjust as needed)
-   var fPlayerHeight = 2;
-    
-   // Calculate the direct distance from the player to the floor pixel
-   var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
+  
+    // Define the height of the player above the floor (adjust as needed)
+    var fPlayerHeight = 2 * sectorFloorFactor;
+      
+    // Calculate the direct distance from the player to the floor pixel
+    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
 
-   // Calculate the angle for the current ray
-  //  var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
+    // Calculate the angle for the current ray
+    var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
-   // Calculate real-world distance with the angle relative to the player
-  //  var realDistance = directDistFloor / Math.cos(rayAngle);
-   var realDistance = directDistFloor / Math.cos(fRayAngleGlob);
+    // Calculate real-world distance with the angle relative to the player
+    var realDistance = directDistFloor / Math.cos(fPlayerA - rayAngle);
 
-   // Calculate real-world coordinates with the player angle
-   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * realDistance;
-   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * realDistance;
-
-   // Map the texture coordinates based on the floor texture
-   // Adjust this mapping based on your actual texture size and coordinates
-   var textureX = Math.floor(floorPointX); // Adjust texture mapping according to your texture size
-   var textureY = Math.floor(floorPointY); // Adjust texture mapping according to your texture size
-
-
-   var dy    = j - (nScreenHeight/2);
-   var deg   = fRayAngleGlob;
-   var raFix = Math.cos(fPlayerA - fRayAngleGlob );
-
-   floorPointX2 = fPlayerX/2 + Math.cos(deg) *158*32/dy/raFix; 
-   floorPointY2 = fPlayerY/2 - Math.sin(deg) *158*32/dy/raFix;
-
-
-
+    // Calculate real-world coordinates with the player angle
+    var floorPointX = fPlayerX + Math.cos(rayAngle) * realDistance;
+    var floorPointY = fPlayerY + Math.sin(rayAngle) * realDistance;
 
 
     sFloorPixelToRender = _rh.renderWall(
       1,
       "N",
-      _getSamplePixel( textures["#"], floorPointX2,  floorPointY2  , 0.5, 0.5)
+      _getSamplePixel( textures["Y"], floorPointX,  floorPointY , 1, 1)
     );
     return sFloorPixelToRender;
   }
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end, nNextSectorCeiling, nNextSectorFloor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end, nNextSectorCeiling, nNextSectorFloor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -419,7 +403,7 @@ var gameEngineJS = (function () {
       // floor
       else {
         // screen[j * nScreenWidth + i] = sectorFloorColor;
-        screen[j * nScreenWidth + i] = drawFloor( i, j,  fDistanceToWall );
+        screen[j * nScreenWidth + i] = drawFloor( i, j, sectorFloorFactor );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -573,6 +557,8 @@ var gameEngineJS = (function () {
                 sWallDirection, 
                 nCeiling, 
                 nFloor, 
+                sectorFloorFactor,
+                sectorCeilingFactor,
                 wallSamplePosition, 
                 fSampleXScale, 
                 fSampleYScale, 
@@ -580,7 +566,8 @@ var gameEngineJS = (function () {
                 nDrawStart,
                 nDrawEnd,
                 nNextSectorCeiling,
-                nNextSectorFloor
+                nNextSectorFloor,
+                
               );
               // for the next iteration of non-portal walls seen through this window.
               nDrawStart = newStartAndEnd[0];
@@ -601,6 +588,8 @@ var gameEngineJS = (function () {
               sWallDirection, 
               nCeiling, 
               nFloor, 
+              sectorFloorFactor,
+              sectorCeilingFactor,
               wallSamplePosition, 
               fSampleXScale, 
               fSampleYScale, 
