@@ -325,31 +325,43 @@ var gameEngineJS = (function () {
     fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
  
    // Define the height of the player above the floor (adjust as needed)
-   var fPlayerHeight = 2; // Example value, adjust based on your game's scale
+   var fPlayerHeight = 2;
     
    // Calculate the direct distance from the player to the floor pixel
    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
 
    // Calculate the angle for the current ray
-   var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
+  //  var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
 
    // Calculate real-world distance with the angle relative to the player
   //  var realDistance = directDistFloor / Math.cos(rayAngle);
    var realDistance = directDistFloor / Math.cos(fRayAngleGlob);
 
    // Calculate real-world coordinates with the player angle
-   var floorPointX = fPlayerX + Math.cos(rayAngle) * realDistance;
-   var floorPointY = fPlayerY + Math.sin(rayAngle) * realDistance;
+   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * realDistance;
+   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * realDistance;
 
    // Map the texture coordinates based on the floor texture
    // Adjust this mapping based on your actual texture size and coordinates
-  //  var textureX = Math.floor(floorPointX); // Adjust texture mapping according to your texture size
-  //  var textureY = Math.floor(floorPointY); // Adjust texture mapping according to your texture size
+   var textureX = Math.floor(floorPointX); // Adjust texture mapping according to your texture size
+   var textureY = Math.floor(floorPointY); // Adjust texture mapping according to your texture size
+
+
+   var dy    = j - (nScreenHeight/2);
+   var deg   = fRayAngleGlob;
+   var raFix = Math.cos(fPlayerA - fRayAngleGlob );
+
+   floorPointX2 = fPlayerX/2 + Math.cos(deg) *158*32/dy/raFix; 
+   floorPointY2 = fPlayerY/2 - Math.sin(deg) *158*32/dy/raFix;
+
+
+
+
 
     sFloorPixelToRender = _rh.renderWall(
       1,
       "N",
-      _getSamplePixel( textures["#"], floorPointX,  floorPointY  , 0.5, 0.5)
+      _getSamplePixel( textures["#"], floorPointX2,  floorPointY2  , 0.5, 0.5)
     );
     return sFloorPixelToRender;
   }
