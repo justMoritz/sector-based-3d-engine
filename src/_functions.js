@@ -12,6 +12,8 @@ function getFraction(number) {
 
 // takes beginning and ends of two vectors, and returns the point at which they meet, if they do
 // Stolen from jdh on YouTube, (who stole it from Wikipedia), but then implemented for my needs :)
+// I actually like returning NaN in case of no intersection, 
+// since it's more ‘numberic’ than a truthy check (i.e.false)
 function intersectionPoint(a0, a1, b0, b1) {
   var d = ((a0.x - a1.x) * (b0.y - b1.y)) - ((a0.y - a1.y) * (b0.x - b1.x));
   
