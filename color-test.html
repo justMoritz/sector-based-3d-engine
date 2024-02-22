@@ -1,0 +1,212 @@
+<html>
+  <head>
+    <title>Color Test</title>
+    <style>
+      body{
+        background: #777;
+        color: white;
+        font-family: 'Consolas', Courier, monospace;
+      }
+      h2{ color: white; margin: 0; font-size: 1rem; }
+      
+      p{ margin: 0; font-size: 0.66rem; margin-top: 1rem; }
+
+      .black{ color: rgb(0, 0, 0); }
+      
+      /* .red{ color: red; }
+      .green{ color: lightgreen; }
+      .blue{ color: blue; }
+      .yellow{ color: gold; }
+
+
+      .cyan{ color: rgb(85, 255, 255); }
+      .pink{ color: rgb(255, 85, 255); } */
+
+
+      .c1 { color: red; }
+      .c2 { color: lightgreen; }
+      .c3 { color: blue; }
+
+      
+      /* .c3 { color: gold; } */
+
+      /* .cb { color: rgb(0, 0, 0); } */
+      /* .c2 { color: rgb(85, 255, 255); } */
+      /* .c1 { color: rgb(255, 85, 255); } */
+
+      .container{
+        position: relative;
+        background: black;
+        width: 1500px;
+        height: 40px;
+        padding: 20px;
+      }
+
+      .pixel1,
+      .pixel2,
+      .pixel3,
+      .pixel4,
+      .pixel5,
+      .pixel6{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 20px;
+      }
+
+      .pixel2{ left: 60px; }
+      .pixel3{ left: 100px; }
+      .pixel4{ left: 140px; }
+      .pixel5{ left: 180px; }
+      .pixel6{ left: 220px; }
+
+    </style>
+  </head>
+  <body>
+
+    
+
+
+
+
+
+    <p class="black">Solid Colors if pallets are flippable (probably won't be though)</p>
+    <div class="container">
+
+      <div class="pixel1 c1 "> ▒▓░</div>
+      <div class="pixel1 c2 "> ░▒▓</div>
+      <div class="pixel1 c3 "> ▓░▒</div>
+
+      <div class="pixel2 c1 "> ▒▓░</div>
+      <div class="pixel2 c3 "> ░▒▓</div>
+      <div class="pixel2 c2 "> ▓░▒</div>
+
+      <div class="pixel3 c2 "> ▓░▒</div>
+      <div class="pixel3 c1 "> ░▒▓</div>
+      <div class="pixel3 c3 "> ░▓▒</div>
+
+      <div class="pixel4 c2 "> ▓░▒</div>
+      <div class="pixel4 c3 "> ░▒▓</div>
+      <div class="pixel4 c1 "> ░▓▒</div>
+
+      <div class="pixel5 c3 "> ▒▓░</div>
+      <div class="pixel5 c1 "> ░▒▓</div>
+      <div class="pixel5 c2 "> ▓░▒</div>
+
+      <div class="pixel6 c3 "> ▒▓░</div>
+      <div class="pixel6 c2 "> ░▒▓</div>
+      <div class="pixel6 c1 "> ▓░▒</div>
+
+    </div>
+      
+    █▓▒░.
+
+    <p class="black">RED GREEN BLUE</p>
+    <div class="container">
+      <div class="pixel1 c1 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c2 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c3 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>   
+
+
+    <p class="black">RED BLUE GREEN</p>
+    <div class="container">
+      <div class="pixel1 c1 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c3 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c2 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>   
+
+
+    <p class="black">GREEN BLUE RED </p>
+    <div class="container">
+      <div class="pixel1 c2 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c3 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c1 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>   
+    
+
+    <p class="black">GREEN RED BLUE</p>
+    <div class="container">
+      <div class="pixel1 c2 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c1 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c3 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>   
+    
+
+    <p class="black">BLUE RED GREEN </p>
+    <div class="container">
+      <div class="pixel1 c3 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c1 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c2 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>     
+
+
+    <p class="black">BLUE GREEN RED </p>
+    <div class="container">
+      <div class="pixel1 c3 "> ▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓░░░░░░░░░ </div>
+      <div class="pixel1 c2 "> ▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░▒▒▒▓▓▓░░░ </div>
+      <div class="pixel1 c1 "> ▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░▒▓░ </div>
+    </div>   
+
+-o-crisp-edges
+
+
+██████████▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░..........██████████▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░..........
+
+&nbsp;
+___
+
+<p class="black">RED GREEN BLUE</p>
+<div class="container">
+  <div class="pixel1 c1 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c2 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c3 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>   
+
+
+<p class="black">RED BLUE GREEN</p>
+<div class="container">
+  <div class="pixel1 c1 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c3 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c2 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>   
+
+
+<p class="black">GREEN BLUE RED </p>
+<div class="container">
+  <div class="pixel1 c2 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c3 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c1 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>   
+
+
+<p class="black">GREEN RED BLUE</p>
+<div class="container">
+  <div class="pixel1 c2 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c1 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c3 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>   
+
+
+<p class="black">BLUE RED GREEN </p>
+<div class="container">
+  <div class="pixel1 c3 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c1 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c2 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>     
+
+
+<p class="black">BLUE GREEN RED </p>
+<div class="container">
+  <div class="pixel1 c3 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
+  <div class="pixel1 c2 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="pixel1 c1 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>   
+
+
+
+
+
+
+  </body>
+</html>

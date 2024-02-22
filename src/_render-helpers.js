@@ -59,29 +59,29 @@ var _rh = {
     2: "b50",
     3: "b75",
     4: "b100",
-    a: "b25", // 4 Blues
-    b: "b50",
-    c: "b75",
-    d: "b100",
+    a: "b0", // 4 Blues
+    b: "b25",
+    c: "b50",
+    d: "b75",
     e: "b25", // 4 pinks (consider replacing with orange/brown)
     f: "b50",
     g: "b75",
     h: "b100",
-    i: "b25", // 4 reds
+    i: "b0", // 4 reds
     j: "b50",
     k: "b75",
     l: "b100",
-    m: "b25", // 4 oranges (really yellow)
-    n: "b50",
+    m: "b0", // 4 oranges (really yellow)
+    n: "b25",
     o: "b75",
     p: "b100",
-    q: "b25", // 4 greens
-    r: "b50",
+    q: "b0", // 4 greens
+    r: "b25",
     s: "b75",
     t: "b100",
-    u: "b25", // 4 teals
+    u: "b0", // 4 teals
     v: "b50",
-    w: "b75",
+    w: "b100",
     x: "b100",
   },
   renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
