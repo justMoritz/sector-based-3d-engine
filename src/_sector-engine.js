@@ -749,6 +749,7 @@ var gameEngineJS = (function () {
         _fDrawFrameWithSkew(screen);
       }else{
         _fDrawFrame(screen);
+        // _fDrawFrameRGB(screen);
       }
 
     }
@@ -758,6 +759,11 @@ var gameEngineJS = (function () {
   var init = function (input) {
     // prep document
     eScreen = document.getElementById("display");
+
+    eScreenG = document.getElementById("displayg");
+    eScreenB = document.getElementById("displayb");
+    eScreenR = document.getElementById("displayr");
+
     eCanvas = document.getElementById("seconddisplay");
     cCtx    = eCanvas.getContext("2d");
     eDebugOut = document.getElementById("debug");

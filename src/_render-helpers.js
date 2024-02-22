@@ -84,6 +84,99 @@ var _rh = {
     w: "b100",
     x: "b100",
   },
+  pixelToAsciiGreen : {
+    0: "b0",
+    1: "b0",
+    2: "b50",
+    3: "b75",
+    4: "b100",
+    a: "b0", // 4 Blues
+    b: "b0",
+    c: "b25",
+    d: "b50",
+    e: "b0", // 4 pinks (consider replacing with orange/brown)
+    f: "b75",
+    g: "b100",
+    h: "b100",
+    i: "b0", // 4 reds
+    j: "b0",
+    k: "b75",
+    l: "b75",
+    m: "b25", // 4 oranges (really yellow)
+    n: "b100",
+    o: "b75",
+    p: "b100",
+    q: "b25", // 4 greens
+    r: "b50",
+    s: "b100",
+    t: "b75",
+    u: "b25", // 4 teals
+    v: "b100",
+    w: "b75",
+    x: "b75",
+  },
+  pixelToAsciiBlue : {
+    0: "b0",
+    1: "b25",
+    2: "b25",
+    3: "b50",
+    4: "b50",
+    a: "b25", // 4 Blues
+    b: "b50",
+    c: "b50",
+    d: "b50",
+    e: "b50", // 4 pinks (consider replacing with orange/brown)
+    f: "b100",
+    g: "b100",
+    h: "b75",
+    i: "b0", // 4 reds
+    j: "b25",
+    k: "b0",
+    l: "b25",
+    m: "b0", // 4 oranges (really yellow)
+    n: "b0",
+    o: "b25",
+    p: "b0",
+    q: "b0", // 4 greens
+    r: "b0",
+    s: "b0",
+    t: "b0",
+    u: "b50", // 4 teals
+    v: "b50",
+    w: "b25",
+    x: "b50",
+  },
+  pixelToAsciiRed : {
+    0: "b0",
+    1: "b0",
+    2: "b0",
+    3: "b0",
+    4: "b25",
+    a: "b0", // 4 Blues
+    b: "b0",
+    c: "b0",
+    d: "b0",
+    e: "b25", // 4 pinks (consider replacing with orange/brown)
+    f: "b100",
+    g: "b75",
+    h: "b75",
+    i: "b25", // 4 reds
+    j: "b50",
+    k: "b75",
+    l: "b50",
+    m: "b25", // 4 oranges (really yellow)
+    n: "b50",
+    o: "b50",
+    p: "b50",
+    q: "b0", // 4 greens
+    r: "b25",
+    s: "b25",
+    t: "b0",
+    u: "b0", // 4 teals
+    v: "b0",
+    w: "b0",
+    x: "b25",
+  },
   renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
 
     var pixel = pixelArray[0];
@@ -574,26 +667,79 @@ var _fPrepareFrame = function (oInput, eTarget) {
 };
 
 
-var _convertPixelToAscii = function( input ){
+var _convertPixelToAscii = function( input, color ){
   // var b0   = ".";
   // var b20  = "&#9617;"; // ░
   // var b40  = "&#9618;"; // ▒
   // var b60  = "&#9618;"; // ▒
   // var b80  = "&#9619;"; // ▓
   // var b100 = "&#9608;"; // █
-  pixelToRender = _rh.pixelToAscii[input];
-  switch (pixelToRender) {
-    case "b0":
-      return "&nbsp;";
-    case "b25":
-      return "&#9617;";
-    case "b50":
-      return "&#9618;";
-    case "b75":
-      return "&#9619;";
-    case "b100":
-      return "&#9608;";
+
+  if(color === 0){
+    pixelToRender = _rh.pixelToAscii[input];
+    switch (pixelToRender) {
+      case "b0":
+        return "&nbsp;";
+      case "b25":
+        return "&#9617;";
+      case "b50":
+        return "&#9618;";
+      case "b75":
+        return "&#9619;";
+      case "b100":
+        return "&#9608;";
+    }
   }
+
+  else if(color === 1){
+    pixelToRender = _rh.pixelToAsciiRed[input];
+    switch (pixelToRender) {
+      case "b0":
+        return "&nbsp;";
+      case "b25":
+        return "&#9617;";
+      case "b50":
+        return "&#9618;";
+      case "b75":
+        return "&#9619;";
+      case "b100":
+        return "&#9608;";
+    }
+  }
+
+  else if(color === 2){
+    pixelToRender = _rh.pixelToAsciiGreen[input];
+    switch (pixelToRender) {
+      case "b0":
+        return "&nbsp;";
+      case "b25":
+        return "&#9617;";
+      case "b50":
+        return "&#9618;";
+      case "b75":
+        return "&#9619;";
+      case "b100":
+        return "&#9608;";
+    }
+  }
+
+  else if(color === 3){
+    pixelToRender = _rh.pixelToAsciiBlue[input];
+    switch (pixelToRender) {
+      case "b0":
+        return "&nbsp;";
+      case "b25":
+        return "&#9617;";
+      case "b50":
+        return "&#9618;";
+      case "b75":
+        return "&#9619;";
+      case "b100":
+        return "&#9608;";
+    }
+  }
+
+
 };
 
 
@@ -626,6 +772,7 @@ var _fDrawFrame = function (screen, target) {
   var target = target || eScreen;
 
   var sOutput = "";
+  
   var sCanvasOutput = "";
 
   // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
@@ -637,13 +784,51 @@ var _fDrawFrame = function (screen, target) {
       if (printIndex % nScreenWidth == 0) {
         sOutput += "<br>";
       }
-      // sOutput += _convertPixelToAscii(frame[printIndex]);
+      // sOutput += _convertPixelToAscii(frame[printIndex], 0);
       sOutput += frame[printIndex];
       sCanvasOutput += frame[printIndex];
       printIndex++;
     }
   }
-  target.innerHTML = sOutput;
+  eScreen.innerHTML = sOutput;
+  _drawToCanvas( sCanvasOutput );
+};
+
+
+var _fDrawFrameRGB = function (screen, target) {
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
+  var frame = screen
+  var target = target || eScreen;
+
+  var sOutputG = "";
+  var sOutputB = "";
+  var sOutputR = "";
+  
+  var sCanvasOutput = "";
+
+  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  var printIndex = 0;
+
+  for (var row = 0; row < nScreenHeight; row++) {
+    for (var pix = 0; pix < nScreenWidth; pix++) {
+      // H-blank based on screen-width
+      if (printIndex % nScreenWidth == 0) {
+        sOutputG += "<br>";
+        sOutputB += "<br>";
+        sOutputR += "<br>";
+      }
+      sOutputG += _convertPixelToAscii(frame[printIndex], 2);
+      sOutputB += _convertPixelToAscii(frame[printIndex], 3);
+      sOutputR += _convertPixelToAscii(frame[printIndex], 1);
+
+      sCanvasOutput += frame[printIndex];
+      printIndex++;
+    }
+  }
+  eScreenG.innerHTML = sOutputG;
+  eScreenB.innerHTML = sOutputB;
+  eScreenR.innerHTML = sOutputR;
+
   _drawToCanvas( sCanvasOutput );
 };
 

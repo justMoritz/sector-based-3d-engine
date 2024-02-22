@@ -37,6 +37,7 @@
       pointer-events: none;
     }
 
+
     #seconddisplay {
       position: absolute;
       transform: scale(2, 4);
@@ -84,6 +85,25 @@
         font-size: 3px;
       }
     }
+
+    #displayg{
+      color: lightgreen;
+    }
+    #displayb{
+      color: blue;
+    }
+    #displayr{
+      color: red;
+    }
+
+    .color-mix{
+      display: inline-block;
+      pointer-events: none;
+      border: 1px solid red;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
   </style>
 </head>
 
@@ -91,6 +111,11 @@
   <div id="debug" style="font-size: 2em; line-height: 2em;"></div>
   <div id="game">
     <div id="display"></div>
+
+    <div class="color-mix" id="displayg"></div>
+    <div class="color-mix" id="displayb"></div>
+    <div class="color-mix" id="displayr"></div>
+
     <canvas id="seconddisplay"></canvas>
     <div id="touchinputlook"></div>
     <div id="touchinputmove"></div>
