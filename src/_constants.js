@@ -64,6 +64,7 @@ var fPlayerEndX;
 var fPlayerEndY;
 
 var fscreenHeightFactor;
+var fRayAngleGlob;
 
 var oMap;
 
