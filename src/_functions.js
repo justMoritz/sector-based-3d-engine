@@ -54,6 +54,22 @@ function approximatelyEqual(a, b, epsilon) {
 
 
 // leaving the console for errors, logging seems to kill performance
-var _debugOutput = function (input) {
+var _debugOutput = function ( input ) {
   eDebugOut.innerHTML = input;
 };
+
+
+function toggleFullscreen( canvasElement ) {
+  if (document.fullscreenElement) {
+    // If already in fullscreen, exit fullscreen
+    document.exitFullscreen();
+  } else {
+    // Set new screen height
+    nScreenHeight = nScreenHeight*2
+    // Request fullscreen
+    canvasElement.requestFullscreen()
+      .catch(err => {
+      console.error('Failed to enter fullscreen mode: ', err);
+    });
+  }
+}

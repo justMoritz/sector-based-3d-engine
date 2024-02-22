@@ -211,32 +211,32 @@ sectorMeta = {
   "sector1" : [
     0.5, // Floor Height
     3, // Ceiling Height
-    "i"  // floor color/TODO: Texture
+    "Y"  // floor texture
   ],
   "sector2" : [
     1, 
     1, 
-    "a",
+    "Y",
   ],
   "sector3" : [
     1, 
     1, 
-    "b",
+    "Y",
   ],
   "sector4":[
     1,
     0.5,
-    'c'
+    '#'
   ],
   "sector5":[
     1,
     1,
-    's',
+    'Y',
   ],
   "sector6": [
     2.5,
     0.5,
-    'g'
+    'Y'
   ]
 }
 
@@ -318,41 +318,38 @@ var gameEngineJS = (function () {
   };
 
 
-  function drawFloor( i, j, sectorFloorFactor ){
-
-
-    // Some constants for each loop
-    var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
-    fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
   
-    // Define the height of the player above the floor (adjust as needed)
+  function drawSolidWall(j, xxx){
+    
+  }
+
+
+  function drawFloor(j, sectorFloorFactor, sSectorFloorTexture ){
+
+    // Define the height of the player above the floor 
     var fPlayerHeight = 2 * sectorFloorFactor;
       
     // Calculate the direct distance from the player to the floor pixel
     var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
 
-    // Calculate the angle for the current ray
-    var rayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
-
     // Calculate real-world distance with the angle relative to the player
-    var realDistance = directDistFloor / Math.cos(fPlayerA - rayAngle);
+    var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
 
     // Calculate real-world coordinates with the player angle
-    var floorPointX = fPlayerX + Math.cos(rayAngle) * realDistance;
-    var floorPointY = fPlayerY + Math.sin(rayAngle) * realDistance;
-
+    var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * realDistance;
+    var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * realDistance;
 
     sFloorPixelToRender = _rh.renderWall(
-      1,
+      realDistance,
       "N",
-      _getSamplePixel( textures["Y"], floorPointX,  floorPointY , 1, 1)
+      _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
     );
     return sFloorPixelToRender;
   }
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sectorFloorColor, start, end, nNextSectorCeiling, nNextSectorFloor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, start, end, nNextSectorCeiling, nNextSectorFloor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -365,10 +362,10 @@ var gameEngineJS = (function () {
           screen[j * nScreenWidth + i] = "a";
       }
 
-      // draws in the wall portion that's above or below the ‘window’ through which we are looking into the next sector
+      // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
       else if (j > nNextSectorCeiling && j <= nNextSectorFloor) {
-        screen[j * nScreenWidth + i] = "1";
         // as well as
+        screen[j * nScreenWidth + i] = "1";
         // sets the new screen start (the first screen-height-pixel is a wall) 
         // and new screen end variable (whatever last screen-height-pixel of wall we found)
         if(!bScreenStartSet){
@@ -378,7 +375,7 @@ var gameEngineJS = (function () {
         nNewScreenEnd =j+1;
       }
 
-      // solid block
+      // Draw Solid Wall
       else if (j > nCeiling && j <= nFloor) {
 
         // Default Pixel (probably don't need)
@@ -390,20 +387,13 @@ var gameEngineJS = (function () {
           sWallDirection,
           _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
         );
-        // }
+        screen[j * nScreenWidth + i] = sPixelToRender
 
-        // Does not draw out of bounds pixels
-        if( fDistanceToWall < fDepth ){
-          screen[j * nScreenWidth + i] = sPixelToRender
-        }else{
-          screen[j * nScreenWidth + i] = "o"
-        }
-      } // end solid block
+      } // End Draw Solid Wall
 
-      // floor
+      // Draw Floor
       else {
-        // screen[j * nScreenWidth + i] = sectorFloorColor;
-        screen[j * nScreenWidth + i] = drawFloor( i, j, sectorFloorFactor );
+        screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -451,7 +441,7 @@ var gameEngineJS = (function () {
 
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
-      var sectorFloorColor = "f";
+      var sSectorFloorTexture = "Y";
 
       // per-sector overrides for floor and ceiling heights
       if(typeof sectorMeta[currentSector] !== 'undefined'){
@@ -459,7 +449,7 @@ var gameEngineJS = (function () {
         sectorCeilingFactor = sectorMeta[currentSector][1]
 
         if(typeof sectorMeta[currentSector][2] !== 'undefined'){
-          sectorFloorColor = sectorMeta[currentSector][2];
+          sSectorFloorTexture = sectorMeta[currentSector][2];
         }
       }
 
@@ -562,7 +552,7 @@ var gameEngineJS = (function () {
                 wallSamplePosition, 
                 fSampleXScale, 
                 fSampleYScale, 
-                sectorFloorColor,
+                sSectorFloorTexture,
                 nDrawStart,
                 nDrawEnd,
                 nNextSectorCeiling,
@@ -593,7 +583,7 @@ var gameEngineJS = (function () {
               wallSamplePosition, 
               fSampleXScale, 
               fSampleYScale, 
-              sectorFloorColor,
+              sSectorFloorTexture,
               nDrawStart,
               nDrawEnd,
               false,
@@ -764,6 +754,7 @@ var gameEngineJS = (function () {
     }
   };
 
+
   var init = function (input) {
     // prep document
     eScreen = document.getElementById("display");
@@ -772,6 +763,10 @@ var gameEngineJS = (function () {
     eDebugOut = document.getElementById("debug");
     eTouchLook = document.getElementById("touchinputlook");
     eTouchMove = document.getElementById("touchinputmove");
+
+    eDebugOut.addEventListener('click', () => {
+      toggleFullscreen(eCanvas);
+    });
 
     _moveHelpers.keylisten();
     _moveHelpers.mouseinit();
