@@ -372,7 +372,7 @@ var gameEngineJS = (function () {
           nNewScreenStart = j;
           bScreenStartSet = true;
         }
-        nNewScreenEnd =j+1;
+        nNewScreenEnd = j+1;
       }
 
       // Draw Solid Wall
