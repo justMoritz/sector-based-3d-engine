@@ -326,11 +326,16 @@ var gameEngineJS = (function () {
 
   function drawFloor(j, sectorFloorFactor, sSectorFloorTexture ){
 
+    var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
+    fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+
     // Define the height of the player above the floor 
-    var fPlayerHeight = 2 * sectorFloorFactor;
+    var fPlayerHeight = (2) * sectorFloorFactor;
+
+    // console.log()
       
     // Calculate the direct distance from the player to the floor pixel
-    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor) / (j - nScreenHeight / 2);
+    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor2) / (j - nScreenHeight / 2);
 
     // Calculate real-world distance with the angle relative to the player
     var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
