@@ -27,12 +27,15 @@
       .c2 { color: lightgreen; }
       .c3 { color: blue; }
 
+      .grey { color: #333; }
       
       /* .c3 { color: gold; } */
 
       /* .cb { color: rgb(0, 0, 0); } */
       /* .c2 { color: rgb(85, 255, 255); } */
       /* .c1 { color: rgb(255, 85, 255); } */
+
+      .nm{ margin: 0; }
 
       .container{
         position: relative;
@@ -151,13 +154,21 @@
 -o-crisp-edges
 
 
-██████████▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░..........██████████▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░..........
+<!-- 
+.........10........20........30........40........50........60........70........80........90........100
+123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.|
+█▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ |
+█████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     |
+████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░                    |
+ -->
 
 &nbsp;
 ___
 
 <p class="black">RED GREEN BLUE</p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c1 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c2 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c3 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -166,22 +177,75 @@ ___
 
 <p class="black">RED BLUE GREEN</p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c1 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c3 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c2 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 </div>   
 
+<br> 
+
+
+<!-- 
+.........10........20........30........40........50........60........70........80........90........100
+123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.|
+█▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ █▓▒░ |
+█████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     █████▓▓▓▓▓▒▒▒▒▒░░░░░     |
+████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░                    |
+ -->
 
 <p class="black">GREEN BLUE RED </p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c2 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c3 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c1 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>  
+<p class="black nm"> Pink </p>
+<div class="container">
+  <div class="pixel1 c2 ">                                       </div>
+  <div class="pixel1 c3 ">                                </div>
+  <div class="pixel1 c1 ">                                            </div>
+</div>  
+<p class="black nm"> Teal </p>
+<div class="container">
+  <div class="pixel1 c2 ">  ░      █      ▓      ▓                                         </div>
+  <div class="pixel1 c3 ">  ▒      ▒      ░      ▒                                             </div>
+  <div class="pixel1 c1 ">  &nbsp; &nbsp; &nbsp; ░                                                   </div>
+</div>  
+<p class="black nm"> Red </p>
+<div class="container">
+  <div class="pixel1 c2 "> &nbsp; &nbsp; &nbsp; ▒      ▓      ▓      </div>
+  <div class="pixel1 c3 "> &nbsp; &nbsp; ░      ░      &nbsp; ░            </div>
+  <div class="pixel1 c1 "> ░      ▒      ▒      ▒      ▓      ▒      </div>
+</div>   
+<p class="black nm"> Yellow </p>
+<div class="container">
+  <div class="pixel1 c2 "> ░      █      ▓      ▓      █       </div>
+  <div class="pixel1 c3 "> &nbsp; &nbsp; ░      &nbsp; &nbsp;          </div>
+  <div class="pixel1 c1 "> ▒      ▓      ▒      ▒      ▒        </div>
+</div>   
+<p class="black nm"> Blue </p>
+<div class="container">
+  <div class="pixel1 c2 "> &nbsp; &nbsp; ░      ▓      █                                                                           </div>
+  <div class="pixel1 c3 "> ░      ▒      ▒      ▒      ▒                                                                  </div>
+  <div class="pixel1 c1 "> &nbsp; &nbsp; &nbsp; &nbsp; ░                                                                           </div>
+</div>   
+<p class="black nm"> Green </p>
+<div class="container">
+  <div class="pixel1 c2 "> ░      ▒      █      ▓                           </div>
+  <div class="pixel1 c3 "> &nbsp; &nbsp; &nbsp; &nbsp;                                           </div>
+  <div class="pixel1 c1 "> &nbsp; ░      ░      &nbsp;                                                   </div>
 </div>   
 
+<br> 
 
 <p class="black">GREEN RED BLUE</p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c2 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c1 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c3 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -190,6 +254,8 @@ ___
 
 <p class="black">BLUE RED GREEN </p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c3 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c1 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c2 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -198,6 +264,8 @@ ___
 
 <p class="black">BLUE GREEN RED </p>
 <div class="container">
+  <div class="pixel1 grey " style="top: 10px;">.........10........20........30........40........50........60........70........80........90........100</div>
+  <div class="pixel1 grey " style="top: 25px;">123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.</div>
   <div class="pixel1 c3 "> █▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;█▓▒░&nbsp;</div>
   <div class="pixel1 c2 "> █████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;█████▓▓▓▓▓▒▒▒▒▒░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div class="pixel1 c1 "> ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
