@@ -324,13 +324,16 @@ var gameEngineJS = (function () {
   }
 
 
-  function drawFloor(j, sectorFloorFactor, sSectorFloorTexture ){
+  function drawFloor(j, fSectorFloorFactor, sSectorFloorTexture ){
 
     var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
     fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
 
+
+    fscreenHeightFactor2 = nScreenHeight / 2;
+
     // Define the height of the player above the floor 
-    var fPlayerHeight = (2) * sectorFloorFactor;
+    var fPlayerHeight = (2) * fSectorFloorFactor;
 
     // console.log()
       
