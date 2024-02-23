@@ -75,7 +75,9 @@ var _moveHelpers = {
     }else{
       fPlayerH = 0;
     }
-    console.log(nNewHeight)
+    console.log(`sectorFloorFactor: ${input[0]}`)
+    console.log(`nNewHeight = ${nNewHeight}  //  (1 - ${input[0]})`)
+    console.log(`----`)
   },
 
 
