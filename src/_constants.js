@@ -23,8 +23,8 @@ var eCanvas;
 var cCtx;
 var eDebugOut;
 
-var nScreenWidth = 420;
-var nScreenHeight = 120;
+var nScreenWidth = 640;
+var nScreenHeight = 200;
 
 var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
 // var fFOV = PI___ / 2.14; // (PI___ / 4.0 originally)

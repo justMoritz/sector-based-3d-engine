@@ -243,12 +243,12 @@ sectorMeta = {
 testmap = {
   map: map,
   sectorMeta: sectorMeta,
-  fPlayerX: 7,
-  fPlayerY: 3.5,
-  fPlayerA: 3.2,
+  fPlayerX: 6.5,
+  fPlayerY: 1.6,
+  fPlayerA: 1.54,
   fPlayerH: 0,
   fDepth: 30,
-  startingSector: 'sector3',
+  startingSector: 'sector2',
   sprites: {
     "1": {
       "x": 3,
@@ -326,19 +326,22 @@ var gameEngineJS = (function () {
 
   function drawFloor(j, fSectorFloorFactor, sSectorFloorTexture ){
 
-    var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
+    // var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
+    // fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+
+    // fscreenHeightFactor2 = nScreenHeight / 2;
+
+
+    var fPerspectiveCalculation2 = (2 - fPlayerH*1.2);
     fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
 
-
-    fscreenHeightFactor2 = nScreenHeight / 2;
-
     // Define the height of the player above the floor 
-    var fPlayerHeight = (2) * fSectorFloorFactor;
+    var fPlayerHeight = ( 2 ) * fSectorFloorFactor;
 
     // console.log()
       
     // Calculate the direct distance from the player to the floor pixel
-    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor2) / (j - nScreenHeight / 2);
+    var directDistFloor = ( (fPlayerHeight) * fscreenHeightFactor2) / ((j ) - nScreenHeight / 2  );
 
     // Calculate real-world distance with the angle relative to the player
     var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
