@@ -201,40 +201,39 @@ map = {
   ],
 }
 
-// 1.5 is 125% 
-// 1 is standard
-// 0.5 is 25%
-// 0 is 50%
-// -1 is 0%
+// New approach:
+// Standard Floor Height: 0
+// Standard Ceiling Height: 1
+// up and down from there :)
 // of the reference of each
 sectorMeta = {
   "sector1" : [
-    0.1, // Floor Height
+    0.8, // Floor Height
     3, // Ceiling Height
     "#"  // floor texture
   ],
   "sector2" : [
-    0.5, 
-    1, 
+    0.4, 
+    2, 
     "Y",
   ],
   "sector3" : [
-    1, 
-    1, 
+    0, 
+    1.5, 
     "Y",
   ],
   "sector4":[
+    0,
     1,
-    0.5,
     '#'
   ],
   "sector5":[
-    1,
+    0.2,
     1,
     'Y',
   ],
   "sector6": [
-    2.5,
+    -2.5,
     0.5,
     'Y'
   ]
@@ -243,12 +242,12 @@ sectorMeta = {
 testmap = {
   map: map,
   sectorMeta: sectorMeta,
-  fPlayerX: 6.5,
-  fPlayerY: 1.6,
-  fPlayerA: 1.54,
+  fPlayerX: 6.7,
+  fPlayerY: 4.4,
+  fPlayerA: 3.8,
   fPlayerH: 0,
   fDepth: 30,
-  startingSector: 'sector2',
+  startingSector: 'sector3',
   sprites: {
     "1": {
       "x": 3,
@@ -410,6 +409,15 @@ var gameEngineJS = (function () {
       // Draw Floor
       else {
         screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+
+
+        // screen[j * nScreenWidth + i] = "a";
+
+        // alternative idea:
+        // return the lowest highest value for j for which we draw a wall OR half-screen-height-lookfactor
+        // (the furthest point in the sector, and the furthestest wall distance should be at that point)
+        // At the end of the drawing loop, we cast the opposite way around?
+
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -521,8 +529,21 @@ var gameEngineJS = (function () {
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
           wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
           
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ;
+          
+
+          // Half the screenheight + however fat
+
+          /**
+           * 
+           * |
+           * |
+           * |         -    
+           * |
+           * |
+           * 
+           */
 
 
           // PORTAL FOUND
@@ -546,8 +567,8 @@ var gameEngineJS = (function () {
 
                 // only recalculate if the next sector floor is higher than the previous
                 // TODO: Maybe the same for ceilings?
-                if( nextSectorFloorFactor < sectorFloorFactor ){
-                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (nextSectorFloorFactor + fPlayerH);
+                if( nextSectorFloorFactor > sectorFloorFactor ){
+                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-nextSectorFloorFactor) + (fPlayerH));
                 }
                 nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (nextSectorCeilingFactor - fPlayerH);
 

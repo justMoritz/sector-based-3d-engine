@@ -71,7 +71,7 @@ var _moveHelpers = {
   setNewPlayerHeight: function ( input ){
     console.log(input)
     if(typeof input !== 'undefined'){
-      nNewHeight = 1 - input[0]
+      nNewHeight =  input[0] 
     }else{
       fPlayerH = 0;
     }
@@ -112,9 +112,9 @@ var _moveHelpers = {
 
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            if( fPlayerH - (1- sectorMeta[collisionSector][0]) < -1 ){
-              return true; // don't allow move
-            }
+            // if( fPlayerH - (1- sectorMeta[collisionSector][0]) < -1 ){
+            //   return true; // don't allow move
+            // }
             
             // set new global sector
             sPlayerSector = collisionSector;
