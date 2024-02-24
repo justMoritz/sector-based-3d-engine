@@ -528,9 +528,13 @@ var gameEngineJS = (function () {
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
           wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
-          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ;
+          // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
+          //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
+          //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
+          //  mean smaller heights. This adjusts for this :)
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ; 
           
           
           // PORTAL FOUND
@@ -553,7 +557,7 @@ var gameEngineJS = (function () {
                 nextSectorCeilingFactor = sectorMeta[nextSector][1];
 
                 // only recalculate if the next sector floor is higher than the previous
-                // TODO: Maybe the same for ceilings?
+                // See also note above about floor and ceiling heights in level data
                 if( nextSectorFloorFactor > sectorFloorFactor ){
                   nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-nextSectorFloorFactor) + (fPlayerH));
                 }
