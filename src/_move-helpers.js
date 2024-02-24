@@ -112,9 +112,9 @@ var _moveHelpers = {
 
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            // if( fPlayerH - (1- sectorMeta[collisionSector][0]) < -1 ){
-            //   return true; // don't allow move
-            // }
+            if( fPlayerH - (sectorMeta[collisionSector][0]) < -1 ){
+              return true; // don't allow move
+            }
             
             // set new global sector
             sPlayerSector = collisionSector;

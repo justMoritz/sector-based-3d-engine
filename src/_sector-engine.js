@@ -229,12 +229,12 @@ sectorMeta = {
   ],
   "sector5":[
     0.2,
-    1,
+    1.5,
     'Y',
   ],
   "sector6": [
-    -2.5,
-    0.5,
+    -1.5,
+    1,
     'Y'
   ]
 }
@@ -408,10 +408,10 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+        // screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
 
 
-        // screen[j * nScreenWidth + i] = "a";
+        screen[j * nScreenWidth + i] = "a";
 
         // alternative idea:
         // return the lowest highest value for j for which we draw a wall OR half-screen-height-lookfactor
@@ -528,24 +528,11 @@ var gameEngineJS = (function () {
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
           wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
-          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
           var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ;
           
-
-          // Half the screenheight + however fat
-
-          /**
-           * 
-           * |
-           * |
-           * |         -    
-           * |
-           * |
-           * 
-           */
-
-
+          
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // instead of drawing that wall, draw the sector behind the portal where the wall would have been
@@ -570,7 +557,7 @@ var gameEngineJS = (function () {
                 if( nextSectorFloorFactor > sectorFloorFactor ){
                   nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-nextSectorFloorFactor) + (fPlayerH));
                 }
-                nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (nextSectorCeilingFactor - fPlayerH);
+                nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+nextSectorCeilingFactor - fPlayerH);
 
               }
          
@@ -712,9 +699,9 @@ var gameEngineJS = (function () {
           fPlayerH = nNewHeight;
         }
         else if( fPlayerH > nNewHeight ){
-          fPlayerH -= 0.2;
+          fPlayerH -= 0.3;
         }else if( fPlayerH < nNewHeight  ){
-          fPlayerH += 0.4;
+          fPlayerH += 0.2;
           nJumptimer = 0;
         }
       }
