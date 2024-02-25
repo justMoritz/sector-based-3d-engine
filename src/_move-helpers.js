@@ -512,11 +512,11 @@ var _moveHelpers = {
 
     // smoothly adjust sector height to new sector height
     if( !bJumping && !bFalling ){
-      if( Math.abs( fPlayerH - nNewHeight) < 0.2  ) {
+      if( Math.abs( fPlayerH - nNewHeight) < 0.1  ) {
         fPlayerH = nNewHeight;
       }
       else if( fPlayerH > nNewHeight ){
-        fPlayerH -= 0.25; // falling
+        fPlayerH -= 0.15; // falling
       }else if( fPlayerH < nNewHeight  ){
         fPlayerH += 0.1;
         nJumptimer = 0;

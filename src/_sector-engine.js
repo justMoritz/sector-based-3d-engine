@@ -29,7 +29,7 @@ map = {
       [4,2], 
       [5,4], 
       "sector2",
-      "#"
+      "#",
     ],     
     [
       [5,4],
@@ -242,9 +242,9 @@ sectorMeta = {
 testmap = {
   map: map,
   sectorMeta: sectorMeta,
-  fPlayerX: 6.7,
-  fPlayerY: 4.4,
-  fPlayerA: 3.8,
+  fPlayerX: 7.5,
+  fPlayerY: 3.2,
+  fPlayerA: 2.8,
   fPlayerH: 0,
   fDepth: 30,
   startingSector: 'sector3',
@@ -319,11 +319,13 @@ var gameEngineJS = (function () {
 
   function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
-    // var fLocalLookTimer = (fLooktimer * 0.15);
+    var fLocalLookTimer = (fLooktimer * 0.15);
+
 
     // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
     // var fPerspectiveCalculation2 = 2 ;
-    // var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+    var fPerspectiveCalculation2 = 2 + fLocalLookTimer;
+    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
 
     var nStandardHeight = 2;
     var fPlayerHinSector;
@@ -335,10 +337,17 @@ var gameEngineJS = (function () {
     fPlayerHinSector = fSectorFloorHeight;
 
     fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2;
-    fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 ); // Adjusts for jumping
-
+    fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 - fLocalLookTimer ) ; // Adjusts for jumping
+    
     // Calculate the direct distance from the player to the floor pixel
-    fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactor ) / ( j - nScreenHeight / 2  );
+    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2  );
+    
+    
+    
+    // works if no looking up or down
+    // fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 - fLocalLookTimer ) ; // Adjusts for jumping
+    // // Calculate the direct distance from the player to the floor pixel
+    // fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactor ) / ( j - nScreenHeight / 2  ); 
 
     // Calculate real-world distance with the angle relative to the player
     var fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
@@ -651,8 +660,8 @@ var gameEngineJS = (function () {
 
 
       // Some constants for each loop
-      // var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
-      var fPerspectiveCalculation = 1.999;
+      var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+      // var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 
@@ -712,19 +721,28 @@ var gameEngineJS = (function () {
       // RENDER SPRITES, DRAW SPRITES
       // _drawSprites();
 
-
-      if( bUseSkew ){
+      if (bDrawRGB) {
+        _fDrawFrameRGB(screen);
+      }
+      
+      if (!bDrawRGB && bUseSkew) {
         _fDrawFrameWithSkew(screen);
       }else{
-        _fDrawFrame(screen);
-        // _fDrawFrameRGB(screen);
-      }
+        _fDrawFrame(screen); 
+      }  
+    
 
     }
   };
 
 
   var init = function (input) {
+
+    if (bDrawRGB){
+      nScreenWidth = 320;
+      nScreenHeight = 100;
+    }
+
     // prep document
     eScreen = document.getElementById("display");
 

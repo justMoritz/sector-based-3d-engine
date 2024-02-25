@@ -804,7 +804,7 @@ var _fDrawFrameRGB = function (screen, target) {
   var sOutputB = "";
   var sOutputR = "";
   
-  var sCanvasOutput = "";
+  // var sCanvasOutput = "";
 
   // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
   var printIndex = 0;
@@ -821,7 +821,7 @@ var _fDrawFrameRGB = function (screen, target) {
       sOutputB += _convertPixelToAscii(frame[printIndex], 3);
       sOutputR += _convertPixelToAscii(frame[printIndex], 1);
 
-      sCanvasOutput += frame[printIndex];
+      // sCanvasOutput += frame[printIndex];
       printIndex++;
     }
   }
@@ -829,7 +829,7 @@ var _fDrawFrameRGB = function (screen, target) {
   eScreenB.innerHTML = sOutputB;
   eScreenR.innerHTML = sOutputR;
 
-  _drawToCanvas( sCanvasOutput );
+  // _drawToCanvas( sCanvasOutput );
 };
 
 
