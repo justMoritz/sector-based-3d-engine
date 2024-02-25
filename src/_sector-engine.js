@@ -319,44 +319,36 @@ var gameEngineJS = (function () {
 
   function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
-    var fLocalLookTimer = (fLooktimer * 0.15);
+    // var fLocalLookTimer = (fLooktimer * 0.15);
 
-    var fPerspectiveCalculation2 = 2 ;
-    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+    // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
+    // var fPerspectiveCalculation2 = 2 ;
+    // var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
 
-    var standardHeight = 2;
+    var nStandardHeight = 2;
     var fPlayerHinSector;
-    var heightDifference;
     var fPlayerViewHeight;
-
-
-    heightDifference = standardHeight - fSectorFloorHeight;
-    fPlayerHinSector = standardHeight - heightDifference;
+    var fAdjustedHeight;
+    var fRealDistance
+    var fDirectDistFloor
 
     fPlayerHinSector = fSectorFloorHeight;
 
+    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2;
+    fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 ); // Adjusts for jumping
 
-    var test = standardHeight - fPlayerHinSector*2;
-
-
-    // fPlayerViewHeight = standardHeight + ( fPlayerH * 2 ); // Adjusts for jumping
-    fPlayerViewHeight = test + ( fPlayerH * 2 ); // Adjusts for jumping
-
-    
-
-    debugWrite = `fPlayerViewHeight: ${fPlayerViewHeight}, fPlayerHinSector: ${fPlayerHinSector}, fPlayerH: ${fPlayerH}`;
     // Calculate the direct distance from the player to the floor pixel
-    var directDistFloor = ( fPlayerViewHeight * fscreenHeightFactor2 ) / ((j ) - nScreenHeight / 2  );
+    fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactor ) / ( j - nScreenHeight / 2  );
 
     // Calculate real-world distance with the angle relative to the player
-    var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
+    var fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
 
     // Calculate real-world coordinates with the player angle
-    var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * realDistance;
-    var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * realDistance;
+    var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
+    var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
     sFloorPixelToRender = _rh.renderWall(
-      realDistance,
+      fRealDistance,
       "N",
       _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
     );
@@ -643,7 +635,7 @@ var gameEngineJS = (function () {
       // but it could have missed the player in especially small sectors
       if( gameTimer % 33 === 0 ){
         _moveHelpers.playerSectorCheck();
-        _debugOutput(debugWrite)
+        // _debugOutput(debugWrite)
         gameTimer= 0;
       }
 
@@ -659,7 +651,8 @@ var gameEngineJS = (function () {
 
 
       // Some constants for each loop
-      var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+      // var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+      var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 

@@ -516,9 +516,9 @@ var _moveHelpers = {
         fPlayerH = nNewHeight;
       }
       else if( fPlayerH > nNewHeight ){
-        fPlayerH -= 0.3;
+        fPlayerH -= 0.25; // falling
       }else if( fPlayerH < nNewHeight  ){
-        fPlayerH += 0.2;
+        fPlayerH += 0.1;
         nJumptimer = 0;
       }
     }
