@@ -323,7 +323,7 @@ var gameEngineJS = (function () {
   }
 
 
-  function drawFloor(j, fSectorFloorFactor, sSectorFloorTexture ){
+  function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
     // var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
     // fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
@@ -331,21 +331,28 @@ var gameEngineJS = (function () {
     // fscreenHeightFactor2 = nScreenHeight / 2;
 
 
-    var fPerspectiveCalculation2 = (2 - fPlayerH ) ;
+    // var fPerspectiveCalculation2 = (2 - fPlayerH ) ;
+    var fPerspectiveCalculation2 = 2 ;
     fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
 
-    
+    var standardHeight = 2;
+    var playerHeightInSector;
+    var heightDifference;
 
-    // Define the height of the player above the floor 
-    var fPlayerHeight = ( 1 + nNewHeight ) * fSectorFloorFactor;
-    // var fPlayerHeight = ( fPlayerH ) * fSectorFloorFactor;
 
-    adjustedHeight = 2 - fPlayerHeight;
+    // heightDifference = standardHeight - fSectorFloorHeight;
 
-    // console.log()
+    // playerHeightInSector = standardHeight - heightDifference;
+
+    // fPlayerHeight = standardHeight - playerHeightInSector;
+
+    fPlayerHeight = standardHeight + fPlayerH*standardHeight
+
+    debugWrite = `heightDifference: ${heightDifference}, playerHeightInSector: ${playerHeightInSector}, fPlayerH: ${fPlayerH}`;
+
       
     // Calculate the direct distance from the player to the floor pixel
-    var directDistFloor = ( (fPlayerHeight * 2 ) * fscreenHeightFactor2) / ((j ) - nScreenHeight / 2  );
+    var directDistFloor = ( fPlayerHeight * fscreenHeightFactor2 ) / ((j ) - nScreenHeight / 2  );
 
     // Calculate real-world distance with the angle relative to the player
     var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
@@ -408,10 +415,10 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        // screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+        screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
 
 
-        screen[j * nScreenWidth + i] = "a";
+        // screen[j * nScreenWidth + i] = "a";
 
         // alternative idea:
         // return the lowest highest value for j for which we draw a wall OR half-screen-height-lookfactor
@@ -649,6 +656,7 @@ var gameEngineJS = (function () {
       // but it could have missed the player in especially small sectors
       if( gameTimer % 33 === 0 ){
         _moveHelpers.playerSectorCheck();
+        _debugOutput(debugWrite)
         gameTimer= 0;
       }
 

@@ -49,6 +49,8 @@ var fLooktimer = 0;
 var fHeighttimer = 0;
 var nNewHeight = 0;
 
+var debugWrite;
+
 var fDepthBuffer = [];
 
 // defaults

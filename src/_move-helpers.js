@@ -76,7 +76,7 @@ var _moveHelpers = {
       fPlayerH = 0;
     }
     console.log(`sectorFloorFactor: ${input[0]}`)
-    console.log(`nNewHeight = ${nNewHeight}  //  (1 - ${input[0]})`)
+    console.log(`nNewHeight = ${nNewHeight} `);
     console.log(`----`)
   },
 
@@ -139,7 +139,6 @@ var _moveHelpers = {
   // keystroke listening engine
   keylisten: function () {
     window.onkeydown = function (e) {
-      // _debugOutput(e.which);
 
       if (e.which == 80) {
         // p
