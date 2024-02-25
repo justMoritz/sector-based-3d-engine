@@ -474,4 +474,54 @@ var _moveHelpers = {
       }
     }
   },
+
+  // Calculations related to jumping, falling, and sector height changes. Called 1x ea. frame
+  playerHeight: function(){
+
+    // Jumping
+    if (bJumping) {
+      nJumptimer++;
+      fPlayerH += 0.1;
+    }
+    if (nJumptimer > 10) {
+      bFalling = true;
+      bJumping = false;
+    }
+
+    // falling back down after jump
+    if (bFalling && nJumptimer > 0) {
+      // handles cases if jumping between different sector heights
+      if( fPlayerH < nNewHeight && Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
+        fPlayerH = nNewHeight;
+        nJumptimer = 0;
+        bFalling = false;
+      }
+      else{
+        nJumptimer--;
+        fPlayerH -= 0.1;
+      }
+    }
+    else{
+      bFalling = false;
+    }
+
+    // stop falling
+    if (nJumptimer < 1) {
+      bFalling = false;
+    }
+
+    // smoothly adjust sector height to new sector height
+    if( !bJumping && !bFalling ){
+      if( Math.abs( fPlayerH - nNewHeight) < 0.2  ) {
+        fPlayerH = nNewHeight;
+      }
+      else if( fPlayerH > nNewHeight ){
+        fPlayerH -= 0.3;
+      }else if( fPlayerH < nNewHeight  ){
+        fPlayerH += 0.2;
+        nJumptimer = 0;
+      }
+    }
+  },
+  
 };

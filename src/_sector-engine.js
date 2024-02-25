@@ -317,42 +317,32 @@ var gameEngineJS = (function () {
   };
 
 
-  
-  function drawSolidWall(j, xxx){
-    
-  }
-
-
   function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
-    // var fPerspectiveCalculation2 = (2 - fLooktimer * 0.15);
-    // fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+    var fLocalLookTimer = (fLooktimer * 0.15);
 
-    // fscreenHeightFactor2 = nScreenHeight / 2;
-
-
-    // var fPerspectiveCalculation2 = (2 - fPlayerH ) ;
     var fPerspectiveCalculation2 = 2 ;
-    fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
+    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2;
 
     var standardHeight = 2;
-    var playerHeightInSector;
+    var fPlayerHinSector;
     var heightDifference;
+    var fPlayerViewHeight;
 
 
-    // heightDifference = standardHeight - fSectorFloorHeight;
+    heightDifference = standardHeight - fSectorFloorHeight;
+    fPlayerHinSector = standardHeight - heightDifference;
 
-    // playerHeightInSector = standardHeight - heightDifference;
+    fPlayerHinSector = fSectorFloorHeight;
 
-    // fPlayerHeight = standardHeight - playerHeightInSector;
 
-    fPlayerHeight = standardHeight + fPlayerH*standardHeight
+    fPlayerViewHeight = standardHeight + ( fPlayerH * 2-fPlayerHinSector ); // Adjusts for jumping
 
-    debugWrite = `heightDifference: ${heightDifference}, playerHeightInSector: ${playerHeightInSector}, fPlayerH: ${fPlayerH}`;
+    
 
-      
+    debugWrite = `heightDifference: ${heightDifference}, fPlayerHinSector: ${fPlayerHinSector}, fPlayerH: ${fPlayerH}`;
     // Calculate the direct distance from the player to the floor pixel
-    var directDistFloor = ( fPlayerHeight * fscreenHeightFactor2 ) / ((j ) - nScreenHeight / 2  );
+    var directDistFloor = ( fPlayerViewHeight * fscreenHeightFactor2 ) / ((j ) - nScreenHeight / 2  );
 
     // Calculate real-world distance with the angle relative to the player
     var realDistance = directDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
@@ -416,15 +406,7 @@ var gameEngineJS = (function () {
       // Draw Floor
       else {
         screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
-
-
         // screen[j * nScreenWidth + i] = "a";
-
-        // alternative idea:
-        // return the lowest highest value for j for which we draw a wall OR half-screen-height-lookfactor
-        // (the furthest point in the sector, and the furthestest wall distance should be at that point)
-        // At the end of the drawing loop, we cast the opposite way around?
-
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
@@ -540,8 +522,8 @@ var gameEngineJS = (function () {
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ; 
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
           
           // PORTAL FOUND
@@ -647,6 +629,7 @@ var gameEngineJS = (function () {
       gameTimer++
 
       _moveHelpers.move();
+      _moveHelpers.playerHeight();
 
       // _updateSpriteBuffer();
       // _moveSprites();
@@ -670,54 +653,6 @@ var gameEngineJS = (function () {
       }
 
 
-      // Jumping
-      if (bJumping) {
-        nJumptimer++;
-        fPlayerH += 0.1;
-      }
-      if (nJumptimer > 10) {
-        bFalling = true;
-        bJumping = false;
-      }
-
-
-      // falling back down after jump
-      if (bFalling && nJumptimer > 0) {
-        // handles cases if jumping between different sector heights
-        if( fPlayerH < nNewHeight && Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
-          fPlayerH = nNewHeight;
-          nJumptimer = 0;
-          bFalling = false;
-        }
-        else{
-          nJumptimer--;
-          fPlayerH -= 0.1;
-        }
-      }
-      else{
-        bFalling = false;
-      }
-      
-
-      // stop falling
-      if (nJumptimer < 1) {
-        bFalling = false;
-      }
-
-
-      // smoothly adjust sector height to new sector height
-      if( !bJumping && !bFalling ){
-        if( Math.abs( fPlayerH - nNewHeight) < 0.2  ) {
-          fPlayerH = nNewHeight;
-        }
-        else if( fPlayerH > nNewHeight ){
-          fPlayerH -= 0.3;
-        }else if( fPlayerH < nNewHeight  ){
-          fPlayerH += 0.2;
-          nJumptimer = 0;
-        }
-      }
-    
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
