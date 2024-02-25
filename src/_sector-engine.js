@@ -336,11 +336,15 @@ var gameEngineJS = (function () {
     fPlayerHinSector = fSectorFloorHeight;
 
 
-    fPlayerViewHeight = standardHeight + ( fPlayerH * 2-fPlayerHinSector ); // Adjusts for jumping
+    var test = standardHeight - fPlayerHinSector*2;
+
+
+    // fPlayerViewHeight = standardHeight + ( fPlayerH * 2 ); // Adjusts for jumping
+    fPlayerViewHeight = test + ( fPlayerH * 2 ); // Adjusts for jumping
 
     
 
-    debugWrite = `heightDifference: ${heightDifference}, fPlayerHinSector: ${fPlayerHinSector}, fPlayerH: ${fPlayerH}`;
+    debugWrite = `fPlayerViewHeight: ${fPlayerViewHeight}, fPlayerHinSector: ${fPlayerHinSector}, fPlayerH: ${fPlayerH}`;
     // Calculate the direct distance from the player to the floor pixel
     var directDistFloor = ( fPlayerViewHeight * fscreenHeightFactor2 ) / ((j ) - nScreenHeight / 2  );
 
