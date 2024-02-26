@@ -71,12 +71,13 @@ var _moveHelpers = {
   setNewPlayerHeight: function ( input ){
     console.log(input)
     if(typeof input !== 'undefined'){
-      nNewHeight =  input[0] 
+      nSectorFloorHeight =  input[0] 
     }else{
       fPlayerH = 0;
     }
-    console.log(`sectorFloorFactor: ${input[0]}`)
-    console.log(`nNewHeight = ${nNewHeight} `);
+    nSectorCeilingHeight = input[1];
+    console.log(`nSectorCeilingHeight: ${nSectorCeilingHeight}`)
+    console.log(`nSectorFloorHeight = ${nSectorFloorHeight} `);
     console.log(`----`)
   },
 
@@ -482,8 +483,10 @@ var _moveHelpers = {
     if (bJumping) {
       nJumptimer++;
       fPlayerH += 0.1;
+      console.log( `playerH: ${fPlayerH}, floor: ${nSectorFloorHeight}, ceil: ${nSectorCeilingHeight}` )
     }
-    if (nJumptimer > 10) {
+    // jumping only until max-jump height, OR the player hits the ceiling height (2, minus the player height of about 1.4)
+    if ( nJumptimer > 10 || fPlayerH > nSectorCeilingHeight - 0.6 ) { 
       bFalling = true;
       bJumping = false;
     }
@@ -491,8 +494,8 @@ var _moveHelpers = {
     // falling back down after jump
     if (bFalling && nJumptimer > 0) {
       // handles cases if jumping between different sector heights
-      if( fPlayerH < nNewHeight && Math.abs( fPlayerH - nNewHeight) > 0.1 ) {
-        fPlayerH = nNewHeight;
+      if( fPlayerH < nSectorFloorHeight && Math.abs( fPlayerH - nSectorFloorHeight) > 0.1 ) {
+        fPlayerH = nSectorFloorHeight;
         nJumptimer = 0;
         bFalling = false;
       }
@@ -512,12 +515,12 @@ var _moveHelpers = {
 
     // smoothly adjust sector height to new sector height
     if( !bJumping && !bFalling ){
-      if( Math.abs( fPlayerH - nNewHeight) < 0.1  ) {
-        fPlayerH = nNewHeight;
+      if( Math.abs( fPlayerH - nSectorFloorHeight) < 0.1  ) {
+        fPlayerH = nSectorFloorHeight;
       }
-      else if( fPlayerH > nNewHeight ){
+      else if( fPlayerH > nSectorFloorHeight ){
         fPlayerH -= 0.15; // falling
-      }else if( fPlayerH < nNewHeight  ){
+      }else if( fPlayerH < nSectorFloorHeight  ){
         fPlayerH += 0.1;
         nJumptimer = 0;
       }

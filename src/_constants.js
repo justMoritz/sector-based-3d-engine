@@ -63,6 +63,8 @@ var fPlayerH = 0;
 
 var sLastKnownSector = 'sector0';
 var sPlayerSector = 'sector0';
+var nSectorCeilingHeight = 1;
+var nSectorFloorHeight = 0;
 
 var fPlayerEndX;
 var fPlayerEndY;
