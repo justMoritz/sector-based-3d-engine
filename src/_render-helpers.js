@@ -779,7 +779,7 @@ var _fDrawFrame = function (screen, target) {
   var sCanvasOutput = "";
 
   // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  var printIndex = 0;
+  nPrintIndex = 0;
 
 
 
@@ -795,30 +795,30 @@ var _fDrawFrame = function (screen, target) {
   var maxTop = nScreenHeight - drawRange;
 
   // Calculate the top position based on changeLookTimer
-  var topPosition = Math.max(0, Math.min(maxTop, defaultTop - changeLookTimer));
+  nTopPosition = Math.max(0, Math.min(maxTop, defaultTop - changeLookTimer));
 
-  // Calculate the bottom position based on topPosition
-  var bottomPosition = topPosition + drawRange;
+  // Calculate the bottom position based on nTopPosition
+  nBottomPosition = nTopPosition + drawRange;
 
   // // Loop to draw only within the specified range
-  // for (var row = topPosition; row < bottomPosition; row++) {
+  // for (var row = nTopPosition; row < nBottomPosition; row++) {
   //     // Your drawing logic here
   // }
 
-  _debugOutput(`T: ${topPosition} B:${bottomPosition} R:${drawRange} + Lt: ${ fLooktimer }`)
+  _debugOutput(`T: ${nTopPosition} B:${nBottomPosition} R:${drawRange} + Lt: ${ fLooktimer }`)
   
-  var printIndex = topPosition * nScreenWidth;
-
-  for (var row = topPosition ; row < bottomPosition ; row++) {
+  nPrintIndex = nTopPosition * nScreenWidth;
+  for (var row = nTopPosition ; row < nBottomPosition ; row++) {
+  // for (var row = 0 ; row < nScreenHeight ; row++) {
     for (var pix = 0; pix < nScreenWidth; pix++) {
       // H-blank based on screen-width
-      if (printIndex % nScreenWidth == 0) {
+      if (nPrintIndex % nScreenWidth == 0) {
         sOutput += "<br>";
       }
       // sOutput += _convertPixelToAscii(frame[printIndex], 0);
-      sOutput += frame[printIndex];
-      sCanvasOutput += frame[printIndex];
-      printIndex++;
+      sOutput += frame[nPrintIndex];
+      sCanvasOutput += frame[nPrintIndex];
+      nPrintIndex++;
     }
   }
   eScreen.innerHTML = sOutput;

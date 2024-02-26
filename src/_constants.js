@@ -52,6 +52,11 @@ var fLooktimer = 0;
 var fHeighttimer = 0;
 var nNewHeight = 0;
 
+
+var nPrintIndex = 0;
+var nTopPosition = 0;
+var nBottomPosition = nScreenHeight;
+
 var debugWrite;
 
 var fDepthBuffer = [];

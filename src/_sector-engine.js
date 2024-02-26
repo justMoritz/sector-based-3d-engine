@@ -445,8 +445,13 @@ var gameEngineJS = (function () {
     // These are in screen-space
     // The reason these exist is because when we check each sector in the while loop, 
     // we want the renderer to only draw those columns that are visible through each portal
-    var nDrawStart = 0;
-    var nDrawEnd   = nScreenHeight;
+    // var nDrawStart = 0;
+    // var nDrawEnd   = nScreenHeight;
+
+    // since currently we're looking up and down via just cropping a much larger screen, 
+    // we don't need to actually render the entire view window, this accomplishes that
+    var nDrawStart = nTopPosition;
+    var nDrawEnd   = nBottomPosition;
 
     while (sectorQueue.length > 0) {
       // Dequeue the first sector from the queue
@@ -661,8 +666,8 @@ var gameEngineJS = (function () {
 
 
       // Some constants for each loop
-      var fPerspectiveCalculation = 2;
-      // var fPerspectiveCalculation = 1.999;
+      // var fPerspectiveCalculation = 2;
+      var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 
