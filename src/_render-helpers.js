@@ -767,27 +767,29 @@ var _drawToCanvas = function ( pixels ) {
 
 
 var _fDrawFrame = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
+  var changeLookTimer = ~~(fLooktimer*10)
+
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
   var frame = screen
   var target = target || eScreen;
 
-  var sOutput = "";
-  
+  var sOutput = "";  
   var sCanvasOutput = "";
 
   // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  var printIndex = 0;
+  nPrintIndex = 0;
 
-  for (var row = 0; row < nScreenHeight; row++) {
+  for (var row = 0 ; row < nScreenHeight ; row++) {
+  // for (var row = 0 ; row < nScreenHeight ; row++) {
     for (var pix = 0; pix < nScreenWidth; pix++) {
       // H-blank based on screen-width
-      if (printIndex % nScreenWidth == 0) {
+      if (nPrintIndex % nScreenWidth == 0) {
         sOutput += "<br>";
       }
       // sOutput += _convertPixelToAscii(frame[printIndex], 0);
-      sOutput += frame[printIndex];
-      sCanvasOutput += frame[printIndex];
-      printIndex++;
+      sOutput += frame[nPrintIndex];
+      sCanvasOutput += frame[nPrintIndex];
+      nPrintIndex++;
     }
   }
   eScreen.innerHTML = sOutput;
@@ -903,7 +905,7 @@ function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
   sFloorPixelToRender = _rh.renderWall(
     fRealDistance,
     "N",
-    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
+    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
   );
   return sFloorPixelToRender;
 }
@@ -939,7 +941,7 @@ function drawCeiling(j, fSectorFloorHeight, sectorCeilingFactor, sSectorFloorTex
   sFloorPixelToRender = _rh.renderWall(
     fRealDistance,
     "W",
-    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
+    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
   );
   return sFloorPixelToRender;
 }

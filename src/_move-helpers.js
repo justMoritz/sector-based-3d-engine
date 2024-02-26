@@ -483,7 +483,6 @@ var _moveHelpers = {
     if (bJumping) {
       nJumptimer++;
       fPlayerH += 0.1;
-      console.log( `playerH: ${fPlayerH}, floor: ${nSectorFloorHeight}, ceil: ${nSectorCeilingHeight}` )
     }
     // jumping only until max-jump height, OR the player hits the ceiling height (2, minus the player height of about 1.4)
     if ( nJumptimer > 10 || fPlayerH > nSectorCeilingHeight - 0.6 ) { 

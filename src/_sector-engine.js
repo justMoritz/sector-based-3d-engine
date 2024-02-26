@@ -331,9 +331,8 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-          // screen[j * nScreenWidth + i] = "a";
-          screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
-          
+        // screen[j * nScreenWidth + i] = "a";
+        screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
@@ -612,7 +611,6 @@ var gameEngineJS = (function () {
       if (fPlayerA > PIx2) {
         fPlayerA -= PIx2;
       }
-
 
 
       // Some constants for each loop
