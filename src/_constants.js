@@ -29,7 +29,7 @@ var nScreenHeight = 200;
 var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
 // var fFOV = PI___ / 2.14; // (PI___ / 4.0 originally)
 var fDepth = 16.0; // viewport depth
-var nLookLimit = 8;
+var nLookLimit = 10;
 
 var bUseSkew = false;
 var bDrawRGB = false;

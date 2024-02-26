@@ -248,7 +248,7 @@ var _moveHelpers = {
     fLooktimer -= fYMoveBy;
   
     // Check and adjust boundaries
-    if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 2) {
+    if (fLooktimer > nLookLimit * 0.7 || fLooktimer < -nLookLimit * 3) {
       fLooktimer += fYMoveBy;
     }
   },
