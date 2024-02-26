@@ -24,12 +24,13 @@ var cCtx;
 var eDebugOut;
 
 var nScreenWidth = 640;
-var nScreenHeight = 200;
+var nScreenHeight = 400;
 
 var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
 // var fFOV = PI___ / 2.14; // (PI___ / 4.0 originally)
 var fDepth = 16.0; // viewport depth
 var nLookLimit = 8;
+var fTempVerticalFOV = 0.5;
 
 var bUseSkew = false;
 var bDrawRGB = false;

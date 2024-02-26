@@ -330,19 +330,19 @@ var gameEngineJS = (function () {
 
     // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
     // var fPerspectiveCalculation2 = 2 ;
-    var fPerspectiveCalculation2 = 2 - fLocalLookTimer;
+    var fPerspectiveCalculation2 = 2;
     var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
 
 
 
     fPlayerHinSector = fSectorFloorHeight;
 
-    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ) ; // Adjusts for jumping
+    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2 ;
+    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2 ) ; // Adjusts for jumping
     // Calculate the direct distance from the player to the floor pixel
-    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2 - fLocalLookTimer*10 );
+    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2 );
     
-    fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
+    fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) * fTempVerticalFOV;
     
 
     // // works if no looking up or down
@@ -528,8 +528,8 @@ var gameEngineJS = (function () {
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ; 
-          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall*fTempVerticalFOV * ((1-sectorFloorFactor) + (fPlayerH)) ; 
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall*fTempVerticalFOV * (-0.5+sectorCeilingFactor - fPlayerH);
           
           
           // PORTAL FOUND
@@ -554,9 +554,9 @@ var gameEngineJS = (function () {
                 // only recalculate if the next sector floor is higher than the previous
                 // See also note above about floor and ceiling heights in level data
                 if( nextSectorFloorFactor > sectorFloorFactor ){
-                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-nextSectorFloorFactor) + (fPlayerH));
+                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall*fTempVerticalFOV * ((1-nextSectorFloorFactor) + (fPlayerH));
                 }
-                nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+nextSectorCeilingFactor - fPlayerH);
+                nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall*fTempVerticalFOV  * (-0.5+nextSectorCeilingFactor - fPlayerH);
 
               }
          
@@ -661,7 +661,7 @@ var gameEngineJS = (function () {
 
 
       // Some constants for each loop
-      var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+      var fPerspectiveCalculation = 2;
       // var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 

@@ -767,7 +767,10 @@ var _drawToCanvas = function ( pixels ) {
 
 
 var _fDrawFrame = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
+  var changeLookTimer = ~~(fLooktimer*10)
+
+
+  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
   var frame = screen
   var target = target || eScreen;
 
@@ -778,7 +781,35 @@ var _fDrawFrame = function (screen, target) {
   // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
   var printIndex = 0;
 
-  for (var row = 0; row < nScreenHeight; row++) {
+
+
+  // Define constants
+
+  var drawRange = nScreenHeight/2;
+  var defaultTop = nScreenHeight/4;
+
+  // Calculate the bottom position of the draw window
+  var defaultBottom = defaultTop + drawRange;
+
+  // Calculate the maximum top position of the draw window
+  var maxTop = nScreenHeight - drawRange;
+
+  // Calculate the top position based on changeLookTimer
+  var topPosition = Math.max(0, Math.min(maxTop, defaultTop - changeLookTimer));
+
+  // Calculate the bottom position based on topPosition
+  var bottomPosition = topPosition + drawRange;
+
+  // // Loop to draw only within the specified range
+  // for (var row = topPosition; row < bottomPosition; row++) {
+  //     // Your drawing logic here
+  // }
+
+  _debugOutput(`T: ${topPosition} B:${bottomPosition} R:${drawRange} + Lt: ${ fLooktimer }`)
+  
+  var printIndex = topPosition * nScreenWidth;
+
+  for (var row = topPosition ; row < bottomPosition ; row++) {
     for (var pix = 0; pix < nScreenWidth; pix++) {
       // H-blank based on screen-width
       if (printIndex % nScreenWidth == 0) {
