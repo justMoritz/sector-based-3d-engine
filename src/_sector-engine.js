@@ -330,7 +330,7 @@ var gameEngineJS = (function () {
 
     // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
     // var fPerspectiveCalculation2 = 2 ;
-    var fPerspectiveCalculation2 = 2 - fLocalLookTimer;
+    var fPerspectiveCalculation2 = 2 ;
     var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
 
 
@@ -338,9 +338,9 @@ var gameEngineJS = (function () {
     fPlayerHinSector = fSectorFloorHeight;
 
     fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ) ; // Adjusts for jumping
+    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
     // Calculate the direct distance from the player to the floor pixel
-    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2 - fLocalLookTimer*10 );
+    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / (2 - fLocalLookTimer) );
     
     fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
     
