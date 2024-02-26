@@ -870,3 +870,76 @@ var _fDrawFrameWithSkew = function (screen, target) {
   target.innerHTML = sOutput;
   _drawToCanvas( sCanvasOutput, removePixels );
 };
+
+
+
+function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
+
+  var nStandardHeight = 2;
+  var fPlayerHinSector;
+  var fPlayerViewHeight;
+  var fAdjustedHeight;
+  var fRealDistance;
+  var fDirectDistFloor;
+
+  var fLocalLookTimer = (fLooktimer * 0.15);
+
+  // Need to recalculate the fscreenHeightFactor without the looktimer, since w're going it further down
+  var fscreenHeightFactorFloor = nScreenHeight / 2  ;
+
+  fPlayerHinSector = fSectorFloorHeight;
+  fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+  fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+  // Calculate the direct distance from the player to the floor pixel
+  // Adjusts the looktimer here instead of in the fscreenHeightFactor
+  fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fLocalLookTimer) ); 
+  
+  fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  
+  // Calculate real-world coordinates with the player angle
+  var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
+  var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+
+  sFloorPixelToRender = _rh.renderWall(
+    fRealDistance,
+    "N",
+    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
+  );
+  return sFloorPixelToRender;
+}
+
+
+function drawCeiling(j, fSectorFloorHeight, sectorCeilingFactor, sSectorFloorTexture ){
+
+  var nStandardHeight = 2;
+  var fPlayerHinSector;
+  var fPlayerViewHeight;
+  var fAdjustedHeight;
+  var fRealDistance;
+  var fDirectDistCeil;
+
+  var fLocalLookTimer = (fLooktimer * 0.15);
+
+  // Need to recalculate the fscreenHeightFactor without the looktimer, since w're going it further down
+  var fscreenHeightFactorFloor = nScreenHeight / 2  ;
+
+  fPlayerHinSector = sectorCeilingFactor;
+  fAdjustedHeight = sectorCeilingFactor - fPlayerHinSector * 2  ;
+  fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+  // Calculate the direct distance from the player to the floor pixel
+  // Adjusts the looktimer here instead of in the fscreenHeightFactor
+  fDirectDistCeil = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fLocalLookTimer) ); 
+  
+  fRealDistance = fDirectDistCeil / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  
+  // Calculate real-world coordinates with the player angle
+  var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
+  var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+
+  sFloorPixelToRender = _rh.renderWall(
+    fRealDistance,
+    "W",
+    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
+  );
+  return sFloorPixelToRender;
+}

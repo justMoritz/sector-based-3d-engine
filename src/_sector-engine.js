@@ -317,53 +317,7 @@ var gameEngineJS = (function () {
   };
 
 
-  function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
-    var nStandardHeight = 2;
-    var fPlayerHinSector;
-    var fPlayerViewHeight;
-    var fAdjustedHeight;
-    var fRealDistance;
-    var fDirectDistFloor;
-
-    var fLocalLookTimer = (fLooktimer * 0.15);
-
-    // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
-    // var fPerspectiveCalculation2 = 2 ;
-    var fPerspectiveCalculation2 = 2 ;
-    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
-
-
-
-    fPlayerHinSector = fSectorFloorHeight;
-
-    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
-    // Calculate the direct distance from the player to the floor pixel
-    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / (2 - fLocalLookTimer) );
-    
-    fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
-    
-
-    // // works if no looking up or down
-    // fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-    // fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 ) ; // Adjusts for jumping
-    // // Calculate the direct distance from the player to the floor pixel
-    // fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactor ) / ( j - nScreenHeight / 2  ); 
-    // // Calculate real-world distance with the angle relative to the player
-    // fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
-
-    // Calculate real-world coordinates with the player angle
-    var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
-    var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
-
-    sFloorPixelToRender = _rh.renderWall(
-      fRealDistance,
-      "N",
-      _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1)
-    );
-    return sFloorPixelToRender;
-  }
 
 
   // TODO:
@@ -377,7 +331,9 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-          screen[j * nScreenWidth + i] = "a";
+          // screen[j * nScreenWidth + i] = "a";
+          screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
+          
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
@@ -412,7 +368,6 @@ var gameEngineJS = (function () {
       // Draw Floor
       else {
         screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
-        // screen[j * nScreenWidth + i] = "a";
       }
     } // end draw column loop
     return [nNewScreenStart, nNewScreenEnd];
