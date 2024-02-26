@@ -319,38 +319,39 @@ var gameEngineJS = (function () {
 
   function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 
-    var fLocalLookTimer = (fLooktimer * 0.15);
-
-
-    // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
-    // var fPerspectiveCalculation2 = 2 ;
-    var fPerspectiveCalculation2 = 2 + fLocalLookTimer;
-    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
-
     var nStandardHeight = 2;
     var fPlayerHinSector;
     var fPlayerViewHeight;
     var fAdjustedHeight;
-    var fRealDistance
-    var fDirectDistFloor
+    var fRealDistance;
+    var fDirectDistFloor;
+
+    var fLocalLookTimer = (fLooktimer * 0.15);
+
+    // // TODO: Use the global fscreenHeightFactor, possibly remove the fLooktimer from this and rethink looking up and down
+    // var fPerspectiveCalculation2 = 2 ;
+    var fPerspectiveCalculation2 = 2 - fLocalLookTimer;
+    var fscreenHeightFactor2 = nScreenHeight / fPerspectiveCalculation2  ;
+
+
 
     fPlayerHinSector = fSectorFloorHeight;
 
-    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2;
-    fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 - fLocalLookTimer ) ; // Adjusts for jumping
-    
+    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ) ; // Adjusts for jumping
     // Calculate the direct distance from the player to the floor pixel
-    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2  );
+    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactor2 ) / ( j - nScreenHeight / 2 - fLocalLookTimer*10 );
     
+    fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
     
-    
-    // works if no looking up or down
-    // fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 - fLocalLookTimer ) ; // Adjusts for jumping
+
+    // // works if no looking up or down
+    // fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+    // fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 ) ; // Adjusts for jumping
     // // Calculate the direct distance from the player to the floor pixel
     // fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactor ) / ( j - nScreenHeight / 2  ); 
-
-    // Calculate real-world distance with the angle relative to the player
-    var fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
+    // // Calculate real-world distance with the angle relative to the player
+    // fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob);
 
     // Calculate real-world coordinates with the player angle
     var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
