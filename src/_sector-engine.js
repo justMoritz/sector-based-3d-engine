@@ -209,33 +209,37 @@ map = {
 sectorMeta = {
   "sector1" : [
     0.8, // Floor Height
-    3, // Ceiling Height
-    "#"  // floor texture
+    3,   // Ceiling Height
+    "#", // floor texture
+    "a", // ceiling color
   ],
   "sector2" : [
     0.4, 
     2, 
     "Y",
+    "1"
   ],
   "sector3" : [
     0, 
     1.5, 
     "Y",
+    "2"
   ],
   "sector4":[
     0,
     1,
-    '#'
+    "#"
   ],
   "sector5":[
     0.2,
     1.5,
-    'Y',
+    "Y",
   ],
   "sector6": [
     -1.5,
     1,
-    'Y'
+    "Y",
+    "f"
   ]
 }
 
@@ -321,7 +325,7 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, start, end, nNextSectorCeiling, nNextSectorFloor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -331,8 +335,14 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-        // screen[j * nScreenWidth + i] = "a";
-        screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
+
+        if( sSectorCeilingTexture !== false ){
+          screen[j * nScreenWidth + i] = sSectorCeilingTexture;
+        }else{
+          screen[j * nScreenWidth + i] = "1";
+        }
+        
+        // screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
@@ -415,6 +425,7 @@ var gameEngineJS = (function () {
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
       var sSectorFloorTexture = "Y";
+      var sSectorCeilingTexture = "a";
 
       // per-sector overrides for floor and ceiling heights
       if(typeof sectorMeta[currentSector] !== 'undefined'){
@@ -423,6 +434,9 @@ var gameEngineJS = (function () {
 
         if(typeof sectorMeta[currentSector][2] !== 'undefined'){
           sSectorFloorTexture = sectorMeta[currentSector][2];
+        }
+        if(typeof sectorMeta[currentSector][3] !== 'undefined'){
+          sSectorCeilingTexture = sectorMeta[currentSector][3];
         }
       }
 
@@ -530,6 +544,7 @@ var gameEngineJS = (function () {
                 fSampleXScale, 
                 fSampleYScale, 
                 sSectorFloorTexture,
+                sSectorCeilingTexture,
                 nDrawStart,
                 nDrawEnd,
                 nNextSectorCeiling,
@@ -561,6 +576,7 @@ var gameEngineJS = (function () {
               fSampleXScale, 
               fSampleYScale, 
               sSectorFloorTexture,
+              sSectorCeilingTexture,
               nDrawStart,
               nDrawEnd,
               false,

@@ -925,7 +925,7 @@ function drawCeiling(j, fSectorFloorHeight, sectorCeilingFactor, sSectorFloorTex
   // Need to recalculate the fscreenHeightFactor without the looktimer, since w're going it further down
   var fscreenHeightFactorFloor = nScreenHeight / 2  ;
 
-  // fPlayerHinSector = sectorCeilingFactor + fSectorFloorHeight;
+  fPlayerHinSector = sectorCeilingFactor + fSectorFloorHeight;
   // fAdjustedHeight = sectorCeilingFactor - fPlayerHinSector * 2 ;
 
   fAdjustedHeight = fSectorFloorHeight - sectorCeilingFactor * 2 ;
