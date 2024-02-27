@@ -341,10 +341,10 @@ var gameEngineJS = (function () {
 
       // var fDistanceToSprite;
 
-      var spriteAx = sprite["x"];
-      var spriteAy = sprite["y"];
-      var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
-      var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
+      // var spriteAx = sprite["x"];
+      // var spriteAy = sprite["y"];
+      // var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
+      // var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
 
       // Assuming the sprite["x"] and sprite["y"] are the center coordinates of the sprite
     var spriteCenterX = sprite["x"];
@@ -359,8 +359,10 @@ var gameEngineJS = (function () {
 
     // Normalize the direction vector
     var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
+    
     dirX /= dirLength;
     dirY /= dirLength;
+    
 
     // Calculate the half-width and half-height of the sprite
     var halfWidth = currentSpriteObject["aspctRt"] / 2;
