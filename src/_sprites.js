@@ -152,6 +152,29 @@ var _drawSprites = function () {
       fSpriteAngle -= PIx2;
     }
 
+
+    // fAngleDifferences2 =  fPlayerA - fRayAngle;
+    // var angleCorrection2 = 0;
+
+    // // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
+    // // This corrects for this perspective
+    // if( bUseSkew ){
+    //   var angleCorrection2 = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
+    // }
+
+    // if( angleCorrection2 == 1 ){
+    //   angleCorrection2 = 0;
+    // }
+    // fAngleDifferences2 *= 1- angleCorrection2/4;
+
+    // // normalize
+    // if ( fAngleDifferences2 < 0) {
+    //   fAngleDifferences2 += PIx2;
+    // }
+    // if (fAngleDifferences2 > PIx2) {
+    //   fAngleDifferences2 -= PIx2;
+    // }
+
     // fDistanceFromPlayer *= Math.cos(fAngleDifferences);
 
 

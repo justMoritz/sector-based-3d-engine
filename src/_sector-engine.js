@@ -651,7 +651,7 @@ var gameEngineJS = (function () {
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
         
         fAngleDifferences =  fPlayerA - fRayAngle ;
-
+        
         // normalize
         if ( fAngleDifferences < 0) {
           fAngleDifferences += PIx2;
