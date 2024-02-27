@@ -346,6 +346,32 @@ var gameEngineJS = (function () {
       var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
       var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
 
+      // Assuming the sprite["x"] and sprite["y"] are the center coordinates of the sprite
+    var spriteCenterX = sprite["x"];
+    var spriteCenterY = sprite["y"];
+
+    // Calculate the direction vector from the sprite center to the player
+    var dirX = fPlayerX - spriteCenterX;
+    var dirY = fPlayerY - spriteCenterY;
+
+    // Calculate the distance from the sprite center to the player
+    var distanceToPlayer = Math.sqrt(dirX * dirX + dirY * dirY);
+
+    // Normalize the direction vector
+    var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
+    dirX /= dirLength;
+    dirY /= dirLength;
+
+    // Calculate the half-width and half-height of the sprite
+    var halfWidth = currentSpriteObject["aspctRt"] / 2;
+    var halfHeight = currentSpriteObject["hghtFctr"] / 2;
+
+    // Calculate the new coordinates for the sprite's endpoints
+    var spriteAx = spriteCenterX + dirX * halfWidth - dirY * halfHeight;
+    var spriteAy = spriteCenterY + dirY * halfWidth + dirX * halfHeight;
+    var spriteBx = spriteCenterX + dirX * halfWidth + dirY * halfHeight;
+    var spriteBy = spriteCenterY + dirY * halfWidth - dirX * halfHeight;
+
 
       var intersection = intersectionPoint(
         { x: fPlayerX, y: fPlayerY },
@@ -367,36 +393,30 @@ var gameEngineJS = (function () {
 
         // console.log(sprite);
 
-        // var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite ;
-        // var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite;
-
         var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((sprite["h"]) + (fPlayerH)) ; 
         var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (currentSpriteObject['hghtFctr'] - fPlayerH);
-        // var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sectorFloorFactor) + (fPlayerH)) ; 
-        // var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (-0.5+sectorCeilingFactor - fPlayerH);
+
+        fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
 
         for(var sj = 0; sj < nScreenHeight; sj ++){
 
-          if (sj > fSpriteCeil && sj <= fSpriteFloor) {
-            [screen[sj * nScreenWidth + i]] = 'g';
+          if( fDepthBuffer[i] >= fDistanceToSprite ){
+            if (sj > fSpriteCeil && sj <= fSpriteFloor) {
+              // [screen[sj * nScreenWidth + i]] = 'g';
 
-            // var fSampleY = (sj - fSpriteCeil) / (nFloor - fSpriteFloor);
-            // sPixelToRender = _rh.renderWall(
-            //   fDistanceToSprite,
-            //   sWallDirection,
-            //   _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
-            // );
-            // screen[sj * nScreenWidth + sj] = sPixelToRender
+              var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+
+              sPixelToRender = _rh.renderWall(
+                fDistanceToSprite,
+                "V",
+                _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1)
+              );
+              screen[sj * nScreenWidth + i] = sPixelToRender
+            }
           }
           
         }
-
-        
-
       }
-
-      
-
     }
   }
 
@@ -756,7 +776,7 @@ var gameEngineJS = (function () {
 
 
       // RENDER SPRITES, DRAW SPRITES
-      _drawSprites();
+      // _drawSprites();
 
 
       if (bDrawRGB) {
