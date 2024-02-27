@@ -451,10 +451,13 @@ var _everyAofB = function (a, b) {
 
 
 
-// lookup-table “for fine-control” or “for perfomance”
+// lookup-table “for fine-control” or “for performance”
 // …(but really because I couldn"t figure out the logic [apparently] )
 var _skipEveryXrow = function (input) {
   input = Math.round(input);
+  if(input < -16){
+    return 2;
+  }
   switch (Number(input)) {
     case 0:
       return 0;
@@ -532,7 +535,6 @@ var _skipEveryXrow = function (input) {
     case -16:
       return 2;
       break;
-
     default:
       return 0;
   }

@@ -152,30 +152,7 @@ var _drawSprites = function () {
       fSpriteAngle -= PIx2;
     }
 
-
-    // fAngleDifferences2 =  fPlayerA - fRayAngle;
-    // var angleCorrection2 = 0;
-
-    // // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
-    // // This corrects for this perspective
-    // if( bUseSkew ){
-    //   var angleCorrection2 = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
-    // }
-
-    // if( angleCorrection2 == 1 ){
-    //   angleCorrection2 = 0;
-    // }
-    // fAngleDifferences2 *= 1- angleCorrection2/4;
-
-    // // normalize
-    // if ( fAngleDifferences2 < 0) {
-    //   fAngleDifferences2 += PIx2;
-    // }
-    // if (fAngleDifferences2 > PIx2) {
-    //   fAngleDifferences2 -= PIx2;
-    // }
-
-    fDistanceFromPlayer *= Math.cos(fAngleDifferences);
+    // fDistanceFromPlayer *= Math.cos(fAngleDifferences);
 
 
     var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
@@ -184,12 +161,8 @@ var _drawSprites = function () {
     if (bInPlayerView && fDistanceFromPlayer >= 0.5) {
       // very similar operation to background floor and ceiling.
       // Sprite height is default 1, but we can adjust with the factor passed in the sprite object/
-      // var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * (sectorFloorFactor + fPlayerH);
-      // var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (sectorCeilingFactor - fPlayerH);
-      var fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +fDistanceFromPlayer) * currentSpriteObject["hghtFctr"];
-      var fSpriteFloor =
-        +(fscreenHeightFactor) +
-        nScreenHeight / +fDistanceFromPlayer;
+      var fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +fDistanceFromPlayer)  * currentSpriteObject["hghtFctr"] ;
+      var fSpriteFloor = +(fscreenHeightFactor) + nScreenHeight / +fDistanceFromPlayer ;
 
       var fSpriteCeiling = Math.round(fSpriteCeiling);
       var fSpriteFloor = Math.round(fSpriteFloor);
@@ -421,3 +394,4 @@ var _drawSprites = function () {
     }
   }
 }
+

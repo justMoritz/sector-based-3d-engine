@@ -256,25 +256,29 @@ testmap = {
     "1": {
       "x": 3,
       "y": 3,
+      "h": 0.8,
       "r": 2.0,
       "name": "P",
     },
     "3": {
       "x": 5.5,
       "y": 12.5,
+      "h": -1.5,
       "r": 2.0,
       "name": "O",
     },
     "2": {
       "x": 6,
       "y": 4,
-      "r": 2.0,
+      "r": -0.2,
+      "h": 0.8,
       "name": "P",
     },
     "4": {
       "x": 9.5,
       "y": 11.4,
       "r": 2.0,
+      "h": -1.5,
       "name": "chair",
     },
   },
@@ -607,8 +611,8 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      // _updateSpriteBuffer();
-      // _moveSprites();
+      _updateSpriteBuffer();
+      _moveSprites();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -647,18 +651,6 @@ var gameEngineJS = (function () {
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
         
         fAngleDifferences =  fPlayerA - fRayAngle ;
-        var angleCorrection = 0;
-
-        // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
-        // This corrects for this perspective
-        if( bUseSkew ){
-          var angleCorrection = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
-        }
-
-        if( angleCorrection == 1 ){
-          angleCorrection = 0;
-        }
-        fAngleDifferences *= 1- angleCorrection/4;
 
         // normalize
         if ( fAngleDifferences < 0) {
@@ -689,7 +681,7 @@ var gameEngineJS = (function () {
 
 
       // RENDER SPRITES, DRAW SPRITES
-      // _drawSprites();
+      _drawSprites();
 
       if (bDrawRGB) {
         _fDrawFrameRGB(screen);
@@ -697,7 +689,7 @@ var gameEngineJS = (function () {
       
       if (!bDrawRGB && bUseSkew) {
         _fDrawFrameWithSkew(screen);
-      }else{
+      }else if(!bDrawRGB){
         _fDrawFrame(screen); 
       }  
     
