@@ -325,9 +325,6 @@ var gameEngineJS = (function () {
   };
 
 
-
-
-
   // TODO:
   function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
@@ -611,8 +608,8 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      _updateSpriteBuffer();
-      _moveSprites();
+      // _updateSpriteBuffer();
+      // _moveSprites();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -665,6 +662,8 @@ var gameEngineJS = (function () {
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
+        
+
         // TODO: There's got to be a better way to render sprites
         // Namely, let's test the distance to the sprite-center at every ray. 
         // If we hit the sprite, draw the portion of the visible sprite
@@ -678,10 +677,9 @@ var gameEngineJS = (function () {
 
       } // end column loop
 
-
-
       // RENDER SPRITES, DRAW SPRITES
       _drawSprites();
+
 
       if (bDrawRGB) {
         _fDrawFrameRGB(screen);

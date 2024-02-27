@@ -771,7 +771,7 @@ var _drawToCanvas = function ( pixels ) {
 var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
 
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
+  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
   var frame = screen
   var target = target || eScreen;
 

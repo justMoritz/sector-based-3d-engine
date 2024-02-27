@@ -130,15 +130,16 @@ var _drawSprites = function () {
     // the sprite in the level-side
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
-    // reference to the global-side sprite
+    // reference to the global-side sprite object
     var currentSpriteObject = allSprites[sprite["name"]];
 
-    // can object be seen?
+    
     var fVecX = sprite["x"] - fPlayerX;
     var fVecY = sprite["y"] - fPlayerY;
     var fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
 
- 
+    // fisheye correction
+    fDistanceFromPlayer *= Math.cos(fPlayerA - Math.atan2(fVecY, fVecX));
 
     // calculate angle between sprite and player, to see if in fov
     var fEyeX = Math.cos(fPlayerA);
@@ -174,11 +175,13 @@ var _drawSprites = function () {
     // if (fAngleDifferences2 > PIx2) {
     //   fAngleDifferences2 -= PIx2;
     // }
-
-    // fDistanceFromPlayer *= Math.cos(fAngleDifferences);
-
-
     var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
+    
+
+    // fAngleDifferences2 =  fPlayerA - fRayAngle;
+    // fDistanceFromPlayer *= Math.cos(fAngleDifferences2);
+
+
 
     // only proceed if sprite is visible
     if (bInPlayerView && fDistanceFromPlayer >= 0.5) {
