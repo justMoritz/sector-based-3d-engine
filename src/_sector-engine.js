@@ -253,34 +253,36 @@ testmap = {
   fDepth: 30,
   startingSector: 'sector3',
   sprites: {
-    "1": {
-      "x": 3,
-      "y": 3,
-      "h": 0.8,
-      "r": 2.0,
-      "name": "P",
-    },
-    "3": {
-      "x": 5.5,
-      "y": 12.5,
-      "h": -1.5,
-      "r": 0.0,
-      "name": "O",
-    },
+    // "1": {
+    //   "x": 3,
+    //   "y": 3,
+    //   "h": 0.8,
+    //   "r": 2.0,
+    //   "name": "P",
+    // },
+    // "3": {
+    //   "x": 5.5,
+    //   "y": 12.5,
+    //   "h": -1.5,
+    //   "r": 0.0,
+    //   "name": "O",
+    // },
     "2": {
       "x": 6,
       "y": 4,
+      "x2": 6.2,
+      "y2": 4.2,
       "r": -0.2,
       "h": 0.8,
       "name": "P",
     },
-    "4": {
-      "x": 9.5,
-      "y": 11.4,
-      "r": 2.0,
-      "h": -1.5,
-      "name": "chair",
-    },
+    // "4": {
+    //   "x": 9.5,
+    //   "y": 11.4,
+    //   "r": 2.0,
+    //   "h": -1.5,
+    //   "name": "chair",
+    // },
   },
 };
 
@@ -323,6 +325,81 @@ var gameEngineJS = (function () {
 
     main();
   };
+
+
+
+  function _drawSpritesNew (i) {
+    // for each sprite object
+    for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
+      var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+      // reference to the global sprite object (texture etc. will need later)
+      var currentSpriteObject = allSprites[sprite["name"]];
+
+      // console.log(sprite)
+      // console.log(i)
+
+      // var fDistanceToSprite;
+
+      var spriteAx = sprite["x"];
+      var spriteAy = sprite["y"];
+      var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
+      var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
+
+
+      var intersection = intersectionPoint(
+        { x: fPlayerX, y: fPlayerY },
+        { x: fPlayerEndX, y: fPlayerEndY },
+        { x: spriteAx, y: spriteAy },
+        { x: spriteBx, y: spriteBy }
+      );
+      
+
+      // If there is an intersection, update fDistanceToWall
+      if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+        fDistanceToSprite = Math.sqrt(
+          Math.pow(fPlayerX - intersection.x, 2) +
+          Math.pow(fPlayerY - intersection.y, 2)
+        );
+
+        // Fisheye correction
+        fDistanceToSprite *= Math.cos(fAngleDifferences)
+
+        // console.log(sprite);
+
+        // var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite ;
+        // var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite;
+
+        var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((sprite["h"]) + (fPlayerH)) ; 
+        var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (currentSpriteObject['hghtFctr'] - fPlayerH);
+        // var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sectorFloorFactor) + (fPlayerH)) ; 
+        // var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (-0.5+sectorCeilingFactor - fPlayerH);
+
+        for(var sj = 0; sj < nScreenHeight; sj ++){
+
+          if (sj > fSpriteCeil && sj <= fSpriteFloor) {
+            [screen[sj * nScreenWidth + i]] = 'g';
+
+            // var fSampleY = (sj - fSpriteCeil) / (nFloor - fSpriteFloor);
+            // sPixelToRender = _rh.renderWall(
+            //   fDistanceToSprite,
+            //   sWallDirection,
+            //   _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
+            // );
+            // screen[sj * nScreenWidth + sj] = sPixelToRender
+          }
+          
+        }
+
+        
+
+      }
+
+      
+
+    }
+  }
+
 
 
   // TODO:
@@ -662,7 +739,7 @@ var gameEngineJS = (function () {
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
-        
+        _drawSpritesNew(i);
 
         // TODO: There's got to be a better way to render sprites
         // Namely, let's test the distance to the sprite-center at every ray. 
@@ -676,6 +753,7 @@ var gameEngineJS = (function () {
 
 
       } // end column loop
+
 
       // RENDER SPRITES, DRAW SPRITES
       _drawSprites();
