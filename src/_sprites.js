@@ -125,6 +125,12 @@ var _updateSpriteBuffer = function () {
 };
 
 var _drawSprites = function () {
+
+  // Things that stay the same for all sprites
+  var fEyeX = Math.cos(fPlayerA);
+  var fEyeY = Math.sin(fPlayerA);
+
+
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
 
     // the sprite in the level-side
@@ -142,9 +148,6 @@ var _drawSprites = function () {
     fDistanceFromPlayer *= Math.cos(fPlayerA - Math.atan2(fVecY, fVecX));
 
     // calculate angle between sprite and player, to see if in fov
-    var fEyeX = Math.cos(fPlayerA);
-    var fEyeY = Math.sin(fPlayerA);
-
     var fSpriteAngle = Math.atan2(fVecY, fVecX) - Math.atan2(fEyeY, fEyeX);
     if (fSpriteAngle < -PI___) {
       fSpriteAngle += PIx2;
@@ -153,50 +156,23 @@ var _drawSprites = function () {
       fSpriteAngle -= PIx2;
     }
 
-
-    // fAngleDifferences2 =  fPlayerA - fRayAngle;
-    // var angleCorrection2 = 0;
-
-    // // the looking up and down “reverse-fisheyes” the effect. Similar to the skewing of the final image effect,
-    // // This corrects for this perspective
-    // if( bUseSkew ){
-    //   var angleCorrection2 = (10 - _skipEveryXrow(fLooktimer)) * 0.1; 
-    // }
-
-    // if( angleCorrection2 == 1 ){
-    //   angleCorrection2 = 0;
-    // }
-    // fAngleDifferences2 *= 1- angleCorrection2/4;
-
-    // // normalize
-    // if ( fAngleDifferences2 < 0) {
-    //   fAngleDifferences2 += PIx2;
-    // }
-    // if (fAngleDifferences2 > PIx2) {
-    //   fAngleDifferences2 -= PIx2;
-    // }
-    var bInPlayerView = Math.abs(fSpriteAngle) < fFOV / 2;
-    
-
-    // fAngleDifferences2 =  fPlayerA - fRayAngle;
-    // fDistanceFromPlayer *= Math.cos(fAngleDifferences2);
-
-
+    var bInPlayerView = Math.abs(fSpriteAngle) < fFOV_div2;
+  
 
     // only proceed if sprite is visible
     if (bInPlayerView && fDistanceFromPlayer >= 0.5) {
       // very similar operation to background floor and ceiling.
       // Sprite height is default 1, but we can adjust with the factor passed in the sprite object/
-      var fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +fDistanceFromPlayer)  * currentSpriteObject["hghtFctr"] ;
+      var fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +fDistanceFromPlayer)  * currentSpriteObject["hghtFctr"];
       var fSpriteFloor = +(fscreenHeightFactor) + nScreenHeight / +fDistanceFromPlayer ;
 
       var fSpriteCeiling = Math.round(fSpriteCeiling);
       var fSpriteFloor = Math.round(fSpriteFloor);
 
       var fSpriteHeight = fSpriteFloor - fSpriteCeiling;
-      var fSpriteAspectRatio = +currentSpriteObject["height"] / +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
-      var fSpriteWidth = fSpriteHeight / fSpriteAspectRatio;
-      var fMiddleOfSprite = (0.5 * (fSpriteAngle / (fFOV / 2)) + 0.5) * +nScreenWidth;
+      // var fSpriteAspectRatio = +currentSpriteObject["height"] / +(currentSpriteObject["width"] * currentSpriteObject["aspctRt"]);
+      var fSpriteWidth = fSpriteHeight / currentSpriteObject["aspctRt"];
+      var fMiddleOfSprite = (0.5 * (fSpriteAngle / fFOV_div2 ) + 0.5) * +nScreenWidth;
 
       // If the current Sprite is a Voxel Object
       if(currentSpriteObject["vox"]){
@@ -220,6 +196,8 @@ var _drawSprites = function () {
           }
 
           fDistanceFromPlayer = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+          // fisheye correction
+          fDistanceFromPlayer *= Math.cos(fPlayerA - Math.atan2(fVecY, fVecX));
           oSpritesWithDistances.push({ sprite: currentVox, distance: fDistanceFromPlayer, angle: fSpriteAngle });
         }
 
@@ -236,8 +214,6 @@ var _drawSprites = function () {
           var currentDistance = spriteWithDistance.distance;
           var currentAngle = spriteWithDistance.angle;
 
-
-          // very similar operation to background floor and ceiling.
           // voxel height is default 1, but we can adjust with the factor passed in the voxel object/
           fSpriteCeiling = +(fscreenHeightFactor) - (nScreenHeight / +currentDistance) * currentSpriteObject["hghtFctr"];
           fSpriteFloor = +(fscreenHeightFactor) + nScreenHeight / +currentDistance;
@@ -291,8 +267,6 @@ var _drawSprites = function () {
 
                     screen[yccord * nScreenWidth + xccord] = sSpriteGlyph;
                     fDepthBuffer[nSpriteColumn] = currentDistance;
-
-                    var currentScreenPixel = [yccord * nScreenWidth + xccord]
                   }
                 }
               }
