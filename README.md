@@ -21,6 +21,10 @@ And so much more! The limits are endless!
   ✅ Fix Looking up and down
   ✅ Fix sector height change
 👩🏼‍💻 Re-implement Sprite rendering (possibly via intersection method)
+  - Make sure sprites properly face the player (with perspective correction)
+  - Perhaps draw the sprite up-down by default, and the rotate the same direction as the player?
+  - re-implement angles and animation
+  - re-implement transparency
 
 - Refactor checkSectors function
 - Rethink variable scope of some variables
