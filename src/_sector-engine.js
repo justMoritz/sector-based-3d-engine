@@ -346,33 +346,33 @@ var gameEngineJS = (function () {
       // var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
       // var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
 
+      
       // Assuming the sprite["x"] and sprite["y"] are the center coordinates of the sprite
-    var spriteCenterX = sprite["x"];
-    var spriteCenterY = sprite["y"];
+  var spriteCenterX = sprite["x"];
+  var spriteCenterY = sprite["y"];
 
-    // Calculate the direction vector from the sprite center to the player
-    var dirX = fPlayerX - spriteCenterX;
-    var dirY = fPlayerY - spriteCenterY;
+  // Calculate the direction vector from the sprite center to the player
+  var dirX = fPlayerX - spriteCenterX;
+  var dirY = fPlayerY - spriteCenterY;
 
-    // Calculate the distance from the sprite center to the player
-    var distanceToPlayer = Math.sqrt(dirX * dirX + dirY * dirY);
+  // Calculate the distance from the sprite center to the player
+  // var distanceToPlayer = Math.sqrt(dirX * dirX + dirY * dirY);
 
-    // Normalize the direction vector
-    var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
-    
-    dirX /= dirLength;
-    dirY /= dirLength;
-    
+  // Normalize the direction vector
+  var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
+  
+  dirX /= dirLength;
+  dirY /= dirLength;
+  
+  // Calculate the half-width and half-height of the sprite
+  var halfWidth = currentSpriteObject["aspctRt"] / 2;
+  var halfHeight = currentSpriteObject["hghtFctr"] / 2;
 
-    // Calculate the half-width and half-height of the sprite
-    var halfWidth = currentSpriteObject["aspctRt"] / 2;
-    var halfHeight = currentSpriteObject["hghtFctr"] / 2;
-
-    // Calculate the new coordinates for the sprite's endpoints
-    var spriteAx = spriteCenterX + dirX * halfWidth - dirY * halfHeight;
-    var spriteAy = spriteCenterY + dirY * halfWidth + dirX * halfHeight;
-    var spriteBx = spriteCenterX + dirX * halfWidth + dirY * halfHeight;
-    var spriteBy = spriteCenterY + dirY * halfWidth - dirX * halfHeight;
+  // Calculate the new coordinates for the sprite's endpoints
+  var spriteAx = spriteCenterX + dirX * halfWidth - dirY * halfHeight;
+  var spriteAy = spriteCenterY + dirY * halfWidth + dirX * halfHeight;
+  var spriteBx = spriteCenterX + dirX * halfWidth + dirY * halfHeight;
+  var spriteBy = spriteCenterY + dirY * halfWidth - dirX * halfHeight;
 
 
       var intersection = intersectionPoint(
