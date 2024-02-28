@@ -788,7 +788,7 @@ var _fDrawFrame = function (screen, target) {
       if (nPrintIndex % nScreenWidth == 0) {
         sOutput += "<br>";
       }
-      // sOutput += _convertPixelToAscii(frame[printIndex], 0);
+      // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
       sOutput += frame[nPrintIndex];
       sCanvasOutput += frame[nPrintIndex];
       nPrintIndex++;
