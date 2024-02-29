@@ -11,22 +11,30 @@
 // keyboard and mouse
 var _moveHelpers = {
 
-  // Simple test: If we hit an even number of walls (incl. 0), 
-  // we are NOT in the sector, odd number means we ARE
-  testPlayerInSector: function ( sectorName ){
+
+  // 
+  /**
+   * 
+   * @param {*} sectorName 
+   * @param {*} fEntityX 
+   * @param {*} fEntityY 
+   * @returns  Simple test: If we hit an even number of walls (incl. 0), 
+   *           we are NOT in the sector, odd number means we ARE
+   */
+  testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
     var allCurrentWalls = oMap[sectorName];
     var nWallsHit = 0;
 
     // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
-    fPlayerEndX = fPlayerX + 1 * fDepth;  // fEyeX = Math.cos(0) === 1
-    fPlayerEndY = fPlayerY + 0 * fDepth;  // fEyeY = Math.sin(0) === 0
+    fEntityEndX = fEntityX + 1 * fDepth;  // fEyeX = Math.cos(0) === 1
+    fEntityEndY = fEntityY + 0 * fDepth;  // fEyeY = Math.sin(0) === 0
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var currentWall = allCurrentWalls[w];
 
       var intersection = intersectionPoint(
-        { x: fPlayerX, y: fPlayerY },
-        { x: fPlayerEndX, y: fPlayerEndY },
+        { x: fEntityX, y: fEntityEndY },
+        { x: fPlayerEndX, y: fEntityEndY },
         { x: currentWall[0][0], y: currentWall[0][1] },
         { x: currentWall[1][0], y: currentWall[1][1] }
       );
@@ -34,32 +42,84 @@ var _moveHelpers = {
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
         nWallsHit++
       }
-    
     }
     return ( nWallsHit % 2 )
   },
 
+  
 
   // This function checks if the player is still in the sector they are supposed to 
   // Sectors are updated as the player walks through them in testWallCollision(), 
   // but it could have missed the player in especially small sectors
   playerSectorCheck: function () {
+
     // Check for player in last known sector
-    if( _moveHelpers.testPlayerInSector( sLastKnownSector ) ){
+    if( _moveHelpers.testEntityInSector( sLastKnownSector, fPlayerX, fPlayerY ) ){
       return;
     }
-
-    // TODO:
-    // check walls for connecting sectors.
-    // Check for player in all those sectors
+    
+    // checking for player in connecting sectors to last known sector
+    var lastKnownSectorMap = oMap[sLastKnownSector];
+    for (var l = 0; l < lastKnownSectorMap.length; l++) {
+      var connectingSector = lastKnownSectorMap[l][2];
+      console.log(connectingSector);
+      if (connectingSector && _moveHelpers.testEntityInSector( connectingSector, fPlayerX, fPlayerY )) {
+        console.log(`Player in connecting sector ${connectingSector}`);
+        // set new global sector and player height
+        sPlayerSector = connectingSector;
+        sLastKnownSector = sPlayerSector;
+        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        return;
+      }
+    }
     
     // else check for player in all sectors via linear search in level data
+    // for (let sector in oMap) {
     for (let sector in oMap) {
-      if ( _moveHelpers.testPlayerInSector( sector )){
-        // set new global sector
-        sPlayerSector = collisionSector;
+      if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
+        console.log(`player in ${sector} found via linear search`);
+        // set new global sector and player height
+        sPlayerSector = sector;
         sLastKnownSector = sPlayerSector;
-        // set new player Height
+        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        return;
+      }
+    }
+  },
+
+  
+
+  // Similar to Player Sector Check, but for sprites.
+  // Broken into its own function for clarity. 
+  // This function gets called a lot!
+  spriteSectorCheck: function (fEntityX, fEntityY) {
+
+    // Check for player in last known sector
+    if( _moveHelpers.testEntityInSector( sLastKnownSector, fEntityX, fEntityY ) ){
+      return;
+    }
+    
+    // checking for player in connecting sectors to last known sector
+    var lastKnownSectorMap = oMap[sLastKnownSector];
+    for (var l = 0; l < lastKnownSectorMap.length; l++) {
+      var connectingSector = lastKnownSectorMap[l][2];
+      if (connectingSector && _moveHelpers.testEntityInSector( connectingSector, fEntityX, fEntityY )) {
+        // set new global sector and player height
+        sPlayerSector = connectingSector;
+        sLastKnownSector = sPlayerSector;
+        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        return;
+      }
+    }
+
+    
+    // else check for player in all sectors via linear search in level data
+    // for (let sector in oMap) {
+    for (let sector in oMap) {
+      if ( _moveHelpers.testEntityInSector( sector, fEntityX, fEntityY )){
+        // set new global sector and player height
+        sPlayerSector = sector;
+        sLastKnownSector = sPlayerSector;
         _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
         return;
       }
@@ -117,11 +177,9 @@ var _moveHelpers = {
               return true; // don't allow move
             }
             
-            // set new global sector
+            // set new global sector and set new player Height
             sPlayerSector = collisionSector;
             sLastKnownSector = sPlayerSector;
-            
-            // set new player Height
             _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
 
             // and allow moving
