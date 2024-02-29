@@ -254,11 +254,12 @@ testmap = {
   startingSector: 'sector3',
   sprites: {
     "1": {
-      "x": 3,
+      "x": 2,
       "y": 3,
       "h": 0.8,
       "r": 2.0,
-      "name": "P",
+      "s": "sector1",
+      "name": "O",
     },
     // "3": {
     //   "x": 5.5,
@@ -270,10 +271,9 @@ testmap = {
     "2": {
       "x": 6,
       "y": 4,
-      "x2": 6.2,
-      "y2": 4.2,
       "r": -0.2,
       "h": 0,
+      "s": "sector3",
       "name": "P",
     },
     // "4": {
@@ -330,30 +330,31 @@ var gameEngineJS = (function () {
 
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
     var nNewScreenEnd   = 0;
 
+
     for (var j = start; j < end; j++) {
+
+      fFloorBuffer[j * nScreenWidth + i] = fDepth;
       
       // sky
       if (j < nCeiling) {
 
         if( sSectorCeilingTexture !== false ){
-          screen[j * nScreenWidth + i] = sSectorCeilingTexture;
+          sPixelToRender = sSectorCeilingTexture;
         }else{
-          screen[j * nScreenWidth + i] = "1";
+          sPixelToRender = "1";
         }
-        
-        // screen[j * nScreenWidth + i] = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
       else if (j > nNextSectorCeiling && j <= nNextSectorFloor) {
         // as well as
-        screen[j * nScreenWidth + i] = "1";
+        sPixelToRender = "1";
         // sets the new screen start (the first screen-height-pixel is a wall) 
         // and new screen end variable (whatever last screen-height-pixel of wall we found)
         if(!bScreenStartSet){
@@ -375,15 +376,23 @@ var gameEngineJS = (function () {
           sWallDirection,
           _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
         );
-        screen[j * nScreenWidth + i] = sPixelToRender
+        // screen[j * nScreenWidth + i] = sPixelToRender
 
       } // End Draw Solid Wall
 
       // Draw Floor
       else {
-        screen[j * nScreenWidth + i] = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+        sPixelToRender = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+        fFloorBuffer[j * nScreenWidth + i] = fDistanceToWall
       }
+
+      screen[j * nScreenWidth + i] = sPixelToRender; 
+
     } // end draw column loop
+
+    // _drawSpritesInSector( currentSector, i );
+
+    
     return [nNewScreenStart, nNewScreenEnd];
   }
 
@@ -554,6 +563,7 @@ var gameEngineJS = (function () {
                 nDrawEnd,
                 nNextSectorCeiling,
                 nNextSectorFloor,
+                currentSector,
                 
               );
               // for the next iteration of non-portal walls seen through this window.
@@ -585,7 +595,8 @@ var gameEngineJS = (function () {
               nDrawStart,
               nDrawEnd,
               false,
-              false
+              false,
+              currentSector
             );
 
           } // end non-portal/portal found
@@ -594,7 +605,10 @@ var gameEngineJS = (function () {
         
       } // end iterate over all walls
 
+      
+
     }
+
   };
 
 
@@ -667,16 +681,6 @@ var gameEngineJS = (function () {
         checkSectors(sPlayerSector, i);
 
         _drawSpritesNew(i);
-
-        // TODO: There's got to be a better way to render sprites
-        // Namely, let's test the distance to the sprite-center at every ray. 
-        // If we hit the sprite, draw the portion of the visible sprite
-        // We can make use of the same fDepthBuffer
-
-        // If this doesn't work, the current drawing sprite method works, but it doesn't work with the angle correction.
-        // This is because the angle correction is dependent on correcting on a per-column basis, and we don't have that
-        // column information anymore once we are done casting the ray.
-        
 
 
       } // end column loop

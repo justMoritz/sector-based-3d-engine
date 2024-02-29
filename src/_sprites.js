@@ -479,22 +479,111 @@ function _drawSpritesNew (i) {
 
       for(var sj = 0; sj < nScreenHeight; sj ++){
 
-        if( fDepthBuffer[i] >= fDistanceToSprite ){
+        // makes sure that a) Sprite is not hidden by any wall, and not hidden by any floor pixel
+        if( fDepthBuffer[i] >= fDistanceToSprite  && fFloorBuffer[sj * nScreenWidth + i] >= fDistanceToSprite  ){
           if (sj > fSpriteCeil && sj <= fSpriteFloor) {
-            // [screen[sj * nScreenWidth + i]] = 'g';
 
             var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+            var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1);
 
-            sPixelToRender = _rh.renderWall(
-              fDistanceToSprite,
-              "V",
-              _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1)
-            );
-            screen[sj * nScreenWidth + i] = sPixelToRender
+            // transparency
+            if( fSamplePixel[0] !== "." ){
+              screen[sj * nScreenWidth + i] = _rh.renderWall(
+                fDistanceToSprite,
+                "V",
+                fSamplePixel
+              );
+            }
           }
         }
         
       }
     }
+  }
+}
+
+
+function _updateSpriteBufferSector () {
+  return true;
+}
+
+
+function _drawSpritesInSector (currentSector, i) {
+  // for each sprite object
+  for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
+    var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+    // check if the sprite is in the current sector
+    // console.log(`is ${sprite["name"]} in ${currentSector}?`);
+    if( sprite['s'] === currentSector ){
+      // console.log(`    YES!! ${sprite["name"]} is in ${currentSector}!!!`);  
+      
+    
+      // reference to the global sprite object (texture etc. will need later)
+      var currentSpriteObject = allSprites[sprite["name"]];
+
+
+      var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["hghtFctr"] 
+
+
+      var intersection = intersectionPoint(
+        { x: fPlayerX, y: fPlayerY },
+        { x: fPlayerEndX, y: fPlayerEndY },
+        { x: spriteAx, y: spriteAy },
+        { x: spriteBx, y: spriteBy }
+      );
+      
+
+      // If there is an intersection, update fDistanceToWall
+      if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+        fDistanceToSprite = Math.sqrt(
+          Math.pow(fPlayerX - intersection.x, 2) +
+          Math.pow(fPlayerY - intersection.y, 2)
+        );
+
+        // Fisheye correction
+        fDistanceToSprite *= Math.cos(fAngleDifferences)
+
+        // console.log(sprite);
+
+        var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
+        var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
+
+        fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
+
+        for(var sj = 0; sj < nScreenHeight; sj ++){
+
+          fDepthBufferS[sj * nScreenWidth + i] = 0;
+
+          // if( fDepthBuffer[i] >= fDistanceToSprite ){
+            if (sj > fSpriteCeil && sj <= fSpriteFloor) {
+              // [screen[sj * nScreenWidth + i]] = 'g';
+
+              var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+
+              var sSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1);
+
+              // if(sSamplePixel[0] !== '.'){
+                sPixelToRender = _rh.renderWall(
+                  fDistanceToSprite,
+                  "V",
+                  sSamplePixel
+                );
+                screen[sj * nScreenWidth + i] = sPixelToRender
+                // Update Depth buffer 
+                fDepthBufferS[sj * nScreenWidth + i] = 1;
+              // }
+            }
+            
+          // }
+        }
+        
+      }
+    }
+
+
   }
 }

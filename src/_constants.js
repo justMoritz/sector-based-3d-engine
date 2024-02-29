@@ -56,6 +56,8 @@ var nNewHeight = 0;
 var debugWrite;
 
 var fDepthBuffer = [];
+var fDepthBufferS = [];
+var fFloorBuffer = [];
 
 // defaults
 var fPlayerX = 14.0;

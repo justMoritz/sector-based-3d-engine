@@ -800,7 +800,7 @@ var _fDrawFrame = function (screen, target) {
 
 
 var _fDrawFrameRGB = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
+  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
   var frame = screen
   var target = target || eScreen;
 
