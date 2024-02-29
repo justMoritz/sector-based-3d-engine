@@ -16,6 +16,7 @@ var PIx1_5 = +(PI___ * 1.5);
 var PIx2 = +(PI___ * 2.0);
 var I80divPI = 180 / PI___;
 var PIdiv4 = PI___ / 4.0;
+var PIdiv2 = PI___ / 2.0;
 
 // setup variables
 var eScreen;

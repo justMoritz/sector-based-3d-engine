@@ -75,3 +75,13 @@ function toggleFullscreen( canvasElement ) {
     });
   }
 }
+
+
+// Function to rotate a point (x, y) by an angle
+function rotatePoint(x, y, angle) {
+  var cosAngle = Math.cos(angle);
+  var sinAngle = Math.sin(angle);
+  var rotatedX = x * cosAngle - y * sinAngle;
+  var rotatedY = x * sinAngle + y * cosAngle;
+  return { x: rotatedX, y: rotatedY };
+}

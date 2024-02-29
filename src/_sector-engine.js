@@ -253,13 +253,13 @@ testmap = {
   fDepth: 30,
   startingSector: 'sector3',
   sprites: {
-    // "1": {
-    //   "x": 3,
-    //   "y": 3,
-    //   "h": 0.8,
-    //   "r": 2.0,
-    //   "name": "P",
-    // },
+    "1": {
+      "x": 3,
+      "y": 3,
+      "h": 0.8,
+      "r": 2.0,
+      "name": "P",
+    },
     // "3": {
     //   "x": 5.5,
     //   "y": 12.5,
@@ -273,7 +273,7 @@ testmap = {
       "x2": 6.2,
       "y2": 4.2,
       "r": -0.2,
-      "h": 0.8,
+      "h": 0,
       "name": "P",
     },
     // "4": {
@@ -339,40 +339,48 @@ var gameEngineJS = (function () {
       // console.log(sprite)
       // console.log(i)
 
-      // var fDistanceToSprite;
+      if(false){
+        // var fDistanceToSprite;
 
-      // var spriteAx = sprite["x"];
-      // var spriteAy = sprite["y"];
-      // var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
-      // var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
+        // var spriteAx = sprite["x"];
+        // var spriteAy = sprite["y"];
+        // var spriteBx = sprite["x"] + currentSpriteObject["aspctRt"];
+        // var spriteBy = sprite["y"] + currentSpriteObject["aspctRt"];
 
-      
-      // Assuming the sprite["x"] and sprite["y"] are the center coordinates of the sprite
-  var spriteCenterX = sprite["x"];
-  var spriteCenterY = sprite["y"];
+        
+        // Assuming the sprite["x"] and sprite["y"] are the center coordinates of the sprite
+        // var spriteCenterX = sprite["x"];
+        // var spriteCenterY = sprite["y"];
 
-  // Calculate the direction vector from the sprite center to the player
-  var dirX = fPlayerX - spriteCenterX;
-  var dirY = fPlayerY - spriteCenterY;
+        // // Calculate the direction vector from the sprite center to the player
+        // var dirX = fPlayerX - spriteCenterX;
+        // var dirY = fPlayerY - spriteCenterY;
 
-  // Calculate the distance from the sprite center to the player
-  // var distanceToPlayer = Math.sqrt(dirX * dirX + dirY * dirY);
+        // // Calculate the distance from the sprite center to the player
+        // // var distanceToPlayer = Math.sqrt(dirX * dirX + dirY * dirY);
 
-  // Normalize the direction vector
-  var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
-  
-  dirX /= dirLength;
-  dirY /= dirLength;
-  
-  // Calculate the half-width and half-height of the sprite
-  var halfWidth = currentSpriteObject["aspctRt"] / 2;
-  var halfHeight = currentSpriteObject["hghtFctr"] / 2;
+        // // Normalize the direction vector
+        // var dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
+        
+        // dirX /= dirLength;
+        // dirY /= dirLength;
+        
+        // // Calculate the half-width and half-height of the sprite
+        // var halfWidth = currentSpriteObject["aspctRt"] / 2;
+        // var halfHeight = currentSpriteObject["hghtFctr"] / 2;
 
-  // Calculate the new coordinates for the sprite's endpoints
-  var spriteAx = spriteCenterX + dirX * halfWidth - dirY * halfHeight;
-  var spriteAy = spriteCenterY + dirY * halfWidth + dirX * halfHeight;
-  var spriteBx = spriteCenterX + dirX * halfWidth + dirY * halfHeight;
-  var spriteBy = spriteCenterY + dirY * halfWidth - dirX * halfHeight;
+        // // Calculate the new coordinates for the sprite's endpoints
+        // var spriteAx = spriteCenterX + dirX * halfWidth - dirY * halfHeight;
+        // var spriteAy = spriteCenterY + dirY * halfWidth + dirX * halfHeight;
+        // var spriteBx = spriteCenterX + dirX * halfWidth + dirY * halfHeight;
+        // var spriteBy = spriteCenterY + dirY * halfWidth - dirX * halfHeight;
+      }
+
+
+      var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["hghtFctr"] 
+      var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["hghtFctr"] 
 
 
       var intersection = intersectionPoint(
@@ -395,8 +403,8 @@ var gameEngineJS = (function () {
 
         // console.log(sprite);
 
-        var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((sprite["h"]) + (fPlayerH)) ; 
-        var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (currentSpriteObject['hghtFctr'] - fPlayerH);
+        var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
+        var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"]+currentSpriteObject['hghtFctr'] - fPlayerH);
 
         fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
 
