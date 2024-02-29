@@ -20,7 +20,7 @@ And so much more! The limits are endless!
 - ✅ Floor texture:
   - ✅ Fix Looking up and down
   - ✅ Fix sector height change
-- Re-implement Sprite rendering (possibly via intersection method)
+- Re-implement Sprite rendering (now working officially via intersection method)
   - ✅ Make sure sprites properly face the player (with perspective correction)
   - ✅ Perhaps draw the sprite up-down by default, and the rotate the same direction as the player?
   - re-implement angles and animation
@@ -34,6 +34,7 @@ And so much more! The limits are endless!
 - Refactor checkSectors function
 - Rethink variable scope of some variables
 - Fisheye correction is still a bit wonky
+- Wall-collision detection... it's bad
 
 #### Level Editor (TODO:)
 - Grid (with 0.125 grid size?)
