@@ -276,13 +276,13 @@ testmap = {
       "s": "sector3",
       "name": "P",
     },
-    // "4": {
-    //   "x": 9.5,
-    //   "y": 11.4,
-    //   "r": 2.0,
-    //   "h": -1.5,
-    //   "name": "chair",
-    // },
+    "4": {
+      "x": 9.5,
+      "y": 11.4,
+      "r": 2.0,
+      "h": -1.5,
+      "name": "baby",
+    },
   },
 };
 
@@ -626,8 +626,8 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      // _updateSpriteBuffer();
-      // _moveSprites();
+      _updateSpriteBuffer();
+      // _sortSprites();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -710,6 +710,12 @@ var gameEngineJS = (function () {
     if (bDrawRGB){
       nScreenWidth = 320;
       nScreenHeight = 100;
+    }
+
+    if (bUseSkew){
+      nScreenWidth = 768;
+      nScreenHeight = 210;
+      nLookLimit = 8;
     }
 
     // prep document
