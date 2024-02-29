@@ -343,12 +343,13 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
+        // if( sSectorCeilingTexture !== false ){
+        //   sPixelToRender = sSectorCeilingTexture;
+        // }else{
+        //   sPixelToRender = "1";
+        // }
 
-        if( sSectorCeilingTexture !== false ){
-          sPixelToRender = sSectorCeilingTexture;
-        }else{
-          sPixelToRender = "1";
-        }
+        sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
@@ -376,7 +377,6 @@ var gameEngineJS = (function () {
           sWallDirection,
           _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
         );
-        // screen[j * nScreenWidth + i] = sPixelToRender
 
       } // End Draw Solid Wall
 
@@ -386,13 +386,12 @@ var gameEngineJS = (function () {
         fFloorBuffer[j * nScreenWidth + i] = fDistanceToWall
       }
 
+      // draw
       screen[j * nScreenWidth + i] = sPixelToRender; 
 
     } // end draw column loop
 
-    // _drawSpritesInSector( currentSector, i );
 
-    
     return [nNewScreenStart, nNewScreenEnd];
   }
 
@@ -684,10 +683,6 @@ var gameEngineJS = (function () {
 
 
       } // end column loop
-
-
-      // RENDER SPRITES, DRAW SPRITES
-      // _drawSprites();
 
 
       if (bDrawRGB) {
