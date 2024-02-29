@@ -20,13 +20,15 @@ And so much more! The limits are endless!
 ✅ Floor texture:
   ✅ Fix Looking up and down
   ✅ Fix sector height change
-👩🏼‍💻 Re-implement Sprite rendering (possibly via intersection method)
+- Re-implement Sprite rendering (possibly via intersection method)
   ✅ Make sure sprites properly face the player (with perspective correction)
   ✅ Perhaps draw the sprite up-down by default, and the rotate the same direction as the player?
-  👩🏼‍💻 re-implement angles and animation
+  - re-implement angles and animation
+  - re-implement moving
+  ✅ re-implement sorting 
   ✅ re-implement transparency
   ✅ refactor checkPlayerInSector function to also work for sprites
-- Fix Ceiling texture rendering
+👩🏼‍💻 Fix Ceiling texture rendering
 - Think about slopes. I kinda don't want to open that can of worms, but maybe think about slopes...
 
 - Refactor checkSectors function
