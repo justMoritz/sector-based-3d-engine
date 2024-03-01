@@ -343,13 +343,13 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-        if( sSectorCeilingTexture !== false ){
-          sPixelToRender = sSectorCeilingTexture;
-        }else{
-          sPixelToRender = "1";
-        }
+        // if( sSectorCeilingTexture !== false ){
+        //   sPixelToRender = sSectorCeilingTexture;
+        // }else{
+        //   sPixelToRender = "1";
+        // }
 
-        // sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
+        sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector

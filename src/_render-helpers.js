@@ -917,20 +917,15 @@ function drawCeiling(j, fSectorFloorHeight, fSectorCeilingHeight, sSectorFloorTe
   var fRealDistance;
   var fDirectDistCeil;
 
-  fPlayerHinSector = fSectorCeilingHeight + fSectorFloorHeight;
-  // fAdjustedHeight = fSectorCeilingHeight - fPlayerHinSector * 2 ;
-  // fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
   
-  // fNotStandardHeight = 2;
-
-  fAdjustedHeight = fSectorFloorHeight - fSectorCeilingHeight * 2;
-
+  fPlayerHinSector = 0.5  + fSectorCeilingHeight;
+  fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
   // Calculate the direct distance from the player to the floor pixel
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
-  fDirectDistCeil = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
+  fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
   
-  fRealDistance = fDirectDistCeil / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
   
   
   // Calculate real-world coordinates with the player angle
