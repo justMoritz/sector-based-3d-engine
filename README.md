@@ -28,7 +28,8 @@ And so much more! The limits are endless!
   - ✅ re-implement sorting 
   - ✅ re-implement transparency
   - ✅ refactor checkPlayerInSector function to also work for sprites
-- 👩🏼‍💻 Fix Ceiling texture rendering
+- ✅ Fix Ceiling texture rendering
+  - ✅ Re-implmement and refactor skybox
 - Think about slopes. I kinda don't want to open that can of worms, but maybe think about slopes...
 
 - Refactor checkSectors function
@@ -36,7 +37,7 @@ And so much more! The limits are endless!
 - Fisheye correction is still a bit wonky
 - Wall-collision detection... it's bad
 
-#### Level Editor (TODO:)
+#### 👩🏼‍💻 Level Editor (TODO:)
 - Grid (with 0.125 grid size?)
 - User interaction as follows:
   1. levels consist of sectors
