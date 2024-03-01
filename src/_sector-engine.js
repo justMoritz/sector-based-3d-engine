@@ -211,7 +211,7 @@ sectorMeta = {
     0.8, // Floor Height
     3,   // Ceiling Height
     "#", // floor texture
-    "Y", // ceiling texture
+    "bg", // ceiling texture
   ],
   "sector2" : [
     0.4, 
@@ -343,9 +343,14 @@ var gameEngineJS = (function () {
 
       fFloorBuffer[j * nScreenWidth + i] = fDepth;
       
-      // sky
+      // sky or ceiling
       if (j < nCeiling) {
-        sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorCeilingTexture );
+        if(sSectorCeilingTexture === "bg"){
+          sPixelToRender = drawBackground(i, j);
+        }
+        else{
+          sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorCeilingTexture );
+        }
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector

@@ -938,3 +938,32 @@ function drawCeiling(j, fSectorCeilingHeight, sSectorCeilTexture ){
   );
   return sCeilPixelToRender;
 }
+
+
+function drawBackground (i, h) {
+  // render background!
+  // var fVerticalOffset = nScreenHeight / 2;
+
+  // make the background double the size of the screen
+  var fBgX = i / nScreenWidth;
+  var fBgY = (h + fscreenHeightFactorFloor) / nScreenHeight;
+
+  // Calculate horizontal offset based on player angle
+  var angleOffset = fPlayerA * (1 / (1 * PI___));
+  fBgX += angleOffset * 2;
+
+  if (fLooktimer < 0) { 
+    fBgY -= fLooktimer / 100; // down
+  }else{
+    fBgY -= fLooktimer / 20; // up
+  }
+  
+  sPixelToDraw = _rh.renderWall(
+    0,
+    "N",
+    _getSamplePixel(textures['bg'], fBgX, fBgY)
+  );
+
+  return sPixelToDraw;
+
+}
