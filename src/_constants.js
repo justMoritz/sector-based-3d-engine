@@ -74,6 +74,8 @@ var fPlayerEndX;
 var fPlayerEndY;
 
 var fscreenHeightFactor;
+var fscreenHeightFactorFloor = nScreenHeight / 2;
+var fLocalLooktimer;
 var fRayAngleGlob;
 
 var oMap;

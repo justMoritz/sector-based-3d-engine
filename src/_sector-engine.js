@@ -343,13 +343,13 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-        // if( sSectorCeilingTexture !== false ){
-        //   sPixelToRender = sSectorCeilingTexture;
-        // }else{
-        //   sPixelToRender = "1";
-        // }
+        if( sSectorCeilingTexture !== false ){
+          sPixelToRender = sSectorCeilingTexture;
+        }else{
+          sPixelToRender = "1";
+        }
 
-        sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
+        // sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
@@ -625,8 +625,7 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      _updateSpriteBuffer();
-      // _sortSprites();
+      // _updateSpriteBuffer();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -649,6 +648,7 @@ var gameEngineJS = (function () {
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
+      fFloorLooktimer = fLooktimer * 0.15;
       // var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
@@ -679,7 +679,7 @@ var gameEngineJS = (function () {
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
-        _drawSpritesNew(i);
+        // _drawSpritesNew(i);
 
 
       } // end column loop
