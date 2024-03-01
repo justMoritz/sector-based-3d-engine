@@ -209,7 +209,7 @@ map = {
 sectorMeta = {
   "sector1" : [
     0.8, // Floor Height
-    3,   // Ceiling Height
+    2.8,   // Ceiling Height
     "#", // floor texture
     "bg", // ceiling texture
   ],

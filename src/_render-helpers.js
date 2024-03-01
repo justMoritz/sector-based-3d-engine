@@ -940,16 +940,14 @@ function drawCeiling(j, fSectorCeilingHeight, sSectorCeilTexture ){
 }
 
 
-function drawBackground (i, h) {
-  // render background!
-  // var fVerticalOffset = nScreenHeight / 2;
+function drawBackground (i, j) {
 
   // make the background double the size of the screen
   var fBgX = i / nScreenWidth;
-  var fBgY = (h + fscreenHeightFactorFloor) / nScreenHeight;
+  var fBgY = (j + fscreenHeightFactorFloor) / nScreenHeight;
 
   // Calculate horizontal offset based on player angle
-  var angleOffset = fPlayerA * (1 / (1 * PI___));
+  var angleOffset = fPlayerA * OneDivPi;
   fBgX += angleOffset * 2;
 
   if (fLooktimer < 0) { 
