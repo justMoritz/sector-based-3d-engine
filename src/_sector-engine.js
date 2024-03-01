@@ -306,24 +306,111 @@ var gameEngineJS = (function () {
   /**
    * Loads
    */
-  var _loadLevel = function () {
+
+
+  function _loadLevel (level) {
     clearInterval(gameRun);
 
-    // updates the level map, dimensions and textures
-    oMap = testmap.map;
-    fDepth = testmap.fDepth || fDepth;
-    sPlayerSector = testmap.startingSector || startingSector;
-    sLastKnownSector = sPlayerSector;
-    _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+    sLevelstring = level.replace(".map", ""); // sets global string
 
+    var loadScriptAsync = function (uri, sLevelstring) {
+      return new Promise(function (resolve, reject) {
+        var tag = document.createElement("script");
+        tag.src = "assets/" + uri;
+        tag.id = sLevelstring;
+        tag.async = true;
+
+        tag.onload = function () {
+          resolve();
+        };
+
+        document.getElementById("map").src = "assets/" + level;
+        var firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      });
+    };
+
+    var levelLoaded = loadScriptAsync(level, sLevelstring);
+
+    levelLoaded.then(function () {
+
+      console.log( window[sLevelstring] )
+
+      // updates the level map, dimensions and textures
+      oLevel = window[sLevelstring];
+      oMap = oLevel.map;
+      fDepth = oLevel.fDepth || fDepth;
+      sPlayerSector = oLevel.startingSector || startingSector;
+      sLastKnownSector = sPlayerSector;
+      
+      // load sprites
+      oLevelSprites = testmap.sprites;
+      
+      // places the player at the map starting point
+      fPlayerX = oLevel.fPlayerX;
+      fPlayerY = oLevel.fPlayerY;
+      fPlayerA = oLevel.fPlayerA;
+      fPlayerH = oLevel.fPlayerH;
+
+      _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+      main();
+
+    });
+
+    // main();
+
+    // // pauses, then starts the game loop
+    // _testScreenSizeAndStartTheGame();
+    // window.addEventListener("resize", function () {
+    //   clearInterval(gameRun);
+    //   _testScreenSizeAndStartTheGame();
+    // });
+  };
+  
+  var _loadLevel2 = function (level) {
+    clearInterval(gameRun);
+
+
+    // var filePath = '/assets/'+level;
+
+    // // Fetch JSON data from file
+    // fetch(filePath)
+    //   .then(response => {
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok');
+    //     }
+    //     return response.json();
+    //   })
+    //   .then(jsonData => {
+    //     console.log(jsonData);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching JSON data:', error);
+    //   });
+
+    
+
+    // sLevelstring = level.replace(".map", ""); // sets global string
+    
+    // oLevelObject = JSON.parse(level)
+
+    // updates the level map, dimensions and textures
+    oMap = window[sLevelstring].map;
+    fDepth = window[sLevelstring].fDepth || fDepth;
+    sPlayerSector = window[sLevelstring].startingSector || startingSector;
+    sLastKnownSector = sPlayerSector;
+    
     // load sprites
     oLevelSprites = testmap.sprites;
-
+    
     // places the player at the map starting point
-    fPlayerX = testmap.fPlayerX;
-    fPlayerY = testmap.fPlayerY;
-    fPlayerA = testmap.fPlayerA;
-    fPlayerH = testmap.fPlayerH;
+    fPlayerX = window[sLevelstring].fPlayerX;
+    fPlayerY = window[sLevelstring].fPlayerY;
+    fPlayerA = window[sLevelstring].fPlayerA;
+    fPlayerH = window[sLevelstring].fPlayerH;
+
+    _moveHelpers.setNewPlayerHeight(  oMap.map[sPlayerSector] );
 
     main();
   };
@@ -434,25 +521,19 @@ var gameEngineJS = (function () {
       visitedSectors[currentSector] = true;
 
       // the actual sector object from the level file
-      var sectorWalls = oMap[currentSector]; 
+      var sectorWalls = oMap[currentSector].walls; 
+
 
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
       var sSectorFloorTexture = "Y";
       var sSectorCeilingTexture = "a";
 
-      // per-sector overrides for floor and ceiling heights
-      if(typeof sectorMeta[currentSector] !== 'undefined'){
-        sectorFloorFactor = sectorMeta[currentSector][0]
-        sectorCeilingFactor = sectorMeta[currentSector][1]
-
-        if(typeof sectorMeta[currentSector][2] !== 'undefined'){
-          sSectorFloorTexture = sectorMeta[currentSector][2];
-        }
-        if(typeof sectorMeta[currentSector][3] !== 'undefined'){
-          sSectorCeilingTexture = sectorMeta[currentSector][3];
-        }
-      }
+      // per-sector settings for floors and ceilings
+      sectorFloorFactor = oLevel.map[currentSector].floor
+      sectorCeilingFactor = oLevel.map[currentSector].ceil
+      sSectorFloorTexture = oLevel.map[currentSector].floorTex;
+      sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -468,8 +549,8 @@ var gameEngineJS = (function () {
         var intersection = intersectionPoint(
           { x: fPlayerX, y: fPlayerY },
           { x: fPlayerEndX, y: fPlayerEndY },
-          { x: currentWall[0][0], y: currentWall[0][1] },
-          { x: currentWall[1][0], y: currentWall[1][1] }
+          { x: currentWall[0], y: currentWall[1] },
+          { x: currentWall[2], y: currentWall[3] }
         );
 
         // If there is an intersection, update fDistanceToWall
@@ -490,21 +571,15 @@ var gameEngineJS = (function () {
           }
 
           // Wall Type (texture)
-          if(currentWall[3] != false){
-            sWallType = currentWall[3];
-          }
-
+          sWallType = currentWall[4];
+          sWallType = "U";
           // Wall X-Sample Scale Override
-          if(typeof currentWall[4] !== 'undefined' && currentWall[4]){
-            fSampleXScale = currentWall[4];
-          }
+          fSampleXScale = currentWall[5];
           // Wall Y-Sample Scale Override
-          if(typeof currentWall[5] !== 'undefined' && currentWall[5]){
-            fSampleYScale = currentWall[5];
-          }
+          fSampleYScale = currentWall[6];
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
-          wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
+          wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
@@ -517,9 +592,9 @@ var gameEngineJS = (function () {
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[2] !== false)
           // instead of drawing that wall, draw the sector behind the portal where the wall would have been
-          if(currentWall[2] != false){
-            // sWallDirection = "X";
-            nextSector = currentWall[2];
+          if(currentWall[7] != false){
+
+            nextSector = currentWall[7];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
@@ -528,10 +603,10 @@ var gameEngineJS = (function () {
               var nNextSectorCeiling = nCeiling;
               var nNextSectorFloor = nFloor;
 
-              if(typeof sectorMeta[nextSector] !== 'undefined'){
+              if(typeof oMap.map[nextSector] !== 'undefined'){
 
-                nextSectorFloorFactor = sectorMeta[nextSector][0];
-                nextSectorCeilingFactor = sectorMeta[nextSector][1];
+                nextSectorFloorFactor = oMap.map[nextSector].floor;
+                nextSectorCeilingFactor = oMap.map[nextSector].ceil;
 
                 // only recalculate if the next sector floor is higher than the previous
                 // See also note above about floor and ceiling heights in level data
@@ -736,7 +811,7 @@ var gameEngineJS = (function () {
     _moveHelpers.touchinit();
 
     // initial gameload
-    _loadLevel();
+    _loadLevel("_testmap.map");
   };
 
   return {
