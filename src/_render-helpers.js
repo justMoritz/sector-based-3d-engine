@@ -941,7 +941,7 @@ function drawCeiling(j, fSectorCeilingHeight, sSectorCeilTexture ){
 
 
 function drawBackground (i, j) {
-
+  
   // make the background double the size of the screen
   var fBgX = i / nScreenWidth;
   var fBgY = (j + fscreenHeightFactorFloor) / nScreenHeight;
@@ -963,5 +963,4 @@ function drawBackground (i, j) {
   );
 
   return sPixelToDraw;
-
 }
