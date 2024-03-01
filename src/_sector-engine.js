@@ -349,7 +349,7 @@ var gameEngineJS = (function () {
         //   sPixelToRender = "1";
         // }
 
-        sPixelToRender = drawCeiling(j, sectorFloorFactor, sectorCeilingFactor, sSectorFloorTexture );
+        sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorFloorTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
