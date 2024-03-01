@@ -211,35 +211,37 @@ sectorMeta = {
     0.8, // Floor Height
     3,   // Ceiling Height
     "#", // floor texture
-    "a", // ceiling color
+    "Y", // ceiling texture
   ],
   "sector2" : [
     0.4, 
     2, 
     "Y",
-    "1"
+    "T"
   ],
   "sector3" : [
     0, 
     1.5, 
     "Y",
-    "2"
+    "#"
   ],
   "sector4":[
     0,
     1,
-    "#"
+    "#",
+    "o"
   ],
   "sector5":[
     0.2,
     1.5,
     "Y",
+    "Y"
   ],
   "sector6": [
     -1.5,
     1.2,
     "Y",
-    "f"
+    "#"
   ]
 }
 
@@ -343,13 +345,7 @@ var gameEngineJS = (function () {
       
       // sky
       if (j < nCeiling) {
-        // if( sSectorCeilingTexture !== false ){
-        //   sPixelToRender = sSectorCeilingTexture;
-        // }else{
-        //   sPixelToRender = "1";
-        // }
-
-        sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorFloorTexture );
+        sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorCeilingTexture );
       }
 
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
