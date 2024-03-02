@@ -38,7 +38,7 @@ And so much more! The limits are endless!
 - Wall-collision detection... it's bad
 
 #### 👩🏼‍💻 Level Editor (TODO:)
-- ✅ Refactor level file: No more sectorMeta, no more nested arrays for walls, single source of truth for all level data
+- ✅ Refactor level file: No more sectorMeta, no more nested arrays for walls, single source of truth for all level data 
 - Grid (with 0.125 grid size?)
 - User interaction as follows:
   1. levels consist of sectors
