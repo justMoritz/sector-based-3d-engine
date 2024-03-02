@@ -22,7 +22,7 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
-    var allCurrentWalls = oMap[sectorName];
+    var allCurrentWalls = oMap[sectorName].walls;
     var nWallsHit = 0;
 
     // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
@@ -35,8 +35,8 @@ var _moveHelpers = {
       var intersection = intersectionPoint(
         { x: fEntityX, y: fEntityEndY },
         { x: fPlayerEndX, y: fEntityEndY },
-        { x: currentWall[0][0], y: currentWall[0][1] },
-        { x: currentWall[1][0], y: currentWall[1][1] }
+        { x: currentWall[0], y: currentWall[1] },
+        { x: currentWall[2], y: currentWall[3] }
       );
 
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
@@ -52,37 +52,37 @@ var _moveHelpers = {
   // Sectors are updated as the player walks through them in testWallCollision(), 
   // but it could have missed the player in especially small sectors
   playerSectorCheck: function () {
-
+    
     // Check for player in last known sector
     if( _moveHelpers.testEntityInSector( sLastKnownSector, fPlayerX, fPlayerY ) ){
       return;
     }
     
     // checking for player in connecting sectors to last known sector
-    var lastKnownSectorMap = oMap[sLastKnownSector];
+    var lastKnownSectorMap = oMap[sLastKnownSector].walls;
     for (var l = 0; l < lastKnownSectorMap.length; l++) {
-      var connectingSector = lastKnownSectorMap[l][2];
-      console.log(connectingSector);
+      var connectingSector = lastKnownSectorMap[l][7];
       if (connectingSector && _moveHelpers.testEntityInSector( connectingSector, fPlayerX, fPlayerY )) {
-        console.log(`Player in connecting sector ${connectingSector}`);
+        console.log(`Player sector ${connectingSector} found via CONNECTING SEARCH`);
         // set new global sector and player height
         sPlayerSector = connectingSector;
-        sLastKnownSector = sPlayerSector;
-        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        sLastKnownSector = connectingSector;
+        _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
         return;
       }
     }
-    
+     
     // else check for player in all sectors via linear search in level data
-    // for (let sector in oMap) {
     for (let sector in oMap) {
-      if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
-        console.log(`player in ${sector} found via linear search`);
-        // set new global sector and player height
-        sPlayerSector = sector;
-        sLastKnownSector = sPlayerSector;
-        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
-        return;
+      if(sector != 0){
+        if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
+          console.log(`player in ${sector} found via LINEAR SEARCH`);
+          // set new global sector and player height
+          sPlayerSector = sector;
+          sLastKnownSector = sector;
+          _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+          return;
+        }  
       }
     }
   },
@@ -107,7 +107,7 @@ var _moveHelpers = {
         // set new global sector and player height
         sPlayerSector = connectingSector;
         sLastKnownSector = sPlayerSector;
-        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
         return;
       }
     }
@@ -120,7 +120,7 @@ var _moveHelpers = {
         // set new global sector and player height
         sPlayerSector = sector;
         sLastKnownSector = sPlayerSector;
-        _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+        _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
         return;
       }
     }
@@ -129,16 +129,16 @@ var _moveHelpers = {
 
   // sets the player height when a sector is changed
   setNewPlayerHeight: function ( input ){
-    console.log(input)
+    // console.log(input)
     if(typeof input !== 'undefined'){
-      nSectorFloorHeight =  input[0] 
+      nSectorFloorHeight =  input.floor 
     }else{
       fPlayerH = 0;
     }
-    nSectorCeilingHeight = input[1];
-    console.log(`nSectorCeilingHeight: ${nSectorCeilingHeight}`)
-    console.log(`nSectorFloorHeight = ${nSectorFloorHeight} `);
-    console.log(`----`)
+    nSectorCeilingHeight = input.ceil;
+    // console.log(`nSectorCeilingHeight: ${nSectorCeilingHeight}`)
+    // console.log(`nSectorFloorHeight = ${nSectorFloorHeight} `);
+    // console.log(`----`)
   },
 
 
@@ -148,7 +148,8 @@ var _moveHelpers = {
   testWallCollision: function( testX, testY ){
 
     // look at all walls in the current player sector
-    var allCurrentWalls = oMap[sPlayerSector];
+    var allCurrentWalls = oMap[sPlayerSector].walls;
+
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var fTestDistanceToWall = fDepth;
@@ -156,8 +157,8 @@ var _moveHelpers = {
       var intersection = intersectionPoint(
         { x: fPlayerX, y: fPlayerY },
         { x: testX, y: testY },
-        { x: currentWall[0][0], y: currentWall[0][1] },
-        { x: currentWall[1][0], y: currentWall[1][1] }
+        { x: currentWall[0], y: currentWall[1] },
+        { x: currentWall[2], y: currentWall[3] }
       );
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
         fTestDistanceToWall = Math.sqrt(
@@ -168,19 +169,20 @@ var _moveHelpers = {
         if(fTestDistanceToWall < 1){
 
           // if this wall we are hitting is considered a portal
-          if(currentWall[2] != false){
-            var collisionSector = currentWall[2];
-
+          if(currentWall[7] != false){
+            var collisionSector = currentWall[7];
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            if( fPlayerH - (sectorMeta[collisionSector][0]) < -1 ){
+            if( fPlayerH - (oLevel.map[collisionSector].floor) < -1 ){
               return true; // don't allow move
             }
+
+            console.log(`walking into ${collisionSector}`)
             
             // set new global sector and set new player Height
             sPlayerSector = collisionSector;
             sLastKnownSector = sPlayerSector;
-            _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+            _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
 
             // and allow moving
             return false;

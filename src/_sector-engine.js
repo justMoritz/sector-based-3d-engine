@@ -23,272 +23,6 @@
  */
 
 
-map = {
-  "sector1": [
-    [
-      [4,2], 
-      [5,4], 
-      "sector2",
-      "#",
-    ],     
-    [
-      [5,4],
-      [2,5],
-      false,
-      "$"
-    ],     
-    [
-      [2, 5],
-      [0.5, 4], 
-      false,
-      "Y"
-    ],     
-    [
-      [0.5, 4],
-      [0.2, 0.2],
-      false,
-      "T",
-      10,
-      4
-    ],     
-    [
-      [0.2, 0.2],
-      [4, 2],
-      false,
-      "#",
-      6
-    ]
-  ],
-  "sector2" : [
-    [
-      [4,2],
-      [5,4],
-      "sector1",
-      "#",
-    ],     
-    [
-      [4,2],
-      [6,1],
-      false,
-      "o"
-    ],     
-    [
-      [6, 1],
-      [7, 2.1],
-      false,
-      "o"
-    ],     
-    [
-      [7, 2.1],
-      [5, 4],
-      "sector3",
-      "Y"
-    ]     
-  ],
-  "sector3" : [
-    [
-      [7, 2.1],
-      [5, 4], 
-      "sector2",
-      "o"
-    ],     
-    [
-      [7,2.1],
-      [8,4],
-      false,
-      "#"
-    ],     
-    [
-      [8, 4],
-      [6, 6],
-      false,
-      "#"
-    ],     
-    [
-      [6, 6],
-      [4.5, 5],
-      "sector4",
-      "#"
-    ],     
-    [
-      [4.5, 5],
-      [5, 4],
-      false,
-      "#",
-      1
-    ]     
-  ],
-  "sector4" : [
-    [
-      [6, 6],
-      [4.5, 5],
-      "sector3",
-      "#"
-    ],     
-    [
-      [6, 6],
-      [6, 10],
-      false,
-      "Y"
-    ],     
-    [
-      [6, 10],
-      [4.5, 10],
-      "sector5",
-      "o"
-    ],     
-    [
-      [4.5, 10],
-      [4.5, 5],
-      false,
-      "o",
-      8
-    ]        
-  ],
-  "sector5" : [
-    [
-      [4.5, 10],
-      [6, 10],
-      "sector4",
-      "#"
-    ],     
-    [
-      [4.5, 10],
-      [4.5, 14],
-      false,
-      "Y"
-    ],     
-    [
-      [4.5, 14],
-      [6, 14],
-      false,
-      "o"
-    ],     
-    [
-      [6, 14],
-      [6, 10],
-      "sector6",
-      "o"
-    ]        
-  ],
-  "sector6" : [
-    [
-      [6, 14],
-      [6, 10],
-      "sector5",
-      "#"
-    ],     
-    [
-      [6, 10],
-      [15, 11],
-      false,
-      "Y",
-      8
-    ],     
-    [
-      [15, 11],
-      [15, 14],
-      false,
-      "o"
-    ],     
-    [
-      [15, 14],
-      [6, 14],
-      false,
-      "o",
-      8
-    ]        
-  ],
-}
-
-// New approach:
-// Standard Floor Height: 0
-// Standard Ceiling Height: 1
-// up and down from there :)
-// of the reference of each
-sectorMeta = {
-  "sector1" : [
-    0.8, // Floor Height
-    2,   // Ceiling Height
-    "#", // floor texture
-    "bg", // ceiling texture
-  ],
-  "sector2" : [
-    0.4, 
-    2, 
-    "Y",
-    "T"
-  ],
-  "sector3" : [
-    0, 
-    1.5, 
-    "Y",
-    "#"
-  ],
-  "sector4":[
-    0,
-    1,
-    "#",
-    "o"
-  ],
-  "sector5":[
-    0.2,
-    1.5,
-    "Y",
-    "Y"
-  ],
-  "sector6": [
-    -1.5,
-    1.2,
-    "Y",
-    "#"
-  ]
-}
-
-testmap = {
-  map: map,
-  sectorMeta: sectorMeta,
-  fPlayerX: 7.5,
-  fPlayerY: 3.2,
-  fPlayerA: 2.8,
-  fPlayerH: 0,
-  fDepth: 30,
-  startingSector: 'sector3',
-  sprites: {
-    "1": {
-      "x": 2,
-      "y": 3,
-      "h": 0.8,
-      "r": 2.0,
-      "s": "sector1",
-      "name": "O",
-    },
-    // "3": {
-    //   "x": 5.5,
-    //   "y": 12.5,
-    //   "h": -1.5,
-    //   "r": 0.0,
-    //   "name": "O",
-    // },
-    "2": {
-      "x": 6,
-      "y": 4,
-      "r": -0.2,
-      "h": 0,
-      "s": "sector3",
-      "name": "P",
-    },
-    "4": {
-      "x": 9.5,
-      "y": 11.4,
-      "r": 2.0,
-      "h": -1.5,
-      "name": "baby",
-    },
-  },
-};
-
-
 // Line with two points on the grid system
 // a: x=4 y=2
 // b: x=5 y=4
@@ -298,38 +32,70 @@ testline = [
 ]
 
 
-
-
 var gameEngineJS = (function () {
   
-
   /**
    * Loads
    */
-  var _loadLevel = function () {
+  function _loadLevel (level) {
     clearInterval(gameRun);
 
-    // updates the level map, dimensions and textures
-    oMap = testmap.map;
-    fDepth = testmap.fDepth || fDepth;
-    sPlayerSector = testmap.startingSector || startingSector;
-    sLastKnownSector = sPlayerSector;
-    _moveHelpers.setNewPlayerHeight( sectorMeta[sPlayerSector] );
+    sLevelstring = level.replace(".map", ""); // sets global string
 
-    // load sprites
-    oLevelSprites = testmap.sprites;
+    var loadScriptAsync = function (uri, sLevelstring) {
+      return new Promise(function (resolve, reject) {
+        var tag = document.createElement("script");
+        tag.src = "assets/" + uri;
+        tag.id = sLevelstring;
+        tag.async = true;
 
-    // places the player at the map starting point
-    fPlayerX = testmap.fPlayerX;
-    fPlayerY = testmap.fPlayerY;
-    fPlayerA = testmap.fPlayerA;
-    fPlayerH = testmap.fPlayerH;
+        tag.onload = function () {
+          resolve();
+        };
 
-    main();
+        document.getElementById("map").src = "assets/" + level;
+        var firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      });
+    };
+
+    var levelLoaded = loadScriptAsync(level, sLevelstring);
+
+    levelLoaded.then(function () {
+
+      console.log( window[sLevelstring] )
+
+      // updates the level map, dimensions and textures
+      oLevel = window[sLevelstring];
+      oMap = oLevel.map;
+      fDepth = oLevel.fDepth || fDepth;
+      sPlayerSector = oLevel.startingSector || startingSector;
+      sLastKnownSector = sPlayerSector;
+      
+      // load sprites
+      oLevelSprites = oLevel.sprites;
+      
+      // places the player at the map starting point
+      fPlayerX = oLevel.fPlayerX;
+      fPlayerY = oLevel.fPlayerY;
+      fPlayerA = oLevel.fPlayerA;
+      fPlayerH = oLevel.fPlayerH;
+
+      _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+      main();
+
+    });
+
+
+    // // pauses, then starts the game loop
+    // _testScreenSizeAndStartTheGame();
+    // window.addEventListener("resize", function () {
+    //   clearInterval(gameRun);
+    //   _testScreenSizeAndStartTheGame();
+    // });
   };
-
-
-
+  
 
   // TODO:
   function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
@@ -434,25 +200,19 @@ var gameEngineJS = (function () {
       visitedSectors[currentSector] = true;
 
       // the actual sector object from the level file
-      var sectorWalls = oMap[currentSector]; 
+      var sectorWalls = oMap[currentSector].walls; 
+
 
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
       var sSectorFloorTexture = "Y";
       var sSectorCeilingTexture = "a";
 
-      // per-sector overrides for floor and ceiling heights
-      if(typeof sectorMeta[currentSector] !== 'undefined'){
-        sectorFloorFactor = sectorMeta[currentSector][0]
-        sectorCeilingFactor = sectorMeta[currentSector][1]
-
-        if(typeof sectorMeta[currentSector][2] !== 'undefined'){
-          sSectorFloorTexture = sectorMeta[currentSector][2];
-        }
-        if(typeof sectorMeta[currentSector][3] !== 'undefined'){
-          sSectorCeilingTexture = sectorMeta[currentSector][3];
-        }
-      }
+      // per-sector settings for floors and ceilings
+      sectorFloorFactor = oLevel.map[currentSector].floor
+      sectorCeilingFactor = oLevel.map[currentSector].ceil
+      sSectorFloorTexture = oLevel.map[currentSector].floorTex;
+      sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -468,8 +228,8 @@ var gameEngineJS = (function () {
         var intersection = intersectionPoint(
           { x: fPlayerX, y: fPlayerY },
           { x: fPlayerEndX, y: fPlayerEndY },
-          { x: currentWall[0][0], y: currentWall[0][1] },
-          { x: currentWall[1][0], y: currentWall[1][1] }
+          { x: currentWall[0], y: currentWall[1] },
+          { x: currentWall[2], y: currentWall[3] }
         );
 
         // If there is an intersection, update fDistanceToWall
@@ -490,21 +250,15 @@ var gameEngineJS = (function () {
           }
 
           // Wall Type (texture)
-          if(currentWall[3] != false){
-            sWallType = currentWall[3];
-          }
-
+          sWallType = currentWall[4];
+          // sWallType = "U";
           // Wall X-Sample Scale Override
-          if(typeof currentWall[4] !== 'undefined' && currentWall[4]){
-            fSampleXScale = currentWall[4];
-          }
+          fSampleXScale = currentWall[5];
           // Wall Y-Sample Scale Override
-          if(typeof currentWall[5] !== 'undefined' && currentWall[5]){
-            fSampleYScale = currentWall[5];
-          }
+          fSampleYScale = currentWall[6];
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
-          wallSamplePosition = texSampleLerp( currentWall[0][0],currentWall[0][1],  currentWall[1][0] ,currentWall[1][1], intersection.x, intersection.y );
+          wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
@@ -515,11 +269,11 @@ var gameEngineJS = (function () {
           
           
           // PORTAL FOUND
-          // if the current sector we are looking at has a portal (currentwall[2] !== false)
+          // if the current sector we are looking at has a portal (currentwall[7] !== false)
           // instead of drawing that wall, draw the sector behind the portal where the wall would have been
-          if(currentWall[2] != false){
-            // sWallDirection = "X";
-            nextSector = currentWall[2];
+          if(currentWall[7] != false){
+
+            nextSector = currentWall[7];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
@@ -528,10 +282,11 @@ var gameEngineJS = (function () {
               var nNextSectorCeiling = nCeiling;
               var nNextSectorFloor = nFloor;
 
-              if(typeof sectorMeta[nextSector] !== 'undefined'){
+              if(typeof oMap[nextSector] !== 'undefined'){
 
-                nextSectorFloorFactor = sectorMeta[nextSector][0];
-                nextSectorCeilingFactor = sectorMeta[nextSector][1];
+                nextSectorFloorFactor = oMap[nextSector].floor;
+                nextSectorCeilingFactor = oMap[nextSector].ceil;
+
 
                 // only recalculate if the next sector floor is higher than the previous
                 // See also note above about floor and ceiling heights in level data
@@ -736,7 +491,7 @@ var gameEngineJS = (function () {
     _moveHelpers.touchinit();
 
     // initial gameload
-    _loadLevel();
+    _loadLevel("_testmap.map");
   };
 
   return {
