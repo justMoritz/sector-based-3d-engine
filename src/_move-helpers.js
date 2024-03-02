@@ -22,8 +22,8 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
-    console.log(sectorName)
-    // console.log(oMap[sectorName])
+    // console.log(sectorName)
+    // console.log(oMap[sectorName].walls)
     var allCurrentWalls = oMap[sectorName].walls;
     var nWallsHit = 0;
 
@@ -56,8 +56,8 @@ var _moveHelpers = {
   playerSectorCheck: function () {
     
     // Check for player in last known sector
-    console.log(`last know ${sLastKnownSector}`);
     if( _moveHelpers.testEntityInSector( sLastKnownSector, fPlayerX, fPlayerY ) ){
+      console.log(`play in LAST KNOW sector ${sLastKnownSector}`);
       return;
     }
     
@@ -65,7 +65,7 @@ var _moveHelpers = {
     var lastKnownSectorMap = oMap[sLastKnownSector].walls;
     for (var l = 0; l < lastKnownSectorMap.length; l++) {
       var connectingSector = lastKnownSectorMap[l][7];
-      console.log(`checkign connecting sector ${connectingSector}`);
+      // console.log(`checkign connecting sector ${connectingSector}`);
       if (connectingSector && _moveHelpers.testEntityInSector( connectingSector, fPlayerX, fPlayerY )) {
         console.log(`Player sector ${connectingSector} found via CONNECTING SEARCH`);
         // set new global sector and player height

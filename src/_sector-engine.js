@@ -368,52 +368,52 @@ var gameEngineJS = (function () {
     // });
   };
   
-  var _loadLevel2 = function (level) {
-    clearInterval(gameRun);
+  // var _loadLevel2 = function (level) {
+  //   clearInterval(gameRun);
 
 
-    // var filePath = '/assets/'+level;
+  //   // var filePath = '/assets/'+level;
 
-    // // Fetch JSON data from file
-    // fetch(filePath)
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(jsonData => {
-    //     console.log(jsonData);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching JSON data:', error);
-    //   });
+  //   // // Fetch JSON data from file
+  //   // fetch(filePath)
+  //   //   .then(response => {
+  //   //     if (!response.ok) {
+  //   //       throw new Error('Network response was not ok');
+  //   //     }
+  //   //     return response.json();
+  //   //   })
+  //   //   .then(jsonData => {
+  //   //     console.log(jsonData);
+  //   //   })
+  //   //   .catch(error => {
+  //   //     console.error('Error fetching JSON data:', error);
+  //   //   });
 
     
 
-    // sLevelstring = level.replace(".map", ""); // sets global string
+  //   // sLevelstring = level.replace(".map", ""); // sets global string
     
-    // oLevelObject = JSON.parse(level)
+  //   // oLevelObject = JSON.parse(level)
 
-    // updates the level map, dimensions and textures
-    oMap = window[sLevelstring].map;
-    fDepth = window[sLevelstring].fDepth || fDepth;
-    sPlayerSector = window[sLevelstring].startingSector || startingSector;
-    sLastKnownSector = sPlayerSector;
+  //   // updates the level map, dimensions and textures
+  //   oMap = window[sLevelstring].map;
+  //   fDepth = window[sLevelstring].fDepth || fDepth;
+  //   sPlayerSector = window[sLevelstring].startingSector || startingSector;
+  //   sLastKnownSector = sPlayerSector;
     
-    // load sprites
-    oLevelSprites = testmap.sprites;
+  //   // load sprites
+  //   oLevelSprites = testmap.sprites;
     
-    // places the player at the map starting point
-    fPlayerX = window[sLevelstring].fPlayerX;
-    fPlayerY = window[sLevelstring].fPlayerY;
-    fPlayerA = window[sLevelstring].fPlayerA;
-    fPlayerH = window[sLevelstring].fPlayerH;
+  //   // places the player at the map starting point
+  //   fPlayerX = window[sLevelstring].fPlayerX;
+  //   fPlayerY = window[sLevelstring].fPlayerY;
+  //   fPlayerA = window[sLevelstring].fPlayerA;
+  //   fPlayerH = window[sLevelstring].fPlayerH;
 
-    _moveHelpers.setNewPlayerHeight(  oMap.map[sPlayerSector] );
+  //   _moveHelpers.setNewPlayerHeight(  oMap.map[sPlayerSector] );
 
-    main();
-  };
+  //   main();
+  // };
 
 
 
@@ -708,7 +708,7 @@ var gameEngineJS = (function () {
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
       // but it could have missed the player in especially small sectors
       if( gameTimer % 33 === 0 ){
-        // _moveHelpers.playerSectorCheck();
+        _moveHelpers.playerSectorCheck();
         // _debugOutput(debugWrite)
         gameTimer= 0;
       }
