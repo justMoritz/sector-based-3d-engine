@@ -590,7 +590,7 @@ var gameEngineJS = (function () {
           
           
           // PORTAL FOUND
-          // if the current sector we are looking at has a portal (currentwall[2] !== false)
+          // if the current sector we are looking at has a portal (currentwall[7] !== false)
           // instead of drawing that wall, draw the sector behind the portal where the wall would have been
           if(currentWall[7] != false){
 
@@ -603,10 +603,11 @@ var gameEngineJS = (function () {
               var nNextSectorCeiling = nCeiling;
               var nNextSectorFloor = nFloor;
 
-              if(typeof oMap.map[nextSector] !== 'undefined'){
+              if(typeof oMap[nextSector] !== 'undefined'){
 
-                nextSectorFloorFactor = oMap.map[nextSector].floor;
-                nextSectorCeilingFactor = oMap.map[nextSector].ceil;
+                nextSectorFloorFactor = oMap[nextSector].floor;
+                nextSectorCeilingFactor = oMap[nextSector].ceil;
+
 
                 // only recalculate if the next sector floor is higher than the previous
                 // See also note above about floor and ceiling heights in level data
