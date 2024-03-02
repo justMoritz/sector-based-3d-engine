@@ -533,7 +533,7 @@ var _skipEveryXrow = function (input) {
       return 3;
       break;
     case -16:
-      return 2;
+      return 3;
       break;
     default:
       return 0;

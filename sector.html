@@ -35,17 +35,20 @@
     #display {
       display: inline-block;
       pointer-events: none;
+      /* display: none; */
     }
 
 
     #seconddisplay {
       position: absolute;
+      /* top: 20%; */
       transform: scale(2, 4);
-      transform-origin: left;
+      top: 5%;
+      /* transform: scale(2, 2); */
       /* width: 80%; */
       /* height: auto; */
+      transform-origin: top left;
       left: 0;
-      top: 20%;
       color: lightgreen;
       image-rendering: pixelated;
       /* image-rendering: -moz-crisp-edges;
@@ -61,6 +64,7 @@
       position: absolute;
       top: 0;
       width: 50%;
+      height: 100vh;
       touch-action: pan-left, pan-right, pan-up, pan-down;
     }
 
@@ -103,6 +107,8 @@
       position: absolute;
       top: 0;
       left: 0;
+      transform: scale(0.7);
+      transform-origin: top left;
     }
   </style>
 </head>
@@ -132,9 +138,9 @@
     <button id="shader">Shaded Texture</button> -->
 
   <br><br>
-  <a href="https://github.com/justMoritz/3d-game-engine" target="_blank" style="color: white;">GitHub repo</a>
+  <a href="https://github.com/justMoritz/sector-based-3d-engine" target="_blank" style="color: white;">GitHub repo</a>
   <br>
-  2020-2021 by Moritz Zimmer
+  2020-2024 by Moritz Zimmer
 
   <script>
     gameEngineJS.init();

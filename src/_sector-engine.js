@@ -2,28 +2,8 @@
  * SECTOR ENGINE
  */
 
-
-
-
-// sectors
-// 
-
-
-
-/**
- * Sector Markup
- * 
- * (required) wall start x/y     [float, float]
- * (required) wall end x/y       [float, float]
- * (required) portal to sector   string or false
- * (required) wall textures      string
- *            x-sample scale     float
- *            Y-sample scale     float
- * 
- */
-
-
 // Line with two points on the grid system
+// Not used, just still nostalig :,)
 // a: x=4 y=2
 // b: x=5 y=4
 testline = [
@@ -381,7 +361,7 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      // _updateSpriteBuffer();
+      if(bDrawSrpites) _updateSpriteBuffer();
 
       // about every second or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
@@ -435,39 +415,26 @@ var gameEngineJS = (function () {
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
-        // _drawSpritesNew(i);
+        if(bDrawSrpites) _drawSpritesNew(i);
 
 
       } // end column loop
 
-
-      if (bDrawRGB) {
-        _fDrawFrameRGB(screen);
-      }
       
       if (!bDrawRGB && bUseSkew) {
         _fDrawFrameWithSkew(screen);
       }else if(!bDrawRGB){
         _fDrawFrame(screen); 
       }  
-    
+      else if (bDrawRGB) {
+        _fDrawFrameRGB(screen);
+      }
 
     }
   };
 
 
   var init = function (input) {
-
-    if (bDrawRGB){
-      nScreenWidth = 320;
-      nScreenHeight = 100;
-    }
-
-    if (bUseSkew){
-      nScreenWidth = 768;
-      nScreenHeight = 210;
-      nLookLimit = 8;
-    }
 
     // prep document
     eScreen = document.getElementById("display");

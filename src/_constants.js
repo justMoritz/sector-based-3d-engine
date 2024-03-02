@@ -25,8 +25,8 @@ var eCanvas;
 var cCtx;
 var eDebugOut;
 
-var nScreenWidth = 640;
-var nScreenHeight = 200;
+var nScreenWidth = 480;
+var nScreenHeight = 160;
 
 var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
 var fFOV_div2 = fFOV / 2;
@@ -36,6 +36,21 @@ var nLookLimit = 10;
 
 var bUseSkew = false;
 var bDrawRGB = false;
+var bDrawSrpites = true;
+
+
+if (bDrawRGB){
+    nScreenWidth = 320;
+    nScreenHeight = 110;
+}
+if (bUseSkew){
+    nScreenWidth = 576;
+    nScreenHeight = 160;
+    nLookLimit = 8;
+    var fFOV = PI___ / 2.25;
+    var fFOV_div2 = fFOV / 2;
+}
+
 
 var bTurnLeft;
 var bTurnRight;
