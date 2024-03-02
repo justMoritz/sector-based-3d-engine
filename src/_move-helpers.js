@@ -71,7 +71,7 @@ var _moveHelpers = {
         return;
       }
     }
-    
+     
     // else check for player in all sectors via linear search in level data
     for (let sector in oMap) {
       if(sector != 0){
