@@ -23,272 +23,6 @@
  */
 
 
-map = {
-  "sector1": [
-    [
-      [4,2], 
-      [5,4], 
-      "sector2",
-      "#",
-    ],     
-    [
-      [5,4],
-      [2,5],
-      false,
-      "$"
-    ],     
-    [
-      [2, 5],
-      [0.5, 4], 
-      false,
-      "Y"
-    ],     
-    [
-      [0.5, 4],
-      [0.2, 0.2],
-      false,
-      "T",
-      10,
-      4
-    ],     
-    [
-      [0.2, 0.2],
-      [4, 2],
-      false,
-      "#",
-      6
-    ]
-  ],
-  "sector2" : [
-    [
-      [4,2],
-      [5,4],
-      "sector1",
-      "#",
-    ],     
-    [
-      [4,2],
-      [6,1],
-      false,
-      "o"
-    ],     
-    [
-      [6, 1],
-      [7, 2.1],
-      false,
-      "o"
-    ],     
-    [
-      [7, 2.1],
-      [5, 4],
-      "sector3",
-      "Y"
-    ]     
-  ],
-  "sector3" : [
-    [
-      [7, 2.1],
-      [5, 4], 
-      "sector2",
-      "o"
-    ],     
-    [
-      [7,2.1],
-      [8,4],
-      false,
-      "#"
-    ],     
-    [
-      [8, 4],
-      [6, 6],
-      false,
-      "#"
-    ],     
-    [
-      [6, 6],
-      [4.5, 5],
-      "sector4",
-      "#"
-    ],     
-    [
-      [4.5, 5],
-      [5, 4],
-      false,
-      "#",
-      1
-    ]     
-  ],
-  "sector4" : [
-    [
-      [6, 6],
-      [4.5, 5],
-      "sector3",
-      "#"
-    ],     
-    [
-      [6, 6],
-      [6, 10],
-      false,
-      "Y"
-    ],     
-    [
-      [6, 10],
-      [4.5, 10],
-      "sector5",
-      "o"
-    ],     
-    [
-      [4.5, 10],
-      [4.5, 5],
-      false,
-      "o",
-      8
-    ]        
-  ],
-  "sector5" : [
-    [
-      [4.5, 10],
-      [6, 10],
-      "sector4",
-      "#"
-    ],     
-    [
-      [4.5, 10],
-      [4.5, 14],
-      false,
-      "Y"
-    ],     
-    [
-      [4.5, 14],
-      [6, 14],
-      false,
-      "o"
-    ],     
-    [
-      [6, 14],
-      [6, 10],
-      "sector6",
-      "o"
-    ]        
-  ],
-  "sector6" : [
-    [
-      [6, 14],
-      [6, 10],
-      "sector5",
-      "#"
-    ],     
-    [
-      [6, 10],
-      [15, 11],
-      false,
-      "Y",
-      8
-    ],     
-    [
-      [15, 11],
-      [15, 14],
-      false,
-      "o"
-    ],     
-    [
-      [15, 14],
-      [6, 14],
-      false,
-      "o",
-      8
-    ]        
-  ],
-}
-
-// New approach:
-// Standard Floor Height: 0
-// Standard Ceiling Height: 1
-// up and down from there :)
-// of the reference of each
-// sectorMeta = {
-//   "sector1" : [
-//     0.8, // Floor Height
-//     2,   // Ceiling Height
-//     "#", // floor texture
-//     "bg", // ceiling texture
-//   ],
-//   "sector2" : [
-//     0.4, 
-//     2, 
-//     "Y",
-//     "T"
-//   ],
-//   "sector3" : [
-//     0, 
-//     1.5, 
-//     "Y",
-//     "#"
-//   ],
-//   "sector4":[
-//     0,
-//     1,
-//     "#",
-//     "o"
-//   ],
-//   "sector5":[
-//     0.2,
-//     1.5,
-//     "Y",
-//     "Y"
-//   ],
-//   "sector6": [
-//     -1.5,
-//     1.2,
-//     "Y",
-//     "#"
-//   ]
-// }
-
-testmap = {
-  map: map,
-  // sectorMeta: sectorMeta,
-  fPlayerX: 7.5,
-  fPlayerY: 3.2,
-  fPlayerA: 2.8,
-  fPlayerH: 0,
-  fDepth: 30,
-  startingSector: 'sector3',
-  sprites: {
-    "1": {
-      "x": 2,
-      "y": 3,
-      "h": 0.8,
-      "r": 2.0,
-      "s": "sector1",
-      "name": "O",
-    },
-    // "3": {
-    //   "x": 5.5,
-    //   "y": 12.5,
-    //   "h": -1.5,
-    //   "r": 0.0,
-    //   "name": "O",
-    // },
-    "2": {
-      "x": 6,
-      "y": 4,
-      "r": -0.2,
-      "h": 0,
-      "s": "sector3",
-      "name": "P",
-    },
-    "4": {
-      "x": 9.5,
-      "y": 11.4,
-      "r": 2.0,
-      "h": -1.5,
-      "name": "baby",
-    },
-  },
-};
-
-
 // Line with two points on the grid system
 // a: x=4 y=2
 // b: x=5 y=4
@@ -298,16 +32,11 @@ testline = [
 ]
 
 
-
-
 var gameEngineJS = (function () {
   
-
   /**
    * Loads
    */
-
-
   function _loadLevel (level) {
     clearInterval(gameRun);
 
@@ -344,7 +73,7 @@ var gameEngineJS = (function () {
       sLastKnownSector = sPlayerSector;
       
       // load sprites
-      oLevelSprites = testmap.sprites;
+      oLevelSprites = oLevel.sprites;
       
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
@@ -358,7 +87,6 @@ var gameEngineJS = (function () {
 
     });
 
-    // main();
 
     // // pauses, then starts the game loop
     // _testScreenSizeAndStartTheGame();
@@ -368,55 +96,6 @@ var gameEngineJS = (function () {
     // });
   };
   
-  // var _loadLevel2 = function (level) {
-  //   clearInterval(gameRun);
-
-
-  //   // var filePath = '/assets/'+level;
-
-  //   // // Fetch JSON data from file
-  //   // fetch(filePath)
-  //   //   .then(response => {
-  //   //     if (!response.ok) {
-  //   //       throw new Error('Network response was not ok');
-  //   //     }
-  //   //     return response.json();
-  //   //   })
-  //   //   .then(jsonData => {
-  //   //     console.log(jsonData);
-  //   //   })
-  //   //   .catch(error => {
-  //   //     console.error('Error fetching JSON data:', error);
-  //   //   });
-
-    
-
-  //   // sLevelstring = level.replace(".map", ""); // sets global string
-    
-  //   // oLevelObject = JSON.parse(level)
-
-  //   // updates the level map, dimensions and textures
-  //   oMap = window[sLevelstring].map;
-  //   fDepth = window[sLevelstring].fDepth || fDepth;
-  //   sPlayerSector = window[sLevelstring].startingSector || startingSector;
-  //   sLastKnownSector = sPlayerSector;
-    
-  //   // load sprites
-  //   oLevelSprites = testmap.sprites;
-    
-  //   // places the player at the map starting point
-  //   fPlayerX = window[sLevelstring].fPlayerX;
-  //   fPlayerY = window[sLevelstring].fPlayerY;
-  //   fPlayerA = window[sLevelstring].fPlayerA;
-  //   fPlayerH = window[sLevelstring].fPlayerH;
-
-  //   _moveHelpers.setNewPlayerHeight(  oMap.map[sPlayerSector] );
-
-  //   main();
-  // };
-
-
-
 
   // TODO:
   function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){

@@ -77,19 +77,18 @@ var _moveHelpers = {
     }
     
     // else check for player in all sectors via linear search in level data
-    // for (let sector in oMap) {
-    // for (let sector in oMap) {
-    //   if(sector != 0){
-    //     if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
-    //       console.log(`player in ${sector} found via LINEAR SEARCH`);
-    //       // set new global sector and player height
-    //       sPlayerSector = sector;
-    //       sLastKnownSector = sPlayerSector;
-    //       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
-    //       return;
-    //     }  
-    //   }
-    // }
+    for (let sector in oMap) {
+      if(sector != 0){
+        if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
+          console.log(`player in ${sector} found via LINEAR SEARCH`);
+          // set new global sector and player height
+          sPlayerSector = sector;
+          sLastKnownSector = sPlayerSector;
+          _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+          return;
+        }  
+      }
+    }
   },
 
   
