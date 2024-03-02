@@ -56,17 +56,18 @@ var _moveHelpers = {
   playerSectorCheck: function () {
     
     // Check for player in last known sector
+    console.log(`last know ${sLastKnownSector}`);
     if( _moveHelpers.testEntityInSector( sLastKnownSector, fPlayerX, fPlayerY ) ){
       return;
     }
     
     // checking for player in connecting sectors to last known sector
-    var lastKnownSectorMap = oMap[sLastKnownSector];
+    var lastKnownSectorMap = oMap[sLastKnownSector].walls;
     for (var l = 0; l < lastKnownSectorMap.length; l++) {
       var connectingSector = lastKnownSectorMap[l][7];
-      console.log(connectingSector);
+      console.log(`checkign connecting sector ${connectingSector}`);
       if (connectingSector && _moveHelpers.testEntityInSector( connectingSector, fPlayerX, fPlayerY )) {
-        console.log(`Player in connecting sector ${connectingSector}`);
+        console.log(`Player sector ${connectingSector} found via CONNECTING SEARCH`);
         // set new global sector and player height
         sPlayerSector = connectingSector;
         sLastKnownSector = sPlayerSector;
@@ -77,19 +78,18 @@ var _moveHelpers = {
     
     // else check for player in all sectors via linear search in level data
     // for (let sector in oMap) {
-    for (let sector in oMap) {
-      if(sector !== 0){
-      
-        if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
-          console.log(`player in ${sector} found via linear search`);
-          // set new global sector and player height
-          sPlayerSector = sector;
-          sLastKnownSector = sPlayerSector;
-          _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
-          return;
-        }  
-      }
-    }
+    // for (let sector in oMap) {
+    //   if(sector != 0){
+    //     if ( _moveHelpers.testEntityInSector( sector, fPlayerX, fPlayerY )){
+    //       console.log(`player in ${sector} found via LINEAR SEARCH`);
+    //       // set new global sector and player height
+    //       sPlayerSector = sector;
+    //       sLastKnownSector = sPlayerSector;
+    //       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+    //       return;
+    //     }  
+    //   }
+    // }
   },
 
   
@@ -155,6 +155,7 @@ var _moveHelpers = {
     // look at all walls in the current player sector
     var allCurrentWalls = oMap[sPlayerSector].walls;
 
+
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var fTestDistanceToWall = fDepth;
       var currentWall = allCurrentWalls[w];
@@ -175,7 +176,6 @@ var _moveHelpers = {
           // if this wall we are hitting is considered a portal
           if(currentWall[7] != false){
             var collisionSector = currentWall[7];
-
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
             if( fPlayerH - (oLevel.map[collisionSector].floor) < -1 ){

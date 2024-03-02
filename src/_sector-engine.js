@@ -206,48 +206,48 @@ map = {
 // Standard Ceiling Height: 1
 // up and down from there :)
 // of the reference of each
-sectorMeta = {
-  "sector1" : [
-    0.8, // Floor Height
-    2,   // Ceiling Height
-    "#", // floor texture
-    "bg", // ceiling texture
-  ],
-  "sector2" : [
-    0.4, 
-    2, 
-    "Y",
-    "T"
-  ],
-  "sector3" : [
-    0, 
-    1.5, 
-    "Y",
-    "#"
-  ],
-  "sector4":[
-    0,
-    1,
-    "#",
-    "o"
-  ],
-  "sector5":[
-    0.2,
-    1.5,
-    "Y",
-    "Y"
-  ],
-  "sector6": [
-    -1.5,
-    1.2,
-    "Y",
-    "#"
-  ]
-}
+// sectorMeta = {
+//   "sector1" : [
+//     0.8, // Floor Height
+//     2,   // Ceiling Height
+//     "#", // floor texture
+//     "bg", // ceiling texture
+//   ],
+//   "sector2" : [
+//     0.4, 
+//     2, 
+//     "Y",
+//     "T"
+//   ],
+//   "sector3" : [
+//     0, 
+//     1.5, 
+//     "Y",
+//     "#"
+//   ],
+//   "sector4":[
+//     0,
+//     1,
+//     "#",
+//     "o"
+//   ],
+//   "sector5":[
+//     0.2,
+//     1.5,
+//     "Y",
+//     "Y"
+//   ],
+//   "sector6": [
+//     -1.5,
+//     1.2,
+//     "Y",
+//     "#"
+//   ]
+// }
 
 testmap = {
   map: map,
-  sectorMeta: sectorMeta,
+  // sectorMeta: sectorMeta,
   fPlayerX: 7.5,
   fPlayerY: 3.2,
   fPlayerA: 2.8,
@@ -572,7 +572,7 @@ var gameEngineJS = (function () {
 
           // Wall Type (texture)
           sWallType = currentWall[4];
-          sWallType = "U";
+          // sWallType = "U";
           // Wall X-Sample Scale Override
           fSampleXScale = currentWall[5];
           // Wall Y-Sample Scale Override
@@ -707,7 +707,7 @@ var gameEngineJS = (function () {
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
       // but it could have missed the player in especially small sectors
       if( gameTimer % 33 === 0 ){
-        _moveHelpers.playerSectorCheck();
+        // _moveHelpers.playerSectorCheck();
         // _debugOutput(debugWrite)
         gameTimer= 0;
       }
