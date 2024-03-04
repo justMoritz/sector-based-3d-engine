@@ -17,4 +17,5 @@ let isDragging = false;
 let lastX = 0;
 let lastY = 0;
 let vertices = []; // Array to store vertices
+let gDraggedPoint;
 

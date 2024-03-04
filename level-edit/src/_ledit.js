@@ -1,45 +1,107 @@
 var ledit = (function(){
 
-
-  // Handles all functionality related to mouseclicks on the cancas
-  handleMouseClick = function (event) {
-    /**
-     * 
-     * Draw Mode
-     * 
-     */
+  handleMouseInteraction = function (event) {
     if (appMode === "draw") {
-      const clickX = (event.clientX - offsetX) / scale;
-      const clickY = (event.clientY - offsetY) / scale;
-
-      console.log(vertices);
-      // Add new vertex
-      vertices.push({ x: clickX, y: clickY });
-      _lhelpers.drawGrid();
+      handleDrawMode(event);
+    } else if (appMode === "add") {
+      handleAddMode(event);
+    } else if (appMode === "edit") {
+      handleEditMode(event);
     }
-    /**
-     * 
-     * Edit Mode
-     * 
-     */
-    else if (appMode === "add") {
-      const clickX = (event.clientX - offsetX) / scale;
-      const clickY = (event.clientY - offsetY) / scale;
+  }
 
-      // Check if clicked on a line segment between vertices
-      for (let i = 0; i < vertices.length - 1; i++) {
-        const vertex1 = vertices[i];
-        const vertex2 = vertices[i + 1];
-        const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, vertex1, vertex2);
-        if (distanceToLine <= 3) {
-          // Insert new vertex between vertex1 and vertex2
-          vertices.splice(i + 1, 0, { x: clickX, y: clickY });
-          _lhelpers.drawGrid();
-          return;
-        }
+
+  /**
+   * 
+   * Add Mode
+   * 
+   */
+  handleAddMode = function () {
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
+
+    // Check if clicked on a line segment between vertices
+    for (let i = 0; i < vertices.length - 1; i++) {
+      const vertex1 = vertices[i];
+      const vertex2 = vertices[i + 1];
+      const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, vertex1, vertex2);
+      if (distanceToLine <= 3) {
+        // Insert new vertex between vertex1 and vertex2
+        vertices.splice(i + 1, 0, { x: clickX, y: clickY });
+
+        console.log(vertices);
+        _lhelpers.drawGrid();
+        return;
       }
     }
   }
+
+
+  /**
+   * 
+   * Draw Mode
+   * 
+   */
+  handleDrawMode = function(){
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
+
+    console.log(vertices);
+    // Add new vertex
+    vertices.push({ x: clickX, y: clickY });
+    _lhelpers.drawGrid();
+  }
+
+
+
+
+  /**
+   * 
+   * Edit Mode
+   * 
+   */
+  function handleEditMode(event) {
+
+    const mouseX = (event.clientX - offsetX) / scale;
+    const mouseY = (event.clientY - offsetY) / scale;
+
+    if( !isDragging ){
+      gDraggedPoint = null;
+    }
+    
+    // Check if the mouse is over any point
+    let clickedPoint = null;
+
+    for (const point of vertices) {
+      const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
+      if (distance <= 3) {
+        clickedPoint = point;
+        break;
+      }
+    }
+
+    console.log(clickedPoint);
+    // if(isDragging){
+
+      if (clickedPoint) {
+        isDragging = true;
+        // Start dragging the clicked point
+        gDraggedPoint = clickedPoint;
+        dragOffsetX = mouseX - clickedPoint.x;
+        dragOffsetY = mouseY - clickedPoint.y;
+        _lhelpers.drawGrid();
+      }
+
+    
+      // Continue dragging
+      gDraggedPoint.x = mouseX - dragOffsetX;
+      gDraggedPoint.y = mouseY - dragOffsetY;
+      _lhelpers.drawGrid();
+
+  
+  }
+
+
 
 
   var init = function(){
@@ -51,12 +113,11 @@ var ledit = (function(){
     gridCanvas.height = window.innerHeight;
 
     // sets up buttons
-    allLSBbuttons = document.querySelectorAll('.left-sidebar__button')
+    allLSBbuttons = document.querySelectorAll('.left-sidebar__button');
 
 
     // Attach event listeners
     window.addEventListener('wheel', _lhelpers.handleScroll, { passive: false });
-    gridCanvas.addEventListener('click', handleMouseClick);
 
     // Redraw grid when window is resized
     window.addEventListener('resize', _lhelpers.drawGrid);
@@ -86,6 +147,33 @@ var ledit = (function(){
         document.querySelector('[data-mode="edit"]').click();
       }
     };
+
+
+
+
+    // Attach event listeners for mouse events
+    gridCanvas.addEventListener('mousedown', function (event) {
+      if (appMode === "edit") {
+        // isDragging = true;
+        handleMouseInteraction(event);
+      }else{
+        isDragging = false;
+        handleMouseInteraction(event);
+      }
+    });
+
+    gridCanvas.addEventListener('mousemove', function (event) {
+      if (isDragging && appMode === "edit") {
+        handleMouseInteraction(event);
+      }
+    });
+
+    gridCanvas.addEventListener('mouseup', function () {
+      console.log('mouseUP');
+      isDragging = false;
+    });
+
+
 
     // Initial draw
     _lhelpers.drawGrid();
