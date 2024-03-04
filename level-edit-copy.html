@@ -12,42 +12,10 @@
             overflow: hidden;
         }
 
-        #gridCanvas {
+        canvas {
             display: block;
             background-color: #f0f0f0;
         }
-
-        .left-sidebar{
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: white;
-            width: auto;
-            height: 100%;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.15);
-        }
-
-        button{
-            line-height: 1.75rem;
-            border: 1px solid black;
-            background: white;
-            border-radius: 0.5rem;
-            box-shadow: -2px -2px 1px 0px inset rgba(0,0,0,0.15);
-        }
-
-        .left-sidebar__button{
-            display: block;
-            width: 2rem;
-            margin: 0.5rem;
-        }
-
-        button:active,
-        button.active{
-            background-color: #eee;
-            box-shadow: 0px 0px 3px 2px inset rgba(0,0,0,0.25);
-            font-weight: bold;
-        }
-
     </style>
 </head>
 
@@ -55,24 +23,13 @@
     <canvas id="gridCanvas"></canvas>
     <div id="coordinates"></div>
 
-    <div class="left-sidebar">
-        <button data-mode="edit" class="left-sidebar__button">E</button>
-        <button data-mode="draw" class="left-sidebar__button active">D</button>
-    </div>
-
     <script>
-        // App States
-        let appMode = 'draw';
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
 
-        const allLSBbuttons = document.querySelectorAll('.left-sidebar__button')
-
-
-        // Canvas Setup
-        const gridCanvas = document.getElementById('gridCanvas');
-        const ctx = gridCanvas.getContext('2d');
-
-        gridCanvas.width = window.innerWidth;
-        gridCanvas.height = window.innerHeight;
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         // Grid parameters
         const gridSize = 25; // Size of grid squares
@@ -91,11 +48,11 @@
 
         // Draw grid
         function drawGrid() {
-            ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Calculate visible grid range
-            const visibleWidth = gridCanvas.width / scale;
-            const visibleHeight = gridCanvas.height / scale;
+            const visibleWidth = canvas.width / scale;
+            const visibleHeight = canvas.height / scale;
             const startX = -offsetX / scale;
             const startY = -offsetY / scale;
             const endX = startX + visibleWidth;
@@ -138,24 +95,18 @@
                 ctx.beginPath();
                 ctx.arc(vertex.x, vertex.y, 3, 0, Math.PI * 2);
                 ctx.fill();
-                
-                // Print coordinates
-                ctx.font = '10px Arial';
-                ctx.fillStyle = 'black';
-                ctx.fillText(`(${vertex.x.toFixed(2)}, ${vertex.y.toFixed(2)})`, vertex.x + 5, vertex.y - 5);
             }
 
-            // Draw polygons
+            // Draw lines
             ctx.strokeStyle = 'blue';
             ctx.lineWidth = 2;
-            if (vertices.length > 2) {
-                ctx.beginPath();
-                ctx.moveTo(vertices[0].x, vertices[0].y);
-                for (let i = 1; i < vertices.length; i++) {
-                    ctx.lineTo(vertices[i].x, vertices[i].y);
+            for (let i = 0; i < vertices.length; i += 2) {
+                if (i + 1 < vertices.length) {
+                    ctx.beginPath();
+                    ctx.moveTo(vertices[i].x, vertices[i].y);
+                    ctx.lineTo(vertices[i + 1].x, vertices[i + 1].y);
+                    ctx.stroke();
                 }
-                ctx.closePath(); // Close the path to form a closed polygon
-                ctx.stroke();
             }
 
             // Restore transformations
@@ -177,6 +128,32 @@
             drawGrid();
         }
 
+        // Pan on mouse drag
+        function handleMouseDown(event) {
+            if (event.button === 0) { // Left mouse button
+                isDragging = true;
+                lastX = event.clientX;
+                lastY = event.clientY;
+            }
+        }
+
+        function handleMouseMove(event) {
+            if (isDragging) {
+                const deltaX = event.clientX - lastX;
+                const deltaY = event.clientY - lastY;
+                lastX = event.clientX;
+                lastY = event.clientY;
+                offsetX += deltaX / scale;
+                offsetY += deltaY / scale;
+                drawGrid();
+            }
+        }
+
+        function handleMouseUp(event) {
+            if (event.button === 0) { // Left mouse button
+                isDragging = false;
+            }
+        }
 
         // Handle click to add vertices or move existing vertices
         function handleMouseClick(event) {
@@ -202,36 +179,13 @@
 
         // Attach event listeners
         window.addEventListener('wheel', handleScroll, { passive: false });
-        gridCanvas.addEventListener('click', handleMouseClick);
+        // window.addEventListener('mousedown', handleMouseDown);
+        // window.addEventListener('mousemove', handleMouseMove);
+        // window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('click', handleMouseClick);
 
         // Redraw grid when window is resized
         window.addEventListener('resize', drawGrid);
-
-
-
-
-        // Switches between modes
-        allLSBbuttons.forEach( (button)=> {
-            button.addEventListener('click', () => {
-                allLSBbuttons.forEach( (buttons)=> { buttons.classList.remove('active'); });
-                button.classList.add('active');
-                const mode = button.dataset.mode;
-                appMode = mode;
-                console.log(`${appMode} mode`);
-            });
-        });
-
-        document.onkeypress = function (e) {
-            e = e || window.event;
-            let keyCode = e.keyCode;
-            // console.log(keyCode);
-            if( keyCode === 100 ){ // letter D
-                document.querySelector('[data-mode="draw"]').click();
-            }
-            else if (keyCode === 101 ){ // letter E
-                document.querySelector('[data-mode="edit"]').click();
-            }
-        };
 
         // Initial draw
         drawGrid();

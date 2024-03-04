@@ -109,7 +109,7 @@ var _testmap = {
         [15, 11, 15, 14, "o", 2, 2, false],     
         [15, 14, 6, 14, "o", 8, 2, false]  
       ],
-      "floor": -1.5,
+      "floor": -1.8,
       "ceil": 1.2,
       "floorTex": "Y",
       "ceilTex": "#"

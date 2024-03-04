@@ -28,7 +28,7 @@ var eDebugOut;
 var nScreenWidth = 480;
 var nScreenHeight = 160;
 
-var fFOV = PI___ / 1.8; // (PI___ / 4.0 originally)
+var fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
 var fFOV_div2 = fFOV / 2;
 // var fFOV = PI___ / 2.14; // (PI___ / 4.0 originally)
 var fDepth = 16.0; // viewport depth
