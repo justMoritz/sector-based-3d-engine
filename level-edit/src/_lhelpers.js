@@ -124,4 +124,25 @@ _lhelpers = {
   },
 
 
+  findClickedPoint: function( clickX, clickY ){
+    let clickedPoint = null;
+
+    for (const point of vertices) {
+      const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
+      if (distance <= 3) {
+        clickedPoint = point;
+        break;
+      }
+    }
+    return clickedPoint;
+  },
+
+
+  removeNthElement: function (array, n) {
+    if (n >= 0 && n < array.length) {
+      array.splice(n, 1);
+    }
+    return array;
+  },
+
 }

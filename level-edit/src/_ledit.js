@@ -7,7 +7,34 @@ var ledit = (function(){
       handleAddMode(event);
     } else if (appMode === "edit") {
       handleEditMode(event);
+    } else if (appMode === "delete") {
+      handleDeleteMode(event);
     }
+  }
+
+
+  /**
+   * 
+   * Delete Mode
+   * 
+   */
+  handleDeleteMode = function () {
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
+    let clickedPoint = _lhelpers.findClickedPoint(clickX, clickY);
+    
+    console.log(vertices);
+
+    for (let p = 0; p < vertices.length; p++) {
+      if( vertices[p] === clickedPoint ){
+        vertices = _lhelpers.removeNthElement(vertices, p);
+      }
+    }
+
+    console.log(vertices);
+    _lhelpers.drawGrid();
+
+
   }
 
 
@@ -22,11 +49,11 @@ var ledit = (function(){
 
     // Check if clicked on a line segment between vertices
     for (let i = 0; i < vertices.length - 1; i++) {
-      const vertex1 = vertices[i];
-      const vertex2 = vertices[i + 1];
-      const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, vertex1, vertex2);
+      const point1 = vertices[i];
+      const point2 = vertices[i + 1];
+      const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, point1, point2);
       if (distanceToLine <= 3) {
-        // Insert new vertex between vertex1 and vertex2
+        // Insert new vertex between point1 and point2
         vertices.splice(i + 1, 0, { x: clickX, y: clickY });
 
         console.log(vertices);
@@ -60,8 +87,7 @@ var ledit = (function(){
    * Edit Mode
    * 
    */
-  function handleEditMode(event) {
-
+  function handleEditMode(event) {    
     const mouseX = (event.clientX - offsetX) / scale;
     const mouseY = (event.clientY - offsetY) / scale;
 
@@ -70,37 +96,22 @@ var ledit = (function(){
     }
     
     // Check if the mouse is over any point
-    let clickedPoint = null;
+    let clickedPoint = _lhelpers.findClickedPoint(mouseX, mouseY);
 
-    for (const point of vertices) {
-      const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
-      if (distance <= 3) {
-        clickedPoint = point;
-        break;
-      }
-    }
-
-    console.log(clickedPoint);
-    // if(isDragging){
-
-      if (clickedPoint) {
-        isDragging = true;
-        // Start dragging the clicked point
-        gDraggedPoint = clickedPoint;
-        dragOffsetX = mouseX - clickedPoint.x;
-        dragOffsetY = mouseY - clickedPoint.y;
-        _lhelpers.drawGrid();
-      }
-
-    
-      // Continue dragging
-      gDraggedPoint.x = mouseX - dragOffsetX;
-      gDraggedPoint.y = mouseY - dragOffsetY;
+    if (clickedPoint) {
+      isDragging = true;
+      // Start dragging the clicked point
+      gDraggedPoint = clickedPoint;
+      dragOffsetX = mouseX - clickedPoint.x;
+      dragOffsetY = mouseY - clickedPoint.y;
       _lhelpers.drawGrid();
-
+    }
   
+    // Continue dragging
+    gDraggedPoint.x = mouseX - dragOffsetX;
+    gDraggedPoint.y = mouseY - dragOffsetY;
+    _lhelpers.drawGrid();
   }
-
 
 
 
@@ -146,6 +157,9 @@ var ledit = (function(){
       else if (keyCode === 101 ){ // letter E
         document.querySelector('[data-mode="edit"]').click();
       }
+      else if (keyCode === 120 ){ // letter X
+        document.querySelector('[data-mode="delete"]').click();
+      }
     };
 
 
@@ -154,7 +168,6 @@ var ledit = (function(){
     // Attach event listeners for mouse events
     gridCanvas.addEventListener('mousedown', function (event) {
       if (appMode === "edit") {
-        // isDragging = true;
         handleMouseInteraction(event);
       }else{
         isDragging = false;
