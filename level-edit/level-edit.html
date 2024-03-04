@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Canvas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #gridCanvas {
+            display: block;
+            background-color: #f0f0f0;
+        }
+
+        .left-sidebar{
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: white;
+            width: auto;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+        }
+
+        button{
+            line-height: 1.75rem;
+            border: 1px solid black;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: -2px -2px 1px 0px inset rgba(0,0,0,0.15);
+        }
+
+        .left-sidebar__button{
+            display: block;
+            width: 2rem;
+            margin: 0.5rem;
+        }
+
+        button:active,
+        button.active{
+            background-color: #eee;
+            box-shadow: 0px 0px 3px 2px inset rgba(0,0,0,0.25);
+            font-weight: bold;
+        }
+
+    </style>
+
+    <script id="lconst" type="text/javascript" src="src/_lconstants.js"></script>
+    <script id="lhelpers" type="text/javascript" src="src/_lhelpers.js"></script>
+    <script id="ledit" type="text/javascript" src="src/_ledit.js"></script>
+</head>
+
+<body>
+    <canvas id="gridCanvas"></canvas>
+    <div id="coordinates"></div>
+
+    <div class="left-sidebar">
+        <button data-mode="edit" title="edit" class="left-sidebar__button">E</button>
+        <button data-mode="draw" title="draw" class="left-sidebar__button active">D</button>
+        <button data-mode="add" title="add" class="left-sidebar__button">A</button>
+    </div>
+
+
+    <script>
+        ledit.init();
+    </script>
+
+</body>
+
+</html>
