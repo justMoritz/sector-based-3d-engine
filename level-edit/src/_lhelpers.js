@@ -173,4 +173,10 @@ _lhelpers = {
     return array;
   },
 
+
+  roundToNearest: function ( number, nearest ){
+    const roundToNearest = nearest || 25;
+    return  Math.ceil(number / roundToNearest) * roundToNearest;
+  }
+
 }

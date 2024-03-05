@@ -50,8 +50,11 @@ var ledit = (function(){
    * 
    */
   handleAddMode = function () {
-    const clickX = (event.clientX - offsetX) / scale;
-    const clickY = (event.clientY - offsetY) / scale;
+    let clickX = (event.clientX - offsetX) / scale;
+    let clickY = (event.clientY - offsetY) / scale;
+
+    // clickX = _lhelpers.roundToNearest(clickX);
+    // clickY = _lhelpers.roundToNearest(clickY);
 
     // Check if clicked on a line segment between vertices
     for (let i = 0; i < mapdata[currentSector].length - 1; i++) {
@@ -60,7 +63,7 @@ var ledit = (function(){
       const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, point1, point2);
       if (distanceToLine <= 3) {
         // Insert new vertex between point1 and point2
-        mapdata[currentSector].splice(i + 1, 0, { x: clickX, y: clickY });
+        mapdata[currentSector].splice(i + 1, 0, { x: _lhelpers.roundToNearest(clickX), y: _lhelpers.roundToNearest(clickY) });
 
         // console.log(mapdata[currentSector]);
         _lhelpers.drawGrid();
@@ -76,8 +79,10 @@ var ledit = (function(){
    * 
    */
   handleDrawMode = function(){
-    const clickX = (event.clientX - offsetX) / scale;
-    const clickY = (event.clientY - offsetY) / scale;
+    let clickX = (event.clientX - offsetX) / scale;
+    let clickY = (event.clientY - offsetY) / scale;
+    clickX = _lhelpers.roundToNearest(clickX)
+    clickY = _lhelpers.roundToNearest(clickY)
 
     // console.log(mapdata[currentSector]);
     // Add new vertex
@@ -110,14 +115,14 @@ var ledit = (function(){
       isDragging = true;
       // Start dragging the clicked point
       gDraggedPoint = clickedPoint;
-      dragOffsetX = mouseX - clickedPoint.x;
-      dragOffsetY = mouseY - clickedPoint.y;
+      dragOffsetX = _lhelpers.roundToNearest(mouseX) - clickedPoint.x;
+      dragOffsetY = _lhelpers.roundToNearest(mouseY) - clickedPoint.y;
       _lhelpers.drawGrid();
     }
   
     // Continue dragging
-    gDraggedPoint.x = mouseX - dragOffsetX;
-    gDraggedPoint.y = mouseY - dragOffsetY;
+    gDraggedPoint.x = _lhelpers.roundToNearest(mouseX) - dragOffsetX;
+    gDraggedPoint.y = _lhelpers.roundToNearest(mouseY) - dragOffsetY;
     _lhelpers.drawGrid();
   }
 
