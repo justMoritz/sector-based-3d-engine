@@ -19,3 +19,19 @@ let lastY = 0;
 let vertices = []; // Array to store vertices
 let gDraggedPoint;
 
+
+
+let leveldata = {};
+
+
+let mapdata = [];
+
+let currentSector;
+let sectorCounter = 1;
+
+
+const sectorSelectorTemplate = 
+`<div data-id="XXX" class="sector-selector">
+    <span class="sector-name">Sector XXX</span> <div data-remove-id="XXX" class="remove-sector"><span> - </span></div>
+</div>`
+

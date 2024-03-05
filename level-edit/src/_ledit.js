@@ -114,6 +114,37 @@ var ledit = (function(){
   }
 
 
+  var handleAddNewSector = function () {
+    console.log(sectorCounter);
+    let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), sectorCounter);
+    selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
+    sectorCounter++
+  };
+
+
+  var handleRemoveSector = function (event) {
+    let reshuffleCounter = 1;
+
+    if (event.target.classList.contains('remove-sector')) {
+      const dataRemoveId = event.target.dataset.removeId;
+      // remove that sector
+      document.querySelector(`[data-id="${dataRemoveId}"]`).remove();
+
+      // reshuffle all other sectors 
+      let allSectorSelectors = document.querySelectorAll(".sector-selector");
+
+      allSectorSelectors.forEach ( (element) => {
+        element.dataset.id = reshuffleCounter;
+        element.querySelector(".sector-name").innerHTML = `Sector ${reshuffleCounter}`;
+        element.querySelector(".remove-sector").dataset.remove_id = reshuffleCounter;
+        reshuffleCounter++;
+      });
+
+
+    }
+  };
+
+
 
   var init = function(){
 
@@ -125,10 +156,14 @@ var ledit = (function(){
 
     // sets up buttons
     allLSBbuttons = document.querySelectorAll('.left-sidebar__button');
+    
+    // sets up sector handling
+    selectorlist = document.querySelector('#selectorlist');
+    sectorAdd = document.querySelector('#sectorAdd');
 
 
     // Attach event listeners
-    window.addEventListener('wheel', _lhelpers.handleScroll, { passive: false });
+    // window.addEventListener('wheel', _lhelpers.handleScroll, { passive: false });
 
     // Redraw grid when window is resized
     window.addEventListener('resize', _lhelpers.drawGrid);
@@ -163,8 +198,6 @@ var ledit = (function(){
     };
 
 
-
-
     // Attach event listeners for mouse events
     gridCanvas.addEventListener('mousedown', function (event) {
       if (appMode === "edit") {
@@ -186,6 +219,18 @@ var ledit = (function(){
       isDragging = false;
     });
 
+
+
+
+    // Add new sector
+    sectorAdd.addEventListener('click', () => {
+      handleAddNewSector();
+    });
+
+    // Remove a given sector
+    selectorlist.addEventListener('click', (event) => {
+      handleRemoveSector(event);
+    });
 
 
     // Initial draw

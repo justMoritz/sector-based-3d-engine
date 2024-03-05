@@ -42,6 +42,7 @@
             margin: 0.5rem;
         }
 
+        .this--active,
         button:active,
         button.active{
             background-color: #eee;
@@ -135,6 +136,7 @@
             height: calc(100% - 1.5rem);
             font-size: 12px;
             position: relative;
+            overflow: scroll;
         }
 
         .sector-selector{
@@ -169,6 +171,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            pointer-events: none;
         }
 
 
@@ -247,15 +250,8 @@
         <div class="right-sidebar__sectional right-sidebar__bottom">
             
             <h4>Sectors</h4>
-            <div class="sector-list">
-                <div id="1" class="sector-selector">
-                    Sector 1 <div id="1" class="remove-sector"><span> - </span></div>
-                </div>
-                <div id="2" class="sector-selector">
-                    Sector 2 <div id="2" class="remove-sector"><span> - </span></div>
-                </div>
-
-                <div class="sector-add">
+            <div id="selectorlist" class="sector-list">
+                <div id="sectorAdd" class="sector-add">
                     <span> + </span>
                 </div>
             </div>
