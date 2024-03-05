@@ -1,6 +1,11 @@
 var ledit = (function(){
 
+
   handleMouseInteraction = function (event) {
+    if(mapdata.length < 2){
+      alert('please add a sector');
+    }
+
     if (appMode === "draw") {
       handleDrawMode(event);
     } else if (appMode === "add") {
@@ -21,17 +26,18 @@ var ledit = (function(){
   handleDeleteMode = function () {
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
-    let clickedPoint = _lhelpers.findClickedPoint(clickX, clickY);
+    let clickedPoint = _lhelpers.findClickedPoint(clickX, clickY, mapdata[currentSector]);
     
-    console.log(vertices);
 
-    for (let p = 0; p < vertices.length; p++) {
-      if( vertices[p] === clickedPoint ){
-        vertices = _lhelpers.removeNthElement(vertices, p);
+    // console.log(mapdata[currentSector]);
+
+    for (let p = 0; p < mapdata[currentSector].length; p++) {
+      if( mapdata[currentSector][p] === clickedPoint ){
+        mapdata[currentSector] = _lhelpers.removeNthElement(mapdata[currentSector], p);
       }
     }
 
-    console.log(vertices);
+    // console.log(mapdata[currentSector]);
     _lhelpers.drawGrid();
 
 
@@ -48,15 +54,15 @@ var ledit = (function(){
     const clickY = (event.clientY - offsetY) / scale;
 
     // Check if clicked on a line segment between vertices
-    for (let i = 0; i < vertices.length - 1; i++) {
-      const point1 = vertices[i];
-      const point2 = vertices[i + 1];
+    for (let i = 0; i < mapdata[currentSector].length - 1; i++) {
+      const point1 = mapdata[currentSector][i];
+      const point2 = mapdata[currentSector][i + 1];
       const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, point1, point2);
       if (distanceToLine <= 3) {
         // Insert new vertex between point1 and point2
-        vertices.splice(i + 1, 0, { x: clickX, y: clickY });
+        mapdata[currentSector].splice(i + 1, 0, { x: clickX, y: clickY });
 
-        console.log(vertices);
+        // console.log(mapdata[currentSector]);
         _lhelpers.drawGrid();
         return;
       }
@@ -73,9 +79,9 @@ var ledit = (function(){
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
 
-    console.log(vertices);
+    // console.log(mapdata[currentSector]);
     // Add new vertex
-    vertices.push({ x: clickX, y: clickY });
+    mapdata[currentSector].push({ x: clickX, y: clickY });
     _lhelpers.drawGrid();
   }
 
@@ -91,12 +97,14 @@ var ledit = (function(){
     const mouseX = (event.clientX - offsetX) / scale;
     const mouseY = (event.clientY - offsetY) / scale;
 
+    _lhelpers.drawGrid();
+
     if( !isDragging ){
       gDraggedPoint = null;
     }
     
     // Check if the mouse is over any point
-    let clickedPoint = _lhelpers.findClickedPoint(mouseX, mouseY);
+    let clickedPoint = _lhelpers.findClickedPoint(mouseX, mouseY, mapdata[currentSector]);
 
     if (clickedPoint) {
       isDragging = true;
@@ -115,13 +123,20 @@ var ledit = (function(){
 
 
   /**
-   * Adding a new sector
+   * Adding a new sector, (addsector, addnewsectors)
    */
   var handleAddNewSector = function () {
-    console.log(sectorCounter);
+    // console.log(sectorCounter);
     let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), sectorCounter);
     selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
-    sectorCounter++
+
+    currentSector = sectorCounter;
+    // initialize empty array
+    mapdata[currentSector] = [];
+
+    // console.log(mapdata)
+    
+    sectorCounter++;
   };
 
 
@@ -143,19 +158,24 @@ var ledit = (function(){
       element.querySelector(".remove-sector").dataset.remove_id = reshuffleCounter;
       reshuffleCounter++;
     });
+
+    // unselects all sectors
+    document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
+    currentSector = 0;
   };
 
 
 
   /**
-   * Select a given sector selector
+   * Select a given sector selector ( sectorselect, selectsector )
    */
   var handleSelectSector = function (event) {
     document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
     event.target.classList.add('this--active');
     // sets the Global current sector we're working with
     currentSector = event.target.dataset.id;
-    console.log(currentSector);
+    // console.log(currentSector);
+    _lhelpers.drawGrid();
   }
 
 

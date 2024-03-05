@@ -16,7 +16,7 @@ let offsetY = 0; // Initial offset Y
 let isDragging = false;
 let lastX = 0;
 let lastY = 0;
-let vertices = []; // Array to store vertices
+// let vertices = []; // Array to store vertices
 let gDraggedPoint;
 
 
@@ -25,8 +25,9 @@ let leveldata = {};
 
 
 let mapdata = [];
+mapdata[0] = [null];
 
-let currentSector;
+let currentSector = 0;
 let sectorCounter = 1;
 
 

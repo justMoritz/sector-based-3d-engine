@@ -2,49 +2,70 @@ _lhelpers = {
 
   drawGrid: function(){
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+    let rulesDrawn = false;
 
-    // Calculate visible grid range
-    const visibleWidth = gridCanvas.width / scale;
-    const visibleHeight = gridCanvas.height / scale;
-    const startX = -offsetX / scale;
-    const startY = -offsetY / scale;
-    const endX = startX + visibleWidth;
-    const endY = startY + visibleHeight;
+    for ( let i=0; i< mapdata.length; i++ ) {
+      
+      // zero is never a valid sector, skip
+      if(i === 0){
+        continue;
+      }
 
-    // Apply transformations
-    ctx.save();
-    ctx.translate(offsetX, offsetY);
-    ctx.scale(scale, scale);
+      vertices = mapdata[i];
 
-    // Draw sub-rules
-    ctx.beginPath();
-    ctx.strokeStyle = '#ccc'; // Lighter color for sub-rules
-    for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
-    }
-    for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-    }
-    ctx.stroke();
+      // var vertices = mapdata[currentSector];
 
-    // Draw main rules
-    ctx.beginPath();
-    ctx.strokeStyle = '#000';
-    for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
-    }
-    for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-    }
-    ctx.stroke();
+      // Calculate visible grid range
+      const visibleWidth = gridCanvas.width / scale;
+      const visibleHeight = gridCanvas.height / scale;
+      const startX = -offsetX / scale;
+      const startY = -offsetY / scale;
+      const endX = startX + visibleWidth;
+      const endY = startY + visibleHeight;
 
-    // Draw vertices
-    ctx.fillStyle = 'red';
-    for (const vertex of vertices) {
+      // Apply transformations
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      // Draw sub-rules
+      console.log(`Rules drawn for sector ${i}? ${rulesDrawn}`);
+      if (!rulesDrawn) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#ccc'; // Lighter color for sub-rules
+        for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, endY);
+        }
+        for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
+            ctx.moveTo(startX, y);
+            ctx.lineTo(endX, y);
+        }
+        ctx.stroke();
+
+        // Draw main rules
+        ctx.beginPath();
+        ctx.strokeStyle = '#000';
+        for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, endY);
+        }
+        for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
+            ctx.moveTo(startX, y);
+            ctx.lineTo(endX, y);
+        }
+        ctx.stroke();
+        rulesDrawn = true;
+      }
+
+      // Draw points
+      if( currentSector == i ){
+        ctx.fillStyle = 'red';
+      }else{
+        ctx.fillStyle = '#ccc';
+      }
+      
+      for (const vertex of vertices) {
         ctx.beginPath();
         ctx.arc(vertex.x, vertex.y, 3, 0, Math.PI * 2);
         ctx.fill();
@@ -53,12 +74,17 @@ _lhelpers = {
         ctx.font = '10px Arial';
         ctx.fillStyle = 'black';
         ctx.fillText(`(${vertex.x.toFixed(2)}, ${vertex.y.toFixed(2)})`, vertex.x + 5, vertex.y - 5);
-    }
+      }
 
-    // Draw polygons
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    if (vertices.length > 2) {
+      console.log(vertices);
+      // Draw polygons
+      if( currentSector == i ){
+        ctx.strokeStyle = 'blue';
+      } else {
+        ctx.strokeStyle = '#ccc';
+      }
+      ctx.lineWidth = 2;
+      if (vertices.length > 2) {
         ctx.beginPath();
         ctx.moveTo(vertices[0].x, vertices[0].y);
         for (let i = 1; i < vertices.length; i++) {
@@ -66,6 +92,7 @@ _lhelpers = {
         }
         ctx.closePath(); // Close the path to form a closed polygon
         ctx.stroke();
+      }
     }
 
     // Restore transformations
@@ -124,7 +151,7 @@ _lhelpers = {
   },
 
 
-  findClickedPoint: function( clickX, clickY ){
+  findClickedPoint: function( clickX, clickY, vertices ){
     let clickedPoint = null;
 
     for (const point of vertices) {
