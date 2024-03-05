@@ -3,6 +3,47 @@ _lhelpers = {
   drawGrid: function(){
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
+    // Calculate visible grid range
+    const visibleWidth = gridCanvas.width / scale;
+    const visibleHeight = gridCanvas.height / scale;
+    const startX = -offsetX / scale;
+    const startY = -offsetY / scale;
+    const endX = startX + visibleWidth;
+    const endY = startY + visibleHeight;
+
+    // Apply transformations
+    ctx.save();
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+
+
+    // Draw sub-rules
+    console.log('drawing grid');
+    ctx.beginPath();
+    ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
+    for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
+        ctx.moveTo(x, startY);
+        ctx.lineTo(x, endY);
+    }
+    for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+    }
+    ctx.stroke();
+
+    // Draw main rules
+    ctx.beginPath();
+    ctx.strokeStyle = '#555';
+    for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
+        ctx.moveTo(x, startY);
+        ctx.lineTo(x, endY);
+    }
+    for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+    }
+    ctx.stroke();
+
     for ( let i=0; i< mapdata.length; i++ ) {
       
       // zero is never a valid sector, skip
@@ -14,48 +55,7 @@ _lhelpers = {
 
       // var vertices = mapdata[currentSector];
 
-      // Calculate visible grid range
-      const visibleWidth = gridCanvas.width / scale;
-      const visibleHeight = gridCanvas.height / scale;
-      const startX = -offsetX / scale;
-      const startY = -offsetY / scale;
-      const endX = startX + visibleWidth;
-      const endY = startY + visibleHeight;
 
-      // Apply transformations
-      ctx.save();
-      ctx.translate(offsetX, offsetY);
-      ctx.scale(scale, scale);
-
-      // Draw sub-rules
-
-      if (i === 1) {
-        console.log('drawing grid');
-        ctx.beginPath();
-        ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
-        for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
-            ctx.moveTo(x, startY);
-            ctx.lineTo(x, endY);
-        }
-        for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
-            ctx.moveTo(startX, y);
-            ctx.lineTo(endX, y);
-        }
-        ctx.stroke();
-
-        // Draw main rules
-        ctx.beginPath();
-        ctx.strokeStyle = '#555';
-        for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
-            ctx.moveTo(x, startY);
-            ctx.lineTo(x, endY);
-        }
-        for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
-            ctx.moveTo(startX, y);
-            ctx.lineTo(endX, y);
-        }
-        ctx.stroke();
-      }
 
 
       // Draw points
@@ -99,6 +99,23 @@ _lhelpers = {
     // Restore transformations
     ctx.restore();
   },
+
+
+
+  drawWall: function (point1, point2) {
+    _lhelpers.drawGrid();
+
+    // Set line properties
+    ctx.strokeStyle = 'pink'; // Adjust color as needed
+    ctx.lineWidth = 2;
+
+    // Begin drawing the line
+    ctx.beginPath();
+    ctx.moveTo(point1.x, point1.y);
+    ctx.lineTo(point2.x, point2.y);
+    ctx.stroke();
+  },
+
 
 
 
@@ -163,6 +180,35 @@ _lhelpers = {
       }
     }
     return clickedPoint;
+  },
+
+
+  findClosestPointsToClick: function  ( clickX, clickY, vertices) {
+    // Initialize variables to keep track of the closest points and their distances
+    let closestPoints = [];
+    let closestDistances = [Infinity, Infinity]; // Initialize with maximum values
+
+    // Iterate over each pair of points to calculate distances
+    for (let i = 0; i < vertices.length; i++) {
+      for (let j = i + 1; j < vertices.length; j++) {
+        // Calculate the distance between the click point and the line formed by the current pair of points
+        const distance = Math.abs((vertices[j].y - vertices[i].y) * clickX - (vertices[j].x - vertices[i].x) * clickY + vertices[j].x * vertices[i].y - vertices[j].y * vertices[i].x) / Math.sqrt((vertices[j].y - vertices[i].y) ** 2 + (vertices[j].x - vertices[i].x) ** 2);
+        
+        // Check if this distance is within the error margin
+        if (distance <= 5) {
+          // Check if this distance is closer than the current closest distances
+          if (distance < closestDistances[1]) {
+            // Update closestDistances
+            closestDistances[1] = distance;
+            closestDistances.sort((a, b) => a - b);
+
+            // Update closestPoints
+            closestPoints = [vertices[i], vertices[j]];
+          }
+        }
+      }
+    }
+    return closestPoints;
   },
 
 

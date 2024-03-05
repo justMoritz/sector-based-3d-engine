@@ -14,8 +14,32 @@ var ledit = (function(){
       handleEditMode(event);
     } else if (appMode === "delete") {
       handleDeleteMode(event);
+    } else if (appMode === "wall") {
+      handleWallMode(event);
     }
   }
+
+  /**
+   * 
+   * Wall Mode
+   * 
+   */
+  handleWallMode = function () {
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
+
+    const vertices = mapdata[currentSector];
+
+    let wallPoints = _lhelpers.findClosestPointsToClick( clickX, clickY, mapdata[currentSector] );
+
+    console.log(`Wall between`);
+    console.log(wallPoints[0]);
+    console.log(`and`)
+    console.log(wallPoints[1]);
+
+    _lhelpers.drawWall(wallPoints[0], wallPoints[1]);
+
+  };
 
 
   /**
@@ -236,6 +260,9 @@ var ledit = (function(){
       }
       else if (keyCode === 120 ){ // letter X
         document.querySelector('[data-mode="delete"]').click();
+      }
+      else if (keyCode === 119 ){ // letter W
+        document.querySelector('[data-mode="wall"]').click();
       }
     };
 
