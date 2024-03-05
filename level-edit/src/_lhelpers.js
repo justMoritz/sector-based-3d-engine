@@ -73,7 +73,7 @@ _lhelpers = {
         // Print coordinates
         ctx.font = '10px Arial';
         ctx.fillStyle = 'black';
-        ctx.fillText(`(${vertex.x.toFixed(2)}, ${vertex.y.toFixed(2)})`, vertex.x + 5, vertex.y - 5);
+        ctx.fillText(`(${vertex.x.toFixed(2)/100}, ${vertex.y.toFixed(2)/100})`, vertex.x + 5, vertex.y - 5);
       }
 
 
@@ -176,7 +176,7 @@ _lhelpers = {
 
   roundToNearest: function ( number, nearest ){
     const roundToNearest = nearest || 25;
-    return  Math.ceil(number / roundToNearest) * roundToNearest;
+    return  Math.round(number / roundToNearest) * roundToNearest;
   }
 
 }
