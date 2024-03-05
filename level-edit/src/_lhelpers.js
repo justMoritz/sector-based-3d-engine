@@ -1,6 +1,10 @@
 _lhelpers = {
 
-  drawGrid: function(){
+  clearGrid: function(){
+    ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+  },
+
+  drawGrid: function(wall1, wall2){
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
     // Calculate visible grid range
@@ -44,6 +48,8 @@ _lhelpers = {
     }
     ctx.stroke();
 
+
+    // draw all sectors
     for ( let i=0; i< mapdata.length; i++ ) {
       
       // zero is never a valid sector, skip
@@ -52,10 +58,6 @@ _lhelpers = {
       }
 
       vertices = mapdata[i];
-
-      // var vertices = mapdata[currentSector];
-
-
 
 
       // Draw points
@@ -76,7 +78,6 @@ _lhelpers = {
         ctx.fillText(`(${vertex.x.toFixed(2)/100}, ${vertex.y.toFixed(2)/100})`, vertex.x + 5, vertex.y - 5);
       }
 
-
       
       // Draw polygons
       if( currentSector == i ){
@@ -96,28 +97,23 @@ _lhelpers = {
       }
     }
 
+
+    // draw highlighted line, if needed
+    if(wall1 && wall2){
+      // Set line properties
+      ctx.strokeStyle = 'pink'; // Adjust color as needed
+      ctx.lineWidth = 2;
+  
+      // Begin drawing the line
+      ctx.beginPath();
+      ctx.moveTo(wall1.x, wall1.y);
+      ctx.lineTo(wall2.x, wall2.y);
+      ctx.stroke();
+    }
+
     // Restore transformations
     ctx.restore();
   },
-
-
-
-  drawWall: function (point1, point2) {
-    _lhelpers.drawGrid();
-
-    // Set line properties
-    ctx.strokeStyle = 'pink'; // Adjust color as needed
-    ctx.lineWidth = 2;
-
-    // Begin drawing the line
-    ctx.beginPath();
-    ctx.moveTo(point1.x, point1.y);
-    ctx.lineTo(point2.x, point2.y);
-    ctx.stroke();
-  },
-
-
-
 
 
 

@@ -37,7 +37,7 @@ var ledit = (function(){
     console.log(`and`)
     console.log(wallPoints[1]);
 
-    _lhelpers.drawWall(wallPoints[0], wallPoints[1]);
+    _lhelpers.drawGrid(wallPoints[0], wallPoints[1]);
 
   };
 
