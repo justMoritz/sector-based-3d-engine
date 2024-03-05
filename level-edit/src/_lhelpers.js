@@ -22,7 +22,6 @@ _lhelpers = {
 
 
     // Draw sub-rules
-    console.log('drawing grid');
     ctx.beginPath();
     ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
     for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
@@ -219,6 +218,58 @@ _lhelpers = {
   roundToNearest: function ( number, nearest ){
     const roundToNearest = nearest || 25;
     return  Math.round(number / roundToNearest) * roundToNearest;
+  },
+
+
+  createLineSegments: function (vertices) {
+    const lineSegments = [];
+    console.log(vertices)
+    for (let i = 0; i < vertices.length; i++) {
+      const startPoint = vertices[i];
+      const endPoint = vertices[(i + 1) % vertices.length]; // Connect last point to first point
+      lineSegments.push([startPoint.x/100, startPoint.y/100, endPoint.x/100, endPoint.y/100]);
+    }
+    return lineSegments;
+  },
+
+
+
+  generateLevelData: function () {
+
+    // console.log(mapdata);
+
+    let tempMapData = [];
+    tempMapData[0] = {
+      "id": false,
+    }
+
+    for(let i=0; i< mapdata.length; i++){
+      if(i === 0){
+        continue
+      }
+      let sector = mapdata[i];
+      let sectorFormattedWalls = _lhelpers.createLineSegments(sector);
+
+      tempMapData[i] = {
+        "id": "sector"+i,
+        "walls": sectorFormattedWalls
+      }
+    }
+
+    leveldata = { 
+      "fDepth": fDepth,
+      "fPlayerX": fPlayerX,
+      "fPlayerY": fPlayerY,
+      "fPlayerA": fPlayerA,
+      "fPlayerH": fPlayerH,
+      "startingSector": startingSector,
+      "sprites": {
+      },
+      "map": tempMapData
+    }
+
+    console.log(leveldata);
+
   }
 
 }

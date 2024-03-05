@@ -17,6 +17,8 @@ var ledit = (function(){
     } else if (appMode === "wall") {
       handleWallMode(event);
     }
+
+    _lhelpers.generateLevelData();
   }
 
   /**
@@ -28,14 +30,7 @@ var ledit = (function(){
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
 
-    const vertices = mapdata[currentSector];
-
     let wallPoints = _lhelpers.findClosestPointsToClick( clickX, clickY, mapdata[currentSector] );
-
-    console.log(`Wall between`);
-    console.log(wallPoints[0]);
-    console.log(`and`)
-    console.log(wallPoints[1]);
 
     _lhelpers.drawGrid(wallPoints[0], wallPoints[1]);
 
@@ -51,9 +46,6 @@ var ledit = (function(){
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
     let clickedPoint = _lhelpers.findClickedPoint(clickX, clickY, mapdata[currentSector]);
-    
-
-    // console.log(mapdata[currentSector]);
 
     for (let p = 0; p < mapdata[currentSector].length; p++) {
       if( mapdata[currentSector][p] === clickedPoint ){
@@ -61,7 +53,6 @@ var ledit = (function(){
       }
     }
 
-    // console.log(mapdata[currentSector]);
     _lhelpers.drawGrid();
 
 
@@ -89,7 +80,6 @@ var ledit = (function(){
         // Insert new vertex between point1 and point2
         mapdata[currentSector].splice(i + 1, 0, { x: _lhelpers.roundToNearest(clickX), y: _lhelpers.roundToNearest(clickY) });
 
-        // console.log(mapdata[currentSector]);
         _lhelpers.drawGrid();
         return;
       }
@@ -108,7 +98,6 @@ var ledit = (function(){
     clickX = _lhelpers.roundToNearest(clickX)
     clickY = _lhelpers.roundToNearest(clickY)
 
-    // console.log(mapdata[currentSector]);
     // Add new vertex
     mapdata[currentSector].push({ x: clickX, y: clickY });
     _lhelpers.drawGrid();
@@ -152,18 +141,15 @@ var ledit = (function(){
 
 
   /**
-   * Adding a new sector, (addsector, addnewsectors)
+   * Adding a new sector, (addsector, addnewsectors, sectoradd)
    */
   var handleAddNewSector = function () {
-    // console.log(sectorCounter);
     let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), sectorCounter);
     selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
 
     currentSector = sectorCounter;
     // initialize empty array
     mapdata[currentSector] = [];
-
-    // console.log(mapdata)
     
     sectorCounter++;
   };
@@ -203,7 +189,6 @@ var ledit = (function(){
     event.target.classList.add('this--active');
     // sets the Global current sector we're working with
     currentSector = event.target.dataset.id;
-    // console.log(currentSector);
     _lhelpers.drawGrid();
   }
 
@@ -284,7 +269,6 @@ var ledit = (function(){
     });
 
     gridCanvas.addEventListener('mouseup', function () {
-      console.log('mouseUP');
       isDragging = false;
     });
 
