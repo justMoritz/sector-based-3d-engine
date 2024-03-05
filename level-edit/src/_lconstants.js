@@ -27,6 +27,8 @@ let leveldata = {};
 let mapdata = [];
 mapdata[0] = [null];
 
+
+
 let currentSector = 0;
 let sectorCounter = 1;
 
@@ -35,6 +37,10 @@ const sectorSelectorTemplate =
 `<div data-id="XXX" class="sector-selector">
     <span class="sector-name">Sector XXX</span> <div data-remove-id="XXX" class="remove-sector"><span> - </span></div>
 </div>`
+
+
+// Random huge object that holds information about each wall. Coordinates, as well as texture info etc. 
+let wallData = {}
 
 
 

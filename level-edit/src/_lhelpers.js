@@ -227,7 +227,7 @@ _lhelpers = {
     for (let i = 0; i < vertices.length; i++) {
       const startPoint = vertices[i];
       const endPoint = vertices[(i + 1) % vertices.length]; // Connect last point to first point
-      lineSegments.push([startPoint.x/100, startPoint.y/100, endPoint.x/100, endPoint.y/100]);
+      lineSegments.push([startPoint.x/100, startPoint.y/100, endPoint.x/100, endPoint.y/100, "#", 2, 2, false]);
     }
     return lineSegments;
   },
@@ -252,7 +252,11 @@ _lhelpers = {
 
       tempMapData[i] = {
         "id": "sector"+i,
-        "walls": sectorFormattedWalls
+        "walls": sectorFormattedWalls,
+        "floor": 1,
+        "ceil": 2,
+        "floorTex": "#",
+        "ceilTex": "Y"
       }
     }
 
