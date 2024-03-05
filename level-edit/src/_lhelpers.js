@@ -120,7 +120,7 @@ _lhelpers = {
         scale -= scaleFactor;
     }
     scale = Math.max(0.1, scale); // Limit minimum scale
-    drawGrid();
+    _lhelpers.drawGrid();
   },
 
 
