@@ -2,7 +2,6 @@ _lhelpers = {
 
   drawGrid: function(){
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-    let rulesDrawn = false;
 
     for ( let i=0; i< mapdata.length; i++ ) {
       
@@ -29,10 +28,11 @@ _lhelpers = {
       ctx.scale(scale, scale);
 
       // Draw sub-rules
-      console.log(`Rules drawn for sector ${i}? ${rulesDrawn}`);
-      if (!rulesDrawn) {
+
+      if (i === 1) {
+        console.log('drawing grid');
         ctx.beginPath();
-        ctx.strokeStyle = '#ccc'; // Lighter color for sub-rules
+        ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
         for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
             ctx.moveTo(x, startY);
             ctx.lineTo(x, endY);
@@ -45,7 +45,7 @@ _lhelpers = {
 
         // Draw main rules
         ctx.beginPath();
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#555';
         for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
             ctx.moveTo(x, startY);
             ctx.lineTo(x, endY);
@@ -55,8 +55,8 @@ _lhelpers = {
             ctx.lineTo(endX, y);
         }
         ctx.stroke();
-        rulesDrawn = true;
       }
+
 
       // Draw points
       if( currentSector == i ){
@@ -76,12 +76,13 @@ _lhelpers = {
         ctx.fillText(`(${vertex.x.toFixed(2)}, ${vertex.y.toFixed(2)})`, vertex.x + 5, vertex.y - 5);
       }
 
-      console.log(vertices);
+
+      
       // Draw polygons
       if( currentSector == i ){
         ctx.strokeStyle = 'blue';
       } else {
-        ctx.strokeStyle = '#ccc';
+        ctx.strokeStyle = '#000';
       }
       ctx.lineWidth = 2;
       if (vertices.length > 2) {
