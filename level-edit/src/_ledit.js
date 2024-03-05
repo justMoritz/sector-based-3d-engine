@@ -114,6 +114,9 @@ var ledit = (function(){
   }
 
 
+  /**
+   * Adding a new sector
+   */
   var handleAddNewSector = function () {
     console.log(sectorCounter);
     let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), sectorCounter);
@@ -122,30 +125,44 @@ var ledit = (function(){
   };
 
 
+  /**
+   * Remove Sectors
+   */
   var handleRemoveSector = function (event) {
     let reshuffleCounter = 1;
+    const dataRemoveId = event.target.dataset.removeId;
+    // remove that sector
+    document.querySelector(`[data-id="${dataRemoveId}"]`).remove();
 
-    if (event.target.classList.contains('remove-sector')) {
-      const dataRemoveId = event.target.dataset.removeId;
-      // remove that sector
-      document.querySelector(`[data-id="${dataRemoveId}"]`).remove();
+    // reshuffle all other sectors 
+    let allSectorSelectors = document.querySelectorAll(".sector-selector");
 
-      // reshuffle all other sectors 
-      let allSectorSelectors = document.querySelectorAll(".sector-selector");
-
-      allSectorSelectors.forEach ( (element) => {
-        element.dataset.id = reshuffleCounter;
-        element.querySelector(".sector-name").innerHTML = `Sector ${reshuffleCounter}`;
-        element.querySelector(".remove-sector").dataset.remove_id = reshuffleCounter;
-        reshuffleCounter++;
-      });
-
-
-    }
+    allSectorSelectors.forEach ( (element) => {
+      element.dataset.id = reshuffleCounter;
+      element.querySelector(".sector-name").innerHTML = `Sector ${reshuffleCounter}`;
+      element.querySelector(".remove-sector").dataset.remove_id = reshuffleCounter;
+      reshuffleCounter++;
+    });
   };
 
 
 
+  /**
+   * Select a given sector selector
+   */
+  var handleSelectSector = function (event) {
+    document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
+    event.target.classList.add('this--active');
+    // sets the Global current sector we're working with
+    currentSector = event.target.dataset.id;
+    console.log(currentSector);
+  }
+
+
+
+  /**
+   * Init Function
+   */
   var init = function(){
 
     // Sets up Canvas
@@ -229,7 +246,12 @@ var ledit = (function(){
 
     // Remove a given sector
     selectorlist.addEventListener('click', (event) => {
-      handleRemoveSector(event);
+      if (event.target.classList.contains('remove-sector')) {
+        handleRemoveSector(event);
+      }
+      else if (event.target.classList.contains('sector-selector')) {
+        handleSelectSector(event);
+      }
     });
 
 
