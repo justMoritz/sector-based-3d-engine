@@ -28,7 +28,6 @@ let mapdata = [];
 mapdata[0] = [null];
 
 
-
 let currentSector = 0;
 let sectorCounter = 1;
 

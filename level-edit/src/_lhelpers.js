@@ -233,11 +233,23 @@ _lhelpers = {
   },
 
 
+  generateRandomId: function () {
+    let length = 8;
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+  
+    return result;
+  },
+
 
   generateLevelData: function () {
 
     // console.log(mapdata);
-
+ 
     let tempMapData = [];
     tempMapData[0] = {
       "id": false,
@@ -272,7 +284,7 @@ _lhelpers = {
       "map": tempMapData
     }
 
-    console.log(leveldata);
+    // console.log(leveldata);
 
   }
 

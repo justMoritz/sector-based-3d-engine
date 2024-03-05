@@ -209,22 +209,22 @@
 
     <div class="right-sidebar">
 
-        <div class="right-sidebar__sectional right-sidebar__top disabled">
-            <h4>Edit Wall</h4>
+        <div class="right-sidebar__sectional right-sidebar__top disabled right-sidebar__walls">
+            <h4>Edit Wall <span id="editwallid"></span></h4>
             <label for="wallTex">
                 <span>Wall texture:</span>
                 <input id="wallTex" type="text" placeholder="Texture symbol">
                 <label>
                     <span>Texture scale:</span>
                     <div class="sort-labels">
-                        <input id="texScale" type="text" placeholder="X scale">
-                        <input id="texScale" type="text" placeholder="Y scale">
+                        <input id="texScaleX" type="number" placeholder="X scale">
+                        <input id="texScaleY" type="number" placeholder="Y scale">
                     </div>
                 </label>
             </label>
             <label for="sector">
                 <span>Sector Connector:</span>
-                <input id="sector" type="text" placeholder="Texture symbol">
+                <input id="sectorconnectorinput" type="number" placeholder="">
             </label>
         </div>
 

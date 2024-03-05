@@ -32,7 +32,34 @@ var ledit = (function(){
 
     let wallPoints = _lhelpers.findClosestPointsToClick( clickX, clickY, mapdata[currentSector] );
 
+    console.log(wallPoints);
     _lhelpers.drawGrid(wallPoints[0], wallPoints[1]);
+
+
+    // adds an entry into the wallData object
+
+    // let wallId = [wallPoints[0].id, wallPoints[1].id];
+    let wallId = ""+wallPoints[0].id+"_"+wallPoints[1].id+"";
+
+    // makes an entry in the wallData object, with default values for the wall, TODO: if it not yet set
+    wallData[wallId] = {
+      "tex": "#",
+      "xS": 2,
+      "yS": 2,
+      "sC": 0,
+    };
+
+    console.log(wallData)
+
+    document.querySelector(".right-sidebar__walls").classList.remove("disabled");
+    document.querySelector("#editwallid").innerHTML = wallId;
+    document.querySelector("#wallTex").value = wallData[wallId].tex;
+    document.querySelector("#texScaleX").value = wallData[wallId].xS;
+    document.querySelector("#texScaleY").value = wallData[wallId].yS;
+    document.querySelector("#sectorconnectorinput").value = wallData[wallId].sC;
+
+    // opens the edit window, and pulls in data
+
 
   };
 
@@ -78,7 +105,7 @@ var ledit = (function(){
       const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, point1, point2);
       if (distanceToLine <= 3) {
         // Insert new vertex between point1 and point2
-        mapdata[currentSector].splice(i + 1, 0, { x: _lhelpers.roundToNearest(clickX), y: _lhelpers.roundToNearest(clickY) });
+        mapdata[currentSector].splice(i + 1, 0, { x: _lhelpers.roundToNearest(clickX), y: _lhelpers.roundToNearest(clickY),id: _lhelpers.generateRandomId() });
 
         _lhelpers.drawGrid();
         return;
@@ -92,14 +119,14 @@ var ledit = (function(){
    * Draw Mode
    * 
    */
+
   handleDrawMode = function(){
     let clickX = (event.clientX - offsetX) / scale;
     let clickY = (event.clientY - offsetY) / scale;
-    clickX = _lhelpers.roundToNearest(clickX)
-    clickY = _lhelpers.roundToNearest(clickY)
+    clickX = _lhelpers.roundToNearest(clickX);
+    clickY = _lhelpers.roundToNearest(clickY);
 
-    // Add new vertex
-    mapdata[currentSector].push({ x: clickX, y: clickY });
+    mapdata[currentSector].push({ x: clickX, y: clickY, id: _lhelpers.generateRandomId() });
     _lhelpers.drawGrid();
   }
 
@@ -150,6 +177,7 @@ var ledit = (function(){
     currentSector = sectorCounter;
     // initialize empty array
     mapdata[currentSector] = [];
+    mapdataObj[currentSector] = [];
     
     sectorCounter++;
   };
@@ -190,6 +218,15 @@ var ledit = (function(){
     // sets the Global current sector we're working with
     currentSector = event.target.dataset.id;
     _lhelpers.drawGrid();
+  }
+
+
+
+
+
+  handleValueChange = function( event, type){
+    console.log(type);
+    console.log(event);
   }
 
 
@@ -273,13 +310,10 @@ var ledit = (function(){
     });
 
 
-
-
     // Add new sector
     sectorAdd.addEventListener('click', () => {
       handleAddNewSector();
     });
-
     // Remove a given sector
     selectorlist.addEventListener('click', (event) => {
       if (event.target.classList.contains('remove-sector')) {
@@ -289,6 +323,20 @@ var ledit = (function(){
         handleSelectSector(event);
       }
     });
+    
+
+
+    // listeners for wallinputs
+    const editwallid = document.querySelector("#editwallid");
+    const wallTexInput = document.querySelector("#wallTex");
+    const texScaleXinput = document.querySelector("#texScaleX");
+    const texScaleYinput = document.querySelector("#texScaleY");
+    const sectorconnectorinput = document.querySelector("#sectorconnectorinput");
+
+    wallTexInput.addEventListener('input', (e) => { handleValueChange(e, "tex"); });
+    texScaleXinput.addEventListener('input', (e) => { handleValueChange(e, "sX"); });
+    texScaleYinput.addEventListener('input', (e) => { handleValueChange(e, "sY"); });
+    sectorconnectorinput.addEventListener('input', (e) => { handleValueChange(e, "sC"); });
 
 
     // Initial draw
