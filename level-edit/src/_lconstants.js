@@ -27,6 +27,16 @@ let leveldata = {};
 let mapdata = [];
 mapdata[0] = [null];
 
+let mapdataObj = [];
+mapdataObj[0] = [null];
+
+
+// Global variables needed for Draw Mode (DM)
+let DMwallsObject;
+let DMfirstPoint;
+let DMprevPoint;
+let DMdrawCounter;
+
 
 let currentSector = 0;
 let sectorCounter = 1;

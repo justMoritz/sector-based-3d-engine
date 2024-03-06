@@ -120,16 +120,70 @@ var ledit = (function(){
    * 
    */
 
-  handleDrawMode = function(){
-    let clickX = (event.clientX - offsetX) / scale;
-    let clickY = (event.clientY - offsetY) / scale;
-    clickX = _lhelpers.roundToNearest(clickX);
-    clickY = _lhelpers.roundToNearest(clickY);
 
-    mapdata[currentSector].push({ x: clickX, y: clickY, id: _lhelpers.generateRandomId() });
-    _lhelpers.drawGrid();
+  
+  function handleDrawMode(event) {
+      let clickX = (event.clientX - offsetX) / scale;
+      let clickY = (event.clientY - offsetY) / scale;
+      clickX = _lhelpers.roundToNearest(clickX);
+      clickY = _lhelpers.roundToNearest(clickY);
+  
+      if (DMfirstPoint === null) {
+          // First click, store it as the firstPoint
+          DMfirstPoint = { x: clickX, y: clickY };
+          DMprevPoint = { x: clickX, y: clickY }; // Also set prevPoint for the next line segment
+          DMdrawCounter++
+      } else {
+        // get rid of the last wall in the list after on the 3rd vertex (when shapes close)
+        if( DMdrawCounter > 2 ){
+          DMwallsObject.pop();
+        }
+
+        // Second click onwards, create line segments
+        const wallSegment = { start: { x: DMprevPoint.x, y: DMprevPoint.y }, zend: { x: clickX, y: clickY } };
+        DMwallsObject.push(wallSegment);
+
+        // close after the first wall is drawn 
+        if( DMdrawCounter > 1 ){
+          // Connect the last point to the first point to close the polygon
+          const closingSegment = { start: { x: clickX, y: clickY }, zend: { x: DMfirstPoint.x, y: DMfirstPoint.y } };
+          DMwallsObject.push(closingSegment);
+        }
+        
+        // Reset prevPoint for the next line segment
+        DMprevPoint = { x: clickX, y: clickY };
+        DMdrawCounter++
+      }
+      
+      mapdataObj[currentSector] = DMwallsObject;
+
+      console.log(mapdataObj);
+
+
+
+      _lhelpers.clearGrid()
+      _lhelpers.drawRules()
+      for (const wall of mapdataObj[currentSector]) {
+        // Retrieve start and end points of the wall segment
+        const startX = wall.start.x * scale + offsetX;
+        const startY = wall.start.y * scale + offsetY;
+        const endX = wall.zend.x * scale + offsetX;
+        const endY = wall.zend.y * scale + offsetY;
+        ctx.strokeStyle = '#f00';
+        // Draw the line segment
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Print coordinates
+        ctx.font = '10px Arial';
+        ctx.fillStyle = 'black';
+        ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+        ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+    }
   }
-
+  
 
 
 
@@ -177,7 +231,14 @@ var ledit = (function(){
     currentSector = sectorCounter;
     // initialize empty array
     mapdata[currentSector] = [];
+
+
+    // Preparing variables for Draw Mode
     mapdataObj[currentSector] = [];
+    DMwallsObject = [];
+    DMfirstPoint = null;
+    DMprevPoint = null;
+    DMdrawCounter = 0;
     
     sectorCounter++;
   };

@@ -4,6 +4,41 @@ _lhelpers = {
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   },
 
+  drawRules: function(){
+      // Calculate visible grid range
+      const visibleWidth = gridCanvas.width / scale;
+      const visibleHeight = gridCanvas.height / scale;
+      const startX = -offsetX / scale;
+      const startY = -offsetY / scale;
+      const endX = startX + visibleWidth;
+      const endY = startY + visibleHeight;
+    // Draw sub-rules
+    ctx.beginPath();
+    ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
+    for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
+        ctx.moveTo(x, startY);
+        ctx.lineTo(x, endY);
+    }
+    for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+    }
+    ctx.stroke();
+
+    // Draw main rules
+    ctx.beginPath();
+    ctx.strokeStyle = '#555';
+    for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
+        ctx.moveTo(x, startY);
+        ctx.lineTo(x, endY);
+    }
+    for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+    }
+    ctx.stroke();
+  },
+
   drawGrid: function(wall1, wall2){
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
