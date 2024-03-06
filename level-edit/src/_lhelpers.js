@@ -211,14 +211,24 @@ _lhelpers = {
   },
 
 
-  findClickedPoint2: function( clickX, clickY, vertices ){
+  findClickedPoint2: function( clickX, clickY, wallsObj ){
     let clickedPoint = null;
 
-    for (const point of vertices) {
-      const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
-      if (distance <= 3) {
-        clickedPoint = point;
-        break;
+    console.log(`obj has ${wallsObj.length} walls`)
+
+    for (let i = 0; i < wallsObj.length; i++) {
+      const currentWall = wallsObj[i];
+      const points = [currentWall.a, currentWall.b];
+
+      console.log(`wall ${i} has these points:`);
+
+      for (const point of points) {
+        console.log(point);
+        const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
+        if (distance <= 3) {
+          clickedPoint = point;
+          break;
+        }
       }
     }
     return clickedPoint;

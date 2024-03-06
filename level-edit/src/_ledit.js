@@ -154,10 +154,10 @@ var ledit = (function(){
       drawMeta[currentSector].DMprevPoint = { x: clickX, y: clickY };
       drawMeta[currentSector].DMdrawCounter++
     }
-    
-    // mapdataObj[currentSector] = DMwallsObject;
+  
 
-    console.log(mapdataObj)
+    console.log('drew this')
+    console.log(mapdataObj[currentSector])
 
     _lhelpers.drawGrid()
   }
@@ -181,21 +181,22 @@ var ledit = (function(){
     }
     
     // Check if the mouse is over any point
-    let clickedPoint = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdata[currentSector]);
+    let clickedPoint = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdataObj[currentSector]);
+    console.log(clickedPoint);
 
-    if (clickedPoint) {
-      isDragging = true;
-      // Start dragging the clicked point
-      gDraggedPoint = clickedPoint;
-      dragOffsetX = _lhelpers.roundToNearest(mouseX) - clickedPoint.x;
-      dragOffsetY = _lhelpers.roundToNearest(mouseY) - clickedPoint.y;
-      _lhelpers.drawGrid();
-    }
+    // if (clickedPoint) {
+    //   isDragging = true;
+    //   // Start dragging the clicked point
+    //   gDraggedPoint = clickedPoint;
+    //   dragOffsetX = _lhelpers.roundToNearest(mouseX) - clickedPoint.x;
+    //   dragOffsetY = _lhelpers.roundToNearest(mouseY) - clickedPoint.y;
+    //   _lhelpers.drawGrid();
+    // }
   
-    // Continue dragging
-    gDraggedPoint.x = _lhelpers.roundToNearest(mouseX) - dragOffsetX;
-    gDraggedPoint.y = _lhelpers.roundToNearest(mouseY) - dragOffsetY;
-    _lhelpers.drawGrid();
+    // // Continue dragging
+    // gDraggedPoint.x = _lhelpers.roundToNearest(mouseX) - dragOffsetX;
+    // gDraggedPoint.y = _lhelpers.roundToNearest(mouseY) - dragOffsetY;
+    // _lhelpers.drawGrid();
   }
 
 
