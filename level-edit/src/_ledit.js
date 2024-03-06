@@ -138,7 +138,7 @@ var ledit = (function(){
       }
 
       // Second click onwards, create line segments
-      const wallSegment = { a: { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, b: { x: clickX, y: clickY } };
+      const wallSegment = { id: _lhelpers.generateRandomId(), a: { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, b: { x: clickX, y: clickY } };
       mapdataObj[currentSector].push(wallSegment);
 
       
@@ -146,7 +146,7 @@ var ledit = (function(){
       if( drawMeta[currentSector].DMdrawCounter > 1 ){
 
         // Connect the last point to the first point to close the polygon
-        const closingSegment = { a: { x: clickX, y: clickY }, b: { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y } };
+        const closingSegment = { id: _lhelpers.generateRandomId(), a: { x: clickX, y: clickY }, b: { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y } };
         mapdataObj[currentSector].push(closingSegment);
       }
       
@@ -182,6 +182,7 @@ var ledit = (function(){
     
     // Check if the mouse is over any point
     let clickedPoint = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdataObj[currentSector]);
+    console.log(`Found this point:`);
     console.log(clickedPoint);
 
     // if (clickedPoint) {
@@ -266,8 +267,8 @@ var ledit = (function(){
 
 
   handleValueChange = function( event, type){
-    console.log(type);
-    console.log(event);
+    // console.log(type);
+    // console.log(event);
   }
 
 

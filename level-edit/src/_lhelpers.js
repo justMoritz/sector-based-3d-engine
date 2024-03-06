@@ -212,26 +212,27 @@ _lhelpers = {
 
 
   findClickedPoint2: function( clickX, clickY, wallsObj ){
-    let clickedPoint = null;
+    let clickedPoints = [];
 
-    console.log(`obj has ${wallsObj.length} walls`)
+    // console.log(`obj has ${wallsObj.length} walls`)
 
     for (let i = 0; i < wallsObj.length; i++) {
       const currentWall = wallsObj[i];
       const points = [currentWall.a, currentWall.b];
 
-      console.log(`wall ${i} has these points:`);
+      // console.log(`wall ${i} has these points:`);
 
       for (const point of points) {
-        console.log(point);
         const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
+        // console.log(point);
+        // console.log(distance);
         if (distance <= 3) {
-          clickedPoint = point;
-          break;
+          clickedPoints.push( {"wallID": currentWall.id, "point": point} );
+          // break;
         }
       }
     }
-    return clickedPoint;
+    return clickedPoints;
   },
 
 
@@ -280,7 +281,7 @@ _lhelpers = {
 
   createLineSegments: function (vertices) {
     const lineSegments = [];
-    console.log(vertices)
+    // console.log(vertices)
     for (let i = 0; i < vertices.length; i++) {
       const startPoint = vertices[i];
       const endPoint = vertices[(i + 1) % vertices.length]; // Connect last point to first point
