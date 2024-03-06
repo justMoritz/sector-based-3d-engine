@@ -163,25 +163,32 @@ var ledit = (function(){
       // temp print
       _lhelpers.clearGrid()
       _lhelpers.drawRules()
-      for (const wall of mapdataObj[currentSector]) {
-        // Retrieve start and end points of the wall segment
-        const startX = wall.start.x * scale + offsetX;
-        const startY = wall.start.y * scale + offsetY;
-        const endX = wall.zend.x * scale + offsetX;
-        const endY = wall.zend.y * scale + offsetY;
-        ctx.strokeStyle = '#f00';
-        // Draw the line segment
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
-
-        // Print coordinates
-        ctx.font = '10px Arial';
-        ctx.fillStyle = 'black';
-        ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-        ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
-    }
+      for (let index = 0; index < mapdataObj.length; index++) {
+        if (index === 0){
+          continue;
+        }
+        const element = mapdataObj[index];
+        for (const wall of element) {
+          // Retrieve start and end points of the wall segment
+          const startX = wall.start.x * scale + offsetX;
+          const startY = wall.start.y * scale + offsetY;
+          const endX = wall.zend.x * scale + offsetX;
+          const endY = wall.zend.y * scale + offsetY;
+          ctx.strokeStyle = '#f00';
+          // Draw the line segment
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(endX, endY);
+          ctx.stroke();
+  
+          // Print coordinates
+          ctx.font = '10px Arial';
+          ctx.fillStyle = 'black';
+          ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+          ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+        }
+      }
+      
   }
   
 
