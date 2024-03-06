@@ -160,7 +160,7 @@ var ledit = (function(){
       console.log(mapdataObj);
 
 
-
+      // temp print
       _lhelpers.clearGrid()
       _lhelpers.drawRules()
       for (const wall of mapdataObj[currentSector]) {
