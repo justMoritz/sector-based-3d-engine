@@ -32,10 +32,8 @@ mapdataObj[0] = [null];
 
 
 // Global variables needed for Draw Mode (DM)
-let DMwallsObject;
-let DMfirstPoint;
-let DMprevPoint;
-let DMdrawCounter;
+let drawMeta = [];
+drawMeta[0] = [null];
 
 
 let currentSector = 0;

@@ -119,76 +119,47 @@ var ledit = (function(){
    * Draw Mode
    * 
    */
-
-
-  
   function handleDrawMode(event) {
-      let clickX = (event.clientX - offsetX) / scale;
-      let clickY = (event.clientY - offsetY) / scale;
-      clickX = _lhelpers.roundToNearest(clickX);
-      clickY = _lhelpers.roundToNearest(clickY);
-  
-      if (DMfirstPoint === null) {
-          // First click, store it as the firstPoint
-          DMfirstPoint = { x: clickX, y: clickY };
-          DMprevPoint = { x: clickX, y: clickY }; // Also set prevPoint for the next line segment
-          DMdrawCounter++
-      } else {
-        // get rid of the last wall in the list after on the 3rd vertex (when shapes close)
-        if( DMdrawCounter > 2 ){
-          DMwallsObject.pop();
-        }
+    console.log(currentSector)
+    let clickX = (event.clientX - offsetX) / scale;
+    let clickY = (event.clientY - offsetY) / scale;
+    clickX = _lhelpers.roundToNearest(clickX);
+    clickY = _lhelpers.roundToNearest(clickY);
 
-        // Second click onwards, create line segments
-        const wallSegment = { start: { x: DMprevPoint.x, y: DMprevPoint.y }, zend: { x: clickX, y: clickY } };
-        DMwallsObject.push(wallSegment);
+    if (drawMeta[currentSector].DMfirstPoint === null) {
+        // First click, store it as the firstPoint
+        drawMeta[currentSector].DMfirstPoint = { x: clickX, y: clickY };
+        drawMeta[currentSector].DMprevPoint = { x: clickX, y: clickY }; // Also set prevPoint for the next line segment
+        drawMeta[currentSector].DMdrawCounter++;
+    } else {
+      // get rid of the last wall in the list after on the 3rd vertex (when shapes close)
+      if( drawMeta[currentSector].DMdrawCounter > 2 ){
+        mapdataObj[currentSector].pop();
+      }
 
-        // close after the first wall is drawn 
-        if( DMdrawCounter > 1 ){
-          // Connect the last point to the first point to close the polygon
-          const closingSegment = { start: { x: clickX, y: clickY }, zend: { x: DMfirstPoint.x, y: DMfirstPoint.y } };
-          DMwallsObject.push(closingSegment);
-        }
-        
-        // Reset prevPoint for the next line segment
-        DMprevPoint = { x: clickX, y: clickY };
-        DMdrawCounter++
+      // Second click onwards, create line segments
+      const wallSegment = { a: { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, b: { x: clickX, y: clickY } };
+      mapdataObj[currentSector].push(wallSegment);
+
+      
+      // close after the first wall is drawn 
+      if( drawMeta[currentSector].DMdrawCounter > 1 ){
+
+        // Connect the last point to the first point to close the polygon
+        const closingSegment = { a: { x: clickX, y: clickY }, b: { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y } };
+        mapdataObj[currentSector].push(closingSegment);
       }
       
-      mapdataObj[currentSector] = DMwallsObject;
+      // Reset prevPoint for the next line segment
+      drawMeta[currentSector].DMprevPoint = { x: clickX, y: clickY };
+      drawMeta[currentSector].DMdrawCounter++
+    }
+    
+    // mapdataObj[currentSector] = DMwallsObject;
 
-      console.log(mapdataObj);
+    console.log(mapdataObj)
 
-
-      // temp print
-      _lhelpers.clearGrid()
-      _lhelpers.drawRules()
-      for (let index = 0; index < mapdataObj.length; index++) {
-        if (index === 0){
-          continue;
-        }
-        const element = mapdataObj[index];
-        for (const wall of element) {
-          // Retrieve start and end points of the wall segment
-          const startX = wall.start.x * scale + offsetX;
-          const startY = wall.start.y * scale + offsetY;
-          const endX = wall.zend.x * scale + offsetX;
-          const endY = wall.zend.y * scale + offsetY;
-          ctx.strokeStyle = '#f00';
-          // Draw the line segment
-          ctx.beginPath();
-          ctx.moveTo(startX, startY);
-          ctx.lineTo(endX, endY);
-          ctx.stroke();
-  
-          // Print coordinates
-          ctx.font = '10px Arial';
-          ctx.fillStyle = 'black';
-          ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-          ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
-        }
-      }
-      
+    _lhelpers.drawGrid()
   }
   
 
@@ -210,7 +181,7 @@ var ledit = (function(){
     }
     
     // Check if the mouse is over any point
-    let clickedPoint = _lhelpers.findClickedPoint(mouseX, mouseY, mapdata[currentSector]);
+    let clickedPoint = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdata[currentSector]);
 
     if (clickedPoint) {
       isDragging = true;
@@ -242,10 +213,11 @@ var ledit = (function(){
 
     // Preparing variables for Draw Mode
     mapdataObj[currentSector] = [];
-    DMwallsObject = [];
-    DMfirstPoint = null;
-    DMprevPoint = null;
-    DMdrawCounter = 0;
+    drawMeta[currentSector] = {};
+    drawMeta[currentSector].DMwallsObject = [];
+    drawMeta[currentSector].DMfirstPoint = null;
+    drawMeta[currentSector].DMprevPoint = null;
+    drawMeta[currentSector].DMdrawCounter = 0;
     
     sectorCounter++;
   };

@@ -82,60 +82,58 @@ _lhelpers = {
     }
     ctx.stroke();
 
-
-    // draw all sectors
-    for ( let i=0; i< mapdata.length; i++ ) {
-      
-      // zero is never a valid sector, skip
-      if(i === 0){
+    // iterate over the map object and draw each wall
+    for (let i = 0; i < mapdataObj.length; i++) {
+      if (i === 0){
         continue;
       }
 
-      vertices = mapdata[i];
+      const element = mapdataObj[i];
+      for (const wall of element) {  
 
+        // Retrieve start and end points of the wall segment
+        const startX = wall.a.x * scale + offsetX;
+        const startY = wall.a.y * scale + offsetY;
+        const endX = wall.b.x * scale + offsetX;
+        const endY = wall.b.y * scale + offsetY;
 
-      // Draw points
-      if( currentSector == i ){
-        ctx.fillStyle = 'red';
-      }else{
-        ctx.fillStyle = '#ccc';
-      }
-      
-      for (const vertex of vertices) {
-        ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Print coordinates
-        ctx.font = '10px Arial';
-        ctx.fillStyle = 'black';
-        ctx.fillText(`(${vertex.x.toFixed(2)/100}, ${vertex.y.toFixed(2)/100})`, vertex.x + 5, vertex.y - 5);
-      }
-
-      
-      // Draw polygons
-      if( currentSector == i ){
-        ctx.strokeStyle = 'blue';
-      } else {
-        ctx.strokeStyle = '#000';
-      }
-      ctx.lineWidth = 2;
-      if (vertices.length > 2) {
-        ctx.beginPath();
-        ctx.moveTo(vertices[0].x, vertices[0].y);
-        for (let i = 1; i < vertices.length; i++) {
-            ctx.lineTo(vertices[i].x, vertices[i].y);
+        // Print Each Wall 
+        if( currentSector == i ){
+          ctx.strokeStyle = 'rebeccapurple';
         }
-        ctx.closePath(); // Close the path to form a closed polygon
+        else{
+          ctx.strokeStyle = '#444';
+        }
+        ctx.lineWidth = 2;
+
+        // Draw the line segment
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
         ctx.stroke();
+
+        // Print Coordinates
+        ctx.fillStyle = '#111';
+        ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+        ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+
+        // print points
+        ctx.beginPath();
+        if( currentSector == i ){
+          ctx.fillStyle = 'blue';
+        }else{
+          ctx.fillStyle = '#ccc';
+        }
+        ctx.arc(startX, startY, 3, 0, Math.PI * 2);
+        ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
-
 
     // draw highlighted line, if needed
     if(wall1 && wall2){
       // Set line properties
-      ctx.strokeStyle = 'pink'; // Adjust color as needed
+      ctx.strokeStyle = 'pink'; 
       ctx.lineWidth = 2;
   
       // Begin drawing the line
@@ -200,6 +198,20 @@ _lhelpers = {
 
 
   findClickedPoint: function( clickX, clickY, vertices ){
+    let clickedPoint = null;
+
+    for (const point of vertices) {
+      const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
+      if (distance <= 3) {
+        clickedPoint = point;
+        break;
+      }
+    }
+    return clickedPoint;
+  },
+
+
+  findClickedPoint2: function( clickX, clickY, vertices ){
     let clickedPoint = null;
 
     for (const point of vertices) {
