@@ -59,11 +59,13 @@
             top: 0;
             background: white;
             box-shadow: -2px 0 5px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
         }
 
         .right-sidebar__sectional {
             padding: 0.5rem;
-            height: 33%;
+            height: 100%;
             position: relative;
         }
 
@@ -128,15 +130,27 @@
             margin-right: 1rem;
         }
 
-        .sector-list{
+        .sector-list__container{
             background:white;
             background: #e9e9e9;
             border-radius: 0.25rem;
             padding: 0.25rem 0;
-            height: calc(100% - 1.5rem);
+            /* height: calc(100% - 4.5rem); */
+            height: 310px;
             font-size: 12px;
             position: relative;
             overflow: scroll;
+        }
+        .sector-list{
+            /* background:white; */
+            /* background: #e9e9e9; */
+            /* border-radius: 0.25rem; */
+            /* padding: 0.25rem 0; */
+            /* height: calc(100% - 4.5rem); */
+            /* height: 90%; */
+            font-size: 12px;
+            height: auto;
+            position: relative;
         }
 
         .sector-selector{
@@ -178,11 +192,12 @@
         .sector-add{
             width: 1.5rem;
             height: 1.5rem;
-            left: 0.25rem;
+            left: 0.5rem;
             top: auto;
-            bottom: 0.25rem;
+            bottom: 0.5rem;
             background: white;
             border-radius: 0.25rem;
+
         }
         .sector-add:hover{
             opacity: 0.5;
@@ -251,10 +266,12 @@
         <div class="right-sidebar__sectional right-sidebar__bottom">
             
             <h4>Sectors</h4>
-            <div id="selectorlist" class="sector-list">
-                <div id="sectorAdd" class="sector-add">
-                    <span> + </span>
+            <div class="sector-list__container">
+                <div id="selectorlist" class="sector-list">
                 </div>
+            </div>
+            <div id="sectorAdd" class="sector-add">
+                <span> + </span>
             </div>
         </div>
 
