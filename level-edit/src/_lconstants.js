@@ -63,4 +63,16 @@ let startingSector = 3;
 
 
 
-
+const wallDefaults = {
+    "tex": "#",
+    "sX": 2,
+    "sY": 2,
+    "sC": 0,
+    "xO": 0,
+    "yO": 0,
+}
+let editwallid;
+let wallTexInput;
+let texScaleXinput;
+let texScaleYinput;
+let sectorconnectorinput;

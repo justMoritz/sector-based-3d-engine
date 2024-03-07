@@ -30,35 +30,24 @@ var ledit = (function(){
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
 
-    let wallPoints = _lhelpers.findClosestPointsToClick( clickX, clickY, mapdata[currentSector] );
+    let wallPoints = _lhelpers.isClickedOnWall( clickX, clickY, mapdataObj[currentSector] );
 
     console.log(wallPoints);
-    _lhelpers.drawGrid(wallPoints[0], wallPoints[1]);
+    _lhelpers.drawGrid(wallPoints.a, wallPoints.b);
 
-
-    // adds an entry into the wallData object
-
-    // let wallId = [wallPoints[0].id, wallPoints[1].id];
-    let wallId = ""+wallPoints[0].id+"_"+wallPoints[1].id+"";
-
-    // makes an entry in the wallData object, with default values for the wall, TODO: if it not yet set
-    wallData[wallId] = {
-      "tex": "#",
-      "xS": 2,
-      "yS": 2,
-      "sC": 0,
-    };
-
-    console.log(wallData)
-
-    document.querySelector(".right-sidebar__walls").classList.remove("disabled");
-    document.querySelector("#editwallid").innerHTML = wallId;
-    document.querySelector("#wallTex").value = wallData[wallId].tex;
-    document.querySelector("#texScaleX").value = wallData[wallId].xS;
-    document.querySelector("#texScaleY").value = wallData[wallId].yS;
-    document.querySelector("#sectorconnectorinput").value = wallData[wallId].sC;
-
+    if (!wallPoints ){
+      document.querySelector(".right-sidebar__walls").classList.add("disabled");
+    }else{
+      document.querySelector(".right-sidebar__walls").classList.remove("disabled");
+      editwallid.innerHTML = wallPoints.id;
+      wallTexInput.value = wallPoints.tex;
+      texScaleXinput.value = wallPoints.sX;
+      texScaleYinput.value = wallPoints.sY;
+      sectorconnectorinput.value = wallPoints.sC;
+    }
     // opens the edit window, and pulls in data
+
+
 
 
   };
@@ -138,15 +127,31 @@ var ledit = (function(){
       }
 
       // Second click onwards, create line segments
-      const wallSegment = { id: _lhelpers.generateRandomId(), a: { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, b: { x: clickX, y: clickY } };
-      mapdataObj[currentSector].push(wallSegment);
+      const wallSegment = { 
+        "id": _lhelpers.generateRandomId(), 
+        "a": { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, 
+        "b": { x: clickX, y: clickY },
+        "tex": wallDefaults.tex,
+        "sX": wallDefaults.sX,
+        "sY": wallDefaults.sY,
+        "sC": wallDefaults.sC,
+      };
 
+      mapdataObj[currentSector].push(wallSegment);
       
       // close after the first wall is drawn 
       if( drawMeta[currentSector].DMdrawCounter > 1 ){
 
         // Connect the last point to the first point to close the polygon
-        const closingSegment = { id: _lhelpers.generateRandomId(), a: { x: clickX, y: clickY }, b: { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y } };
+        const closingSegment = { 
+          "id": _lhelpers.generateRandomId(), 
+          "a": { x: clickX, y: clickY }, 
+          "b": { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y },
+          "tex": wallDefaults.tex,
+          "sX": wallDefaults.sX,
+          "sY": wallDefaults.sY,
+          "sC": wallDefaults.sC,
+        };
         mapdataObj[currentSector].push(closingSegment);
       }
       
@@ -155,8 +160,7 @@ var ledit = (function(){
       drawMeta[currentSector].DMdrawCounter++
     }
   
-
-    console.log('drew this')
+    console.log('drew this:')
     console.log(mapdataObj[currentSector])
 
     _lhelpers.drawGrid()
@@ -280,9 +284,16 @@ var ledit = (function(){
 
 
 
-  handleValueChange = function( event, type){
-    // console.log(type);
-    // console.log(event);
+  handleValueChange = function( event, type ){
+    const currentWallId = editwallid.innerHTML;
+
+    // find the wallID in the mapdataObj[sector] we are editing
+    for (let i = 0; i < mapdataObj[currentSector].length; i++) {
+      const currentWall = mapdataObj[currentSector][i];
+      if( currentWall.id == currentWallId ){
+        currentWall[type] = event.target.value
+      }
+    }
   }
 
 
@@ -383,11 +394,11 @@ var ledit = (function(){
 
 
     // listeners for wallinputs
-    const editwallid = document.querySelector("#editwallid");
-    const wallTexInput = document.querySelector("#wallTex");
-    const texScaleXinput = document.querySelector("#texScaleX");
-    const texScaleYinput = document.querySelector("#texScaleY");
-    const sectorconnectorinput = document.querySelector("#sectorconnectorinput");
+    editwallid = document.querySelector("#editwallid");
+    wallTexInput = document.querySelector("#wallTex");
+    texScaleXinput = document.querySelector("#texScaleX");
+    texScaleYinput = document.querySelector("#texScaleY");
+    sectorconnectorinput = document.querySelector("#sectorconnectorinput");
 
     wallTexInput.addEventListener('input', (e) => { handleValueChange(e, "tex"); });
     texScaleXinput.addEventListener('input', (e) => { handleValueChange(e, "sX"); });

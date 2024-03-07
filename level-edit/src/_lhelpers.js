@@ -344,6 +344,52 @@ _lhelpers = {
 
     // console.log(leveldata);
 
-  }
+  },
+
+
+  isClickedOnWall: function (clickX, clickY, walls) {
+    // Define an error margin for clicking on a wall segment
+    const errorMargin = 10; // Adjust as needed
+
+    // Iterate through each wall segment
+    for (const wall of walls) {
+        // Extract the coordinates of the wall segment's endpoints
+        const { a, b } = wall;
+        const ax = a.x;
+        const ay = a.y;
+        const bx = b.x;
+        const by = b.y;
+
+        // Calculate vectors representing the wall segment and the vector from point A to the click point
+        const wallVector = { x: bx - ax, y: by - ay };
+        const pointToAVector = { x: clickX - ax, y: clickY - ay };
+
+        // Calculate the dot product of the wall segment vector and the vector from point A to the click point
+        const dotProduct = wallVector.x * pointToAVector.x + wallVector.y * pointToAVector.y;
+
+        // Calculate the length squared of the wall segment
+        const lengthSquared = wallVector.x ** 2 + wallVector.y ** 2;
+
+        // Calculate the parameter t, which represents the position of the projection of the click point onto the wall segment
+        const t = Math.max(0, Math.min(1, dotProduct / lengthSquared));
+
+        // Calculate the coordinates of the projection point onto the wall segment
+        const projectionX = ax + t * wallVector.x;
+        const projectionY = ay + t * wallVector.y;
+
+        // Calculate the distance between the click point and the projection point
+        const distanceSquared = (clickX - projectionX) ** 2 + (clickY - projectionY) ** 2;
+
+        // If the distance is within the error margin, the click point is near the wall segment
+        if (distanceSquared <= errorMargin ** 2) {
+            return wall;
+        }
+    }
+
+    // If no wall segment was clicked, return false
+    return false;
+}
+
+
 
 }
