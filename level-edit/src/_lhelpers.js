@@ -39,7 +39,7 @@ _lhelpers = {
     ctx.stroke();
   },
 
-  drawGrid: function(wall1, wall2){
+  drawGrid: function(wall1, wall2) {
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
     // Calculate visible grid range
@@ -84,68 +84,85 @@ _lhelpers = {
 
     // iterate over the map object and draw each wall
     for (let i = 0; i < mapdataObj.length; i++) {
-      if (i === 0){
-        continue;
-      }
-
-      const element = mapdataObj[i];
-      for (const wall of element) {  
-
-        // Retrieve start and end points of the wall segment
-        const startX = wall.a.x * scale + offsetX;
-        const startY = wall.a.y * scale + offsetY;
-        const endX = wall.b.x * scale + offsetX;
-        const endY = wall.b.y * scale + offsetY;
-
-        // Print Each Wall 
-        if( currentSector == i ){
-          ctx.strokeStyle = 'rebeccapurple';
+        if (i === 0) {
+            continue;
         }
-        else{
-          ctx.strokeStyle = '#444';
+
+        const element = mapdataObj[i];
+
+        // Calculate centroid
+        let centroidX = 0;
+        let centroidY = 0;
+        for (const wall of element) {
+            centroidX += (wall.a.x + wall.b.x) / 2;
+            centroidY += (wall.a.y + wall.b.y) / 2;
         }
-        ctx.lineWidth = 2;
+        centroidX /= element.length;
+        centroidY /= element.length;
 
-        // Draw the line segment
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
+        // Draw sector name
+        ctx.fillStyle = '#000';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`Sector ${i}`, centroidX * scale + offsetX, centroidY * scale + offsetY);
 
-        // Print Coordinates
-        ctx.fillStyle = '#111';
-        ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-        ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+        for (const wall of element) {
 
-        // print points
-        ctx.beginPath();
-        if( currentSector == i ){
-          ctx.fillStyle = 'blue';
-        }else{
-          ctx.fillStyle = '#ccc';
+            // Retrieve start and end points of the wall segment
+            const startX = wall.a.x * scale + offsetX;
+            const startY = wall.a.y * scale + offsetY;
+            const endX = wall.b.x * scale + offsetX;
+            const endY = wall.b.y * scale + offsetY;
+
+            // Print Each Wall 
+            if (currentSector == i) {
+                ctx.strokeStyle = 'rebeccapurple';
+            } else {
+                ctx.strokeStyle = '#444';
+            }
+            ctx.lineWidth = 2;
+
+            // Draw the line segment
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Print Coordinates
+            ctx.fillStyle = '#111';
+            ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+            ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+
+            // print points
+            ctx.beginPath();
+            if (currentSector == i) {
+                ctx.fillStyle = 'blue';
+            } else {
+                ctx.fillStyle = '#ccc';
+            }
+            ctx.arc(startX, startY, 3, 0, Math.PI * 2);
+            ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+            ctx.fill();
         }
-        ctx.arc(startX, startY, 3, 0, Math.PI * 2);
-        ctx.arc(endX, endY, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
     }
 
     // draw highlighted line, if needed
-    if(wall1 && wall2){
-      // Set line properties
-      ctx.strokeStyle = 'pink'; 
-      ctx.lineWidth = 2;
-  
-      // Begin drawing the line
-      ctx.beginPath();
-      ctx.moveTo(wall1.x, wall1.y);
-      ctx.lineTo(wall2.x, wall2.y);
-      ctx.stroke();
+    if (wall1 && wall2) {
+        // Set line properties
+        ctx.strokeStyle = 'pink';
+        ctx.lineWidth = 2;
+
+        // Begin drawing the line
+        ctx.beginPath();
+        ctx.moveTo(wall1.x, wall1.y);
+        ctx.lineTo(wall2.x, wall2.y);
+        ctx.stroke();
     }
 
     // Restore transformations
     ctx.restore();
-  },
+},
 
 
 
@@ -339,10 +356,10 @@ _lhelpers = {
       tempMapData[i] = {
         "id": "sector"+i,
         "walls": sectorWalls,
-        "floor": 1,
+        "floor": 0,
         "ceil": 2,
-        "floorTex": "#",
-        "ceilTex": "Y"
+        "floorTex": "Y",
+        "ceilTex": "U"
       }
     }
 
