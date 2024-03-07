@@ -84,33 +84,33 @@ _lhelpers = {
 
     // iterate over the map object and draw each wall
     for (let i = 0; i < mapdataObj.length; i++) {
-        if (i === 0) {
-            continue;
-        }
+      if (i === 0) {
+          continue;
+      }
 
-        const element = mapdataObj[i];
+      const element = mapdataObj[i];
 
-        // Calculate centroid
-        let centroidX = 0;
-        let centroidY = 0;
-        for (const wall of element) {
-            centroidX += (wall.a.x + wall.b.x) / 2;
-            centroidY += (wall.a.y + wall.b.y) / 2;
-        }
-        centroidX /= element.length;
-        centroidY /= element.length;
+      // Calculate centroid
+      let centroidX = 0;
+      let centroidY = 0;
+      for (const wall of element) {
+          centroidX += (wall.a.x + wall.b.x) / 2;
+          centroidY += (wall.a.y + wall.b.y) / 2;
+      }
+      centroidX /= element.length;
+      centroidY /= element.length;
 
-        // Draw sector name
-        ctx.fillStyle = '#444';
-        if (currentSector == i) {
-          ctx.fillStyle = 'rebeccapurple';
-        }
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`Sector ${i}`, centroidX * scale + offsetX, centroidY * scale + offsetY);
+      // Draw sector name
+      ctx.fillStyle = '#444';
+      if (currentSector == i) {
+        ctx.fillStyle = 'rebeccapurple';
+      }
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`Sector ${i}`, centroidX * scale + offsetX, centroidY * scale + offsetY);
 
-        for (const wall of element) {
+      for (const wall of element) {
 
           // Retrieve start and end points of the wall segment
           const startX = wall.a.x * scale + offsetX;
@@ -120,6 +120,9 @@ _lhelpers = {
 
           // Print Each Wall 
           ctx.strokeStyle = '#444';
+          if( wall.sC != 0 ){
+            ctx.strokeStyle = '#F44';
+          }
           ctx.lineWidth = 2;
 
           // Draw the line segment
@@ -140,6 +143,17 @@ _lhelpers = {
           ctx.arc(endX, endY, 3, 0, Math.PI * 2);
           ctx.fill();
       }
+
+      // ctx.fillStyle = 'rgba(255, 165, 0, 0.2)'; // Adjust the fill color and opacity as needed
+      // ctx.beginPath();
+      // ctx.moveTo(element[0].a.x * scale + offsetX, element[0].a.y * scale + offsetY);
+      // for (const wall of element) {
+      //     const startX = wall.a.x * scale + offsetX;
+      //     const startY = wall.a.y * scale + offsetY;
+      //     ctx.lineTo(startX, startY);
+      // }
+      // ctx.closePath();
+      // ctx.fill();
     }
 
 
@@ -154,6 +168,9 @@ _lhelpers = {
 
       // Print Each Wall 
       ctx.strokeStyle = '#a3a';
+      if( wall.sC != 0 ){
+        ctx.strokeStyle = '#f6c';
+      }
       ctx.lineWidth = 2;
 
       // Draw the line segment
@@ -179,7 +196,7 @@ _lhelpers = {
     // draw highlighted line, if needed
     if (wall1 && wall2) {
         // Set line properties
-        ctx.strokeStyle = 'pink';
+        ctx.strokeStyle = 'gold';
         ctx.lineWidth = 2;
 
         // Begin drawing the line
