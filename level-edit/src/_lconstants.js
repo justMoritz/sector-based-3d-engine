@@ -17,7 +17,9 @@ let isDragging = false;
 let lastX = 0;
 let lastY = 0;
 // let vertices = []; // Array to store vertices
-let gDraggedPoint;
+let gDraggedPoint0;
+let gDraggedPoint1;
+
 
 
 
@@ -57,3 +59,8 @@ let fPlayerY = 3.2;
 let fPlayerA = 2.8;
 let fPlayerH = 0;
 let startingSector = 3;
+
+
+
+
+

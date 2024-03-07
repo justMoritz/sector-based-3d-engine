@@ -214,24 +214,24 @@ _lhelpers = {
   findClickedPoint2: function( clickX, clickY, wallsObj ){
     let clickedPoints = [];
 
-    // console.log(`obj has ${wallsObj.length} walls`)
-
     for (let i = 0; i < wallsObj.length; i++) {
       const currentWall = wallsObj[i];
-      const points = [currentWall.a, currentWall.b];
 
-      // console.log(`wall ${i} has these points:`);
+      // Test Wall point A
+      const distanceA = Math.sqrt((clickX - currentWall.a.x) ** 2 + (clickY - currentWall.a.y) ** 2);
+      if (distanceA <= 3) {
+        clickedPoints.push( {"wallID": currentWall.id, "point": currentWall.a, "pointID":  "a"} );
+      }
 
-      for (const point of points) {
-        const distance = Math.sqrt((clickX - point.x) ** 2 + (clickY - point.y) ** 2);
-        // console.log(point);
-        // console.log(distance);
-        if (distance <= 3) {
-          clickedPoints.push( {"wallID": currentWall.id, "point": point} );
-          // break;
-        }
+      // Test Wall point B
+      const distanceB = Math.sqrt((clickX - currentWall.b.x) ** 2 + (clickY - currentWall.b.y) ** 2);
+      if (distanceB <= 3) {
+        clickedPoints.push( {"wallID": currentWall.id, "point": currentWall.b, "pointID":  "b"} );
       }
     }
+
+    // returns each point, the id of the wall the point belongs to, as well as which point of the wall it is.
+    // This will allow us to modify the exact point of in the mapdataObj Object :)
     return clickedPoints;
   },
 

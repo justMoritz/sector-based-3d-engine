@@ -176,28 +176,42 @@ var ledit = (function(){
 
     _lhelpers.drawGrid();
 
+    let dragOffsetX;
+    let dragOffsetY;
+
     if( !isDragging ){
-      gDraggedPoint = null;
+      gDraggedPoint0 = null;
+      gDraggedPoint1 = null;
     }
     
     // Check if the mouse is over any point
-    let clickedPoint = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdataObj[currentSector]);
-    console.log(`Found this point:`);
-    console.log(clickedPoint);
+    let clickedPoints = _lhelpers.findClickedPoint2(mouseX, mouseY, mapdataObj[currentSector]);
+    // console.log(`Found this points:`);
+    // console.log(clickedPoints);
 
-    // if (clickedPoint) {
-    //   isDragging = true;
-    //   // Start dragging the clicked point
-    //   gDraggedPoint = clickedPoint;
-    //   dragOffsetX = _lhelpers.roundToNearest(mouseX) - clickedPoint.x;
-    //   dragOffsetY = _lhelpers.roundToNearest(mouseY) - clickedPoint.y;
-    //   _lhelpers.drawGrid();
-    // }
-  
-    // // Continue dragging
-    // gDraggedPoint.x = _lhelpers.roundToNearest(mouseX) - dragOffsetX;
-    // gDraggedPoint.y = _lhelpers.roundToNearest(mouseY) - dragOffsetY;
-    // _lhelpers.drawGrid();
+    if (clickedPoints.length > 0) {
+      // console.log('this should only run one time');
+      isDragging = true;
+      
+      // Start dragging the clicked point
+      gDraggedPoint0 = clickedPoints[0];
+      gDraggedPoint1 = clickedPoints[1];
+      dragOffsetX = _lhelpers.roundToNearest(mouseX) - gDraggedPoint0.point.x;
+      dragOffsetY = _lhelpers.roundToNearest(mouseY) - gDraggedPoint0.point.y;
+      // dragOffsetX = _lhelpers.roundToNearest(mouseX) - gDraggedPoint1.point.x;
+      // dragOffsetY = _lhelpers.roundToNearest(mouseY) - gDraggedPoint1.point.y;
+      _lhelpers.drawGrid();
+    }
+    else{
+
+      // Continue dragging
+      gDraggedPoint0.point.x = _lhelpers.roundToNearest(mouseX);
+      gDraggedPoint0.point.y = _lhelpers.roundToNearest(mouseY);
+      gDraggedPoint1.point.x = _lhelpers.roundToNearest(mouseX);
+      gDraggedPoint1.point.y = _lhelpers.roundToNearest(mouseY);
+
+      _lhelpers.drawGrid();
+    }
   }
 
 
