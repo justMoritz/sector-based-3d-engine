@@ -101,7 +101,10 @@ _lhelpers = {
         centroidY /= element.length;
 
         // Draw sector name
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#444';
+        if (currentSector == i) {
+          ctx.fillStyle = 'rebeccapurple';
+        }
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -109,43 +112,69 @@ _lhelpers = {
 
         for (const wall of element) {
 
-            // Retrieve start and end points of the wall segment
-            const startX = wall.a.x * scale + offsetX;
-            const startY = wall.a.y * scale + offsetY;
-            const endX = wall.b.x * scale + offsetX;
-            const endY = wall.b.y * scale + offsetY;
+          // Retrieve start and end points of the wall segment
+          const startX = wall.a.x * scale + offsetX;
+          const startY = wall.a.y * scale + offsetY;
+          const endX = wall.b.x * scale + offsetX;
+          const endY = wall.b.y * scale + offsetY;
 
-            // Print Each Wall 
-            if (currentSector == i) {
-                ctx.strokeStyle = 'rebeccapurple';
-            } else {
-                ctx.strokeStyle = '#444';
-            }
-            ctx.lineWidth = 2;
+          // Print Each Wall 
+          ctx.strokeStyle = '#444';
+          ctx.lineWidth = 2;
 
-            // Draw the line segment
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(endX, endY);
-            ctx.stroke();
+          // Draw the line segment
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(endX, endY);
+          ctx.stroke();
 
-            // Print Coordinates
-            ctx.fillStyle = '#111';
-            ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-            ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+          // Print Coordinates
+          ctx.fillStyle = '#aaa';
+          ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+          ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
 
-            // print points
-            ctx.beginPath();
-            if (currentSector == i) {
-                ctx.fillStyle = 'blue';
-            } else {
-                ctx.fillStyle = '#ccc';
-            }
-            ctx.arc(startX, startY, 3, 0, Math.PI * 2);
-            ctx.arc(endX, endY, 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
+          // print points
+          ctx.beginPath();
+          ctx.fillStyle = '#ccc';
+          ctx.arc(startX, startY, 3, 0, Math.PI * 2);
+          ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+          ctx.fill();
+      }
     }
+
+
+    // Draws the current sector on top again
+    for (const wall of mapdataObj[currentSector]) {
+
+      // Retrieve start and end points of the wall segment
+      const startX = wall.a.x * scale + offsetX;
+      const startY = wall.a.y * scale + offsetY;
+      const endX = wall.b.x * scale + offsetX;
+      const endY = wall.b.y * scale + offsetY;
+
+      // Print Each Wall 
+      ctx.strokeStyle = '#a3a';
+      ctx.lineWidth = 2;
+
+      // Draw the line segment
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      // Print Coordinates
+      ctx.fillStyle = '#111';
+      ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
+      ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+
+      // print points
+      ctx.beginPath();
+      ctx.fillStyle = 'blue';
+
+      ctx.arc(startX, startY, 3, 0, Math.PI * 2);
+      ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+      ctx.fill();
+  }
 
     // draw highlighted line, if needed
     if (wall1 && wall2) {
@@ -422,8 +451,13 @@ _lhelpers = {
 
     // If no wall segment was clicked, return false
     return false;
-}
+  },
 
+
+  // Function to check if two points are equal
+  pointsAreEqual: function (point1, point2) {
+    return point1.x === point2.x && point1.y === point2.y;
+  },
 
 
 }

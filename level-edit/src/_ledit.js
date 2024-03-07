@@ -55,23 +55,95 @@ var ledit = (function(){
   /**
    * 
    * Delete Mode
-   * 
    */
-  handleDeleteMode = function () {
+  function handleDeleteMode(event) {
     const clickX = (event.clientX - offsetX) / scale;
     const clickY = (event.clientY - offsetY) / scale;
-    let clickedPoint = _lhelpers.findClickedPoint(clickX, clickY, mapdata[currentSector]);
+    const clickPoint = { x: clickX, y: clickY };
+    const sectorWalls = mapdataObj[currentSector];
 
-    for (let p = 0; p < mapdata[currentSector].length; p++) {
-      if( mapdata[currentSector][p] === clickedPoint ){
-        mapdata[currentSector] = _lhelpers.removeNthElement(mapdata[currentSector], p);
+    let newStartingPoint;
+    let newEndingPoint;
+    let insertAtThisElement;
+    let removeThisElement0;
+    let removeThisElement1;
+
+    let clickedPoints = _lhelpers.findClickedPoint2(clickX, clickY, mapdataObj[currentSector]);
+    console.log(`Found these points:`);
+    console.log(clickedPoints);
+
+
+    console.log(sectorWalls);
+
+
+    // found points
+    if (clickedPoints.length > 0) {
+
+      // store the points of those walls that were NOT clicked
+      let firstWallId = clickedPoints[0].wallID;
+      let secondWallId = clickedPoints[1].wallID;
+      let clickedPoint = clickedPoints[0].point;
+
+      for (let j = 0; j < mapdataObj[currentSector].length; j++) {
+        const wall = mapdataObj[currentSector][j];
+
+        // // checks first wall
+        if (wall.id == firstWallId) {
+          if( _lhelpers.pointsAreEqual(clickedPoint, wall.a) ){
+            // console.log('clicked point is the same as point a, therefore save point b');
+            newStartingPoint = wall.b;
+          } 
+          else if( _lhelpers.pointsAreEqual(clickedPoint, wall.b) ){
+            // console.log('clicked point is the same as point b, therefore save point a');
+            newStartingPoint = wall.a;
+          }
+          insertAtThisElement = j;
+          removeThisElement0 = j;
+        }
+
+        // // checks second wall
+        else if (wall.id == secondWallId) {
+          if( _lhelpers.pointsAreEqual(clickedPoint, wall.a) ){
+            // console.log('clicked point is the same as point a, therefore save point b');
+            newEndingPoint = wall.b;
+          } 
+          else if( _lhelpers.pointsAreEqual(clickedPoint, wall.b) ){
+            // console.log('clicked point is the same as point b, therefore save point a');
+            newEndingPoint = wall.a;
+          }
+          removeThisElement1 = j;
+        }
       }
+
+      
+      // Remove the two old walls
+      sectorWalls.splice(removeThisElement0, 1);
+      sectorWalls.splice(removeThisElement1-1, 1);
+
+
+
+      // create a new walls connecting the two saved points
+      let newWall = { 
+        // "id": _lhelpers.generateRandomId() ,
+        "id": "XXXXXX" ,
+        "a": newStartingPoint, 
+        "b": newEndingPoint, 
+        "tex": wallDefaults.tex,
+        "sX": wallDefaults.sX,
+        "sY": wallDefaults.sY,
+        "sC": wallDefaults.sC,
+      };
+
+      
+      sectorWalls.splice(insertAtThisElement, 0, newWall);
+      console.log(sectorWalls)
+
     }
 
-    _lhelpers.drawGrid();
-
-
+    _lhelpers.drawGrid(); // Redraw the grid
+    
   }
+
 
 
   /**
@@ -79,27 +151,59 @@ var ledit = (function(){
    * Add Mode
    * 
    */
-  handleAddMode = function () {
-    let clickX = (event.clientX - offsetX) / scale;
-    let clickY = (event.clientY - offsetY) / scale;
+  function handleAddMode(event) {
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
+    const clickPoint = { x: clickX, y: clickY };
 
-    // clickX = _lhelpers.roundToNearest(clickX);
-    // clickY = _lhelpers.roundToNearest(clickY);
+    // Iterate through each sector
+    for (let i = 0; i < mapdataObj.length; i++) {
 
-    // Check if clicked on a line segment between vertices
-    for (let i = 0; i < mapdata[currentSector].length - 1; i++) {
-      const point1 = mapdata[currentSector][i];
-      const point2 = mapdata[currentSector][i + 1];
-      const distanceToLine = _lhelpers.pointToLineDistance({ x: clickX, y: clickY }, point1, point2);
-      if (distanceToLine <= 3) {
-        // Insert new vertex between point1 and point2
-        mapdata[currentSector].splice(i + 1, 0, { x: _lhelpers.roundToNearest(clickX), y: _lhelpers.roundToNearest(clickY),id: _lhelpers.generateRandomId() });
+      if(i == 0){
+        continue;
+      }
+      const sectorWalls = mapdataObj[i];
+      
+      // Iterate through each wall in the sector
+      for (let j = 0; j < sectorWalls.length; j++) {
+        const wall = sectorWalls[j];
+        const startPoint = wall.a;
+        const endPoint = wall.b;
 
-        _lhelpers.drawGrid();
-        return;
+        // Calculate the distance from the click point to the wall segment
+        const distance = _lhelpers.pointToLineDistance(clickPoint, startPoint, endPoint);
+
+        // Check if the distance is within a certain threshold (e.g., 5px)
+        if (distance <= 5) {
+          // Split the wall segment at the click point
+          const newWall1 = { 
+            "id": _lhelpers.generateRandomId(),
+            "a": startPoint, 
+            "b": clickPoint, 
+            "tex": wallDefaults.tex,
+            "sX": wallDefaults.sX,
+            "sY": wallDefaults.sY,
+            "sC": wallDefaults.sC,
+          };
+          const newWall2 = { 
+            "id": _lhelpers.generateRandomId() ,
+            "a": clickPoint, 
+            "b": endPoint, 
+            "tex": wallDefaults.tex,
+            "sX": wallDefaults.sX,
+            "sY": wallDefaults.sY,
+            "sC": wallDefaults.sC,
+          };
+
+          // Replace the old wall with the new ones
+          sectorWalls.splice(j, 1, newWall1, newWall2);
+          _lhelpers.drawGrid(); // Redraw the grid
+          return; // Exit the function after splitting the wall
+        }
       }
     }
-  }
+}
+
 
 
   /**
