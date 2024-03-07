@@ -304,25 +304,41 @@ _lhelpers = {
   },
 
 
+  // Converts data from the level editor to a workable level file
   generateLevelData: function () {
-
-    // console.log(mapdata);
  
     let tempMapData = [];
     tempMapData[0] = {
       "id": false,
     }
 
-    for(let i=0; i< mapdata.length; i++){
+    for(let i=0; i< mapdataObj.length; i++){
       if(i === 0){
         continue
       }
-      let sector = mapdata[i];
-      let sectorFormattedWalls = _lhelpers.createLineSegments(sector);
+      let currentSector = mapdataObj[i];
+      let sectorWalls = [];
 
+      // Formats all the walls in the current sector
+      for(let j=0; j< currentSector.length; j++){
+        const wall = currentSector[j];
+        let sectorFormattedWallData = [
+          wall.a.x/100,
+          wall.a.y/100,
+          wall.b.x/100,
+          wall.b.y/100,
+          wall.tex,
+          wall.sX,
+          wall.sY,
+          wall.sC
+        ]
+        sectorWalls[j] = sectorFormattedWallData;
+      }
+
+      // Formats each sector
       tempMapData[i] = {
         "id": "sector"+i,
-        "walls": sectorFormattedWalls,
+        "walls": sectorWalls,
         "floor": 1,
         "ceil": 2,
         "floorTex": "#",
@@ -330,6 +346,7 @@ _lhelpers = {
       }
     }
 
+    // combines all the data into level data
     leveldata = { 
       "fDepth": fDepth,
       "fPlayerX": fPlayerX,
@@ -342,7 +359,7 @@ _lhelpers = {
       "map": tempMapData
     }
 
-    // console.log(leveldata);
+    console.log(leveldata);
 
   },
 

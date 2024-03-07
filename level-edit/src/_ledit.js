@@ -32,7 +32,6 @@ var ledit = (function(){
 
     let wallPoints = _lhelpers.isClickedOnWall( clickX, clickY, mapdataObj[currentSector] );
 
-    console.log(wallPoints);
     _lhelpers.drawGrid(wallPoints.a, wallPoints.b);
 
     if (!wallPoints ){
@@ -109,7 +108,7 @@ var ledit = (function(){
    * 
    */
   function handleDrawMode(event) {
-    console.log(currentSector)
+    // console.log(currentSector)
     let clickX = (event.clientX - offsetX) / scale;
     let clickY = (event.clientY - offsetY) / scale;
     clickX = _lhelpers.roundToNearest(clickX);
@@ -160,8 +159,8 @@ var ledit = (function(){
       drawMeta[currentSector].DMdrawCounter++
     }
   
-    console.log('drew this:')
-    console.log(mapdataObj[currentSector])
+    // console.log('drew this:')
+    // console.log(mapdataObj[currentSector])
 
     _lhelpers.drawGrid()
   }

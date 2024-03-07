@@ -54,11 +54,11 @@ let wallData = {}
 
 
 let fDepth = 30;
-let fPlayerX = 7.5;
-let fPlayerY = 3.2;
+let fPlayerX = 2;
+let fPlayerY = 2;
 let fPlayerA = 2.8;
 let fPlayerH = 0;
-let startingSector = 3;
+let startingSector = 1;
 
 
 
