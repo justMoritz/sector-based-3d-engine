@@ -57,11 +57,6 @@ _lhelpers = {
     const endX = startX + visibleWidth;
     const endY = startY + visibleHeight;
 
-    // Apply transformations
-    ctx.save();
-    ctx.translate(offsetX, offsetY);
-    ctx.scale(scale, scale);
-
 
     // Draw sub-rules
     ctx.beginPath();
@@ -112,10 +107,10 @@ _lhelpers = {
       for (const wall of element) {
 
           // Retrieve start and end points of the wall segment
-          const startX = wall.a.x * scale + offsetX;
-          const startY = wall.a.y * scale + offsetY;
-          const endX = wall.b.x * scale + offsetX;
-          const endY = wall.b.y * scale + offsetY;
+          const startX = wall.a.x * scale + 0;
+          const startY = wall.a.y * scale + 0;
+          const endX = wall.b.x * scale + 0;
+          const endY = wall.b.y * scale + 0;
 
           // Print Each Wall 
           ctx.strokeStyle = '#444';
@@ -150,10 +145,10 @@ _lhelpers = {
           ctx.fillStyle = `rgba(255, 155, 55, ${(mapSecMeta[i].floor/10 + 0.02)})`;
           // console.log(ctx.fillStyle);
           ctx.beginPath();
-          ctx.moveTo(element[0].a.x * scale + offsetX, element[0].a.y * scale + offsetY);
+          ctx.moveTo(element[0].a.x * scale + 0, element[0].a.y * scale + 0);
           for (const wall of element) {
-              const startX = wall.a.x * scale + offsetX;
-              const startY = wall.a.y * scale + offsetY;
+              const startX = wall.a.x * scale + 0;
+              const startY = wall.a.y * scale + 0;
               ctx.lineTo(startX, startY);
           }
           ctx.closePath();
@@ -168,7 +163,7 @@ _lhelpers = {
       ctx.font = '12px Arial';
       ctx.textAlign = 'center';
       // ctx.textBaseline = 'middle';
-      ctx.fillText(`Sector ${i}`, centroidX * scale + offsetX, centroidY * scale + offsetY);
+      ctx.fillText(`Sector ${i}`, centroidX * scale + 0, centroidY * scale + 0);
       
     }
 
@@ -178,10 +173,10 @@ _lhelpers = {
       for (const wall of mapdataObj[currentSector]) {
 
         // Retrieve start and end points of the wall segment
-        const startX = wall.a.x * scale + offsetX;
-        const startY = wall.a.y * scale + offsetY;
-        const endX = wall.b.x * scale + offsetX;
-        const endY = wall.b.y * scale + offsetY;
+        const startX = wall.a.x * scale + 0;
+        const startY = wall.a.y * scale + 0;
+        const endX = wall.b.x * scale + 0;
+        const endY = wall.b.y * scale + 0;
 
         // Print Each Wall 
         ctx.strokeStyle = '#a3a';
@@ -656,6 +651,36 @@ _lhelpers = {
     // console.log( importedJSON );
     // console.log( importedJSON.fPlayerA );
   },
+
+
+  handleMouseDown: function(event) {
+    isDragging = true;
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+  },
+
+
+  handleMouseMove: function (event) {
+    if (isDragging) {
+      let deltaX = event.clientX - lastMouseX;
+      let deltaY = event.clientY - lastMouseY;
+
+      // Update offsetX and offsetY based on mouse movement
+      offsetX += deltaX;
+      offsetY += deltaY;
+
+      // Redraw the grid with the updated offset values
+      _lhelpers.drawGrid();
+
+      // Update last mouse position
+      lastMouseX = event.clientX;
+      lastMouseY = event.clientY;
+    }
+},
+
+  handleMouseUp: function(event) {
+    isDragging = false;
+  }
 
 
 }

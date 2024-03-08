@@ -635,11 +635,36 @@ var ledit = (function(){
     inputButton = document.querySelector("#inputButton");
     outputButton = document.querySelector("#outputButton");
 
-    outputButton.addEventListener( "click", () =>{ _lhelpers.copyToClipBoard() });
-    inputButton.addEventListener( "click", () =>{ _lhelpers.handleImportFromFile() });
+    outputButton.addEventListener( "click", () => { _lhelpers.copyToClipBoard() });
+    inputButton.addEventListener( "click", () => { _lhelpers.handleImportFromFile() });
 
     // super cheap, but generates level data as we're moving the mouse over the export button
     document.querySelector('#exportTrigger').addEventListener("mouseover", () => { _lhelpers.generateLevelData() });
+
+
+
+
+    let scrollLeft = document.querySelector("#scrollLeft");
+    let scrollRight = document.querySelector("#scrollRight");
+
+
+    scrollLeft.addEventListener("click", ()=>{
+      console.log('left!');
+      offsetX -= 1;
+      console.log(`offsetX: ${offsetX}`);
+
+      _lhelpers.drawGrid();
+    });
+
+
+    scrollRight.addEventListener("click", ()=>{
+      console.log('right!');
+      offsetX += 1;
+      console.log(`offsetX: ${offsetX}`);
+
+      _lhelpers.drawGrid();
+    });
+
 
 
     // Initial draw
