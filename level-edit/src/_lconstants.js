@@ -33,6 +33,10 @@ let mapdataObj = [];
 mapdataObj[0] = [null];
 
 
+let mapSecMeta = [];
+mapSecMeta[0] = [null];
+
+
 // Global variables needed for Draw Mode (DM)
 let drawMeta = [];
 drawMeta[0] = [null];
@@ -71,8 +75,21 @@ const wallDefaults = {
     "xO": 0,
     "yO": 0,
 }
+
+const sectorDefaults = {
+    "floor": 0,
+    "ceil": 2,
+    "floorTex": "Y",
+    "ceilTex": "U"
+}
+
+
 let editwallid;
 let wallTexInput;
 let texScaleXinput;
 let texScaleYinput;
 let sectorconnectorinput;
+let floorInput;
+let ceilInput;
+let ceilTexInput;
+let floorTexInput;

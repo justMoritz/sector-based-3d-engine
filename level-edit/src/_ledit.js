@@ -330,8 +330,19 @@ var ledit = (function(){
     selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
 
     currentSector = sectorCounter;
-    // initialize empty array
+    // initialize empty sectorWalls
     mapdata[currentSector] = [];
+    
+    // init new sector meta, with defaults
+    mapSecMeta[currentSector] = {
+      "id": "sector"+currentSector,
+      "floor": sectorDefaults.floor,
+      "ceil": sectorDefaults.ceil,
+      "ceilTex": sectorDefaults.ceilTex,
+      "floorTex": sectorDefaults.floorTex,
+    };
+
+    console.log(mapSecMeta);
 
 
     // Preparing variables for Draw Mode
@@ -373,13 +384,20 @@ var ledit = (function(){
 
 
   /**
-   * Select a given sector selector ( sectorselect, selectsector )
+   * Select a given sector selector ( sectorselect, selectsector, switchsector )
    */
   var handleSelectSector = function (event) {
     document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
     event.target.classList.add('this--active');
     // sets the Global current sector we're working with
     currentSector = event.target.dataset.id;
+    
+    // writes the current sector Meta into the files
+    floorInput.value = mapSecMeta[currentSector].floor;
+    ceilInput.value = mapSecMeta[currentSector].ceil;
+    ceilTexInput.value = mapSecMeta[currentSector].ceilTex;
+    floorTexInput.value = mapSecMeta[currentSector].floorTex;
+
     _lhelpers.drawGrid();
   }
 
@@ -387,7 +405,7 @@ var ledit = (function(){
 
 
 
-  handleValueChange = function( event, type ){
+  handleValueChangeWall = function( event, type ){
     const currentWallId = editwallid.innerHTML;
 
     // find the wallID in the mapdataObj[sector] we are editing
@@ -395,6 +413,19 @@ var ledit = (function(){
       const currentWall = mapdataObj[currentSector][i];
       if( currentWall.id == currentWallId ){
         currentWall[type] = event.target.value
+      }
+    }
+  }
+
+
+  handleValueChangeSector = function( event, type ){
+    console.log('running');
+    // find the wallID in the mapSecMeta we are editing
+    for (let i = 0; i < mapSecMeta.length; i++) {
+      const thisSector = mapSecMeta[i];
+      console.log(thisSector);
+      if( thisSector.id == "sector"+currentSector ){
+        thisSector[type] = event.target.value
       }
     }
   }
@@ -503,10 +534,20 @@ var ledit = (function(){
     texScaleYinput = document.querySelector("#texScaleY");
     sectorconnectorinput = document.querySelector("#sectorconnectorinput");
 
-    wallTexInput.addEventListener('input', (e) => { handleValueChange(e, "tex"); });
-    texScaleXinput.addEventListener('input', (e) => { handleValueChange(e, "sX"); });
-    texScaleYinput.addEventListener('input', (e) => { handleValueChange(e, "sY"); });
-    sectorconnectorinput.addEventListener('input', (e) => { handleValueChange(e, "sC"); });
+    floorInput = document.querySelector("#floor");
+    ceilInput = document.querySelector("#ceil");
+    ceilTexInput = document.querySelector("#ceilTex");
+    floorTexInput = document.querySelector("#floorTex");
+
+    wallTexInput.addEventListener('input', (e) => { handleValueChangeWall(e, "tex"); });
+    texScaleXinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sX"); });
+    texScaleYinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sY"); });
+    sectorconnectorinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sC"); });
+
+    floorInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floor"); });
+    ceilInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceil"); });
+    ceilTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTex"); });
+    floorTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTex"); });
 
 
     // Initial draw
