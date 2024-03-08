@@ -554,7 +554,7 @@ var ledit = (function(){
       else if (keyCode === 99 ){ // letter W
         document.querySelector('[data-mode="connect"]').click();
       }
-      else if (keyCode === 12 ){ // letter W
+      else if (keyCode === 112 ){ // letter W
         document.querySelector('[data-mode="pan"]').click();
       }
     };
@@ -640,30 +640,6 @@ var ledit = (function(){
 
     // super cheap, but generates level data as we're moving the mouse over the export button
     document.querySelector('#exportTrigger').addEventListener("mouseover", () => { _lhelpers.generateLevelData() });
-
-
-
-
-    let scrollLeft = document.querySelector("#scrollLeft");
-    let scrollRight = document.querySelector("#scrollRight");
-
-
-    scrollLeft.addEventListener("click", ()=>{
-      console.log('left!');
-      offsetX -= 1;
-      console.log(`offsetX: ${offsetX}`);
-
-      _lhelpers.drawGrid();
-    });
-
-
-    scrollRight.addEventListener("click", ()=>{
-      console.log('right!');
-      offsetX += 1;
-      console.log(`offsetX: ${offsetX}`);
-
-      _lhelpers.drawGrid();
-    });
 
 
 
