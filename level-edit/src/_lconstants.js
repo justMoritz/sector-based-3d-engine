@@ -26,8 +26,8 @@ let gDraggedPoint1;
 let leveldata = {};
 
 
-let mapdata = [];
-mapdata[0] = [null];
+// let mapdata = [];
+// mapdata[0] = [null];
 
 let mapdataObj = [];
 mapdataObj[0] = [null];

@@ -2,7 +2,7 @@ var ledit = (function(){
 
 
   handleMouseInteraction = function (event) {
-    if(mapdata.length < 2){
+    if(mapdataObj.length < 2){
       alert('please add a sector');
     }
 
@@ -397,7 +397,6 @@ var ledit = (function(){
 
     currentSector = sectorCounter;
     // initialize empty sectorWalls
-    mapdata[currentSector] = [];
     
     // init new sector meta, with defaults
     mapSecMeta[currentSector] = {
@@ -637,8 +636,10 @@ var ledit = (function(){
     outputButton = document.querySelector("#outputButton");
 
     outputButton.addEventListener( "click", () =>{ _lhelpers.copyToClipBoard() });
-
     inputButton.addEventListener( "click", () =>{ _lhelpers.handleImportFromFile() });
+
+    // super cheap, but generates level data as we're moving the mouse over the export button
+    document.querySelector('#exportTrigger').addEventListener("mouseover", () => { _lhelpers.generateLevelData() });
 
 
     // Initial draw
