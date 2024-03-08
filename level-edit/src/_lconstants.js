@@ -99,6 +99,10 @@ let floorInput;
 let ceilInput;
 let ceilTexInput;
 let floorTexInput;
+let floorTexScaleX;
+let floorTexScaleY;
+let ceilTexScaleX;
+let ceilTexScaleY;
 
 let outputareaTA;
 let inputareaTA;

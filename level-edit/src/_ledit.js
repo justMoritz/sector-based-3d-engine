@@ -639,6 +639,10 @@ var ledit = (function(){
     ceilInput = document.querySelector("#ceil");
     ceilTexInput = document.querySelector("#ceilTex");
     floorTexInput = document.querySelector("#floorTex");
+    floorTexScaleXInput = document.querySelector("#floorTexScaleX");
+    floorTexScaleYInput = document.querySelector("#floorTexScaleY");
+    ceilTexScaleXInput = document.querySelector("#ceilTexScaleX");
+    ceilTexScaleYInput = document.querySelector("#ceilTexScaleY");
 
     wallTexInput.addEventListener('input', (e) => { handleValueChangeWall(e, "tex"); });
     texScaleXinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sX"); });
@@ -653,6 +657,10 @@ var ledit = (function(){
     ceilInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceil"); });
     ceilTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTex"); });
     floorTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTex"); });
+    // floorTexScaleXInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTexScaleX"); });
+    // floorTexScaleYInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTexScaleY"); });
+    // ceilTexScaleXInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTexScaleX"); });
+    // ceilTexScaleYInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTexScaleY"); });
 
     // io elements
     outputareaTA = document.querySelector("#outputarea");

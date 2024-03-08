@@ -36,7 +36,7 @@ And so much more! The limits are endless!
 - Rethink variable scope of some variables
 - Fisheye correction is still a bit wonky
 - Wall-collision detection... it's bad
-- 👩🏼‍💻 Build in Texture X and Y offset
+- ✅ Build in Texture X and Y offset
 - 👩🏼‍💻 Build in sector texture scale
 
 #### 👩🏼‍💻 Level Editor (TODO:)
@@ -46,8 +46,8 @@ And so much more! The limits are endless!
 All of the below is outdated, I'll write up some docs sometime.
 
 Here is the current TODO:
-- 👩🏼‍💻 Level Editor panning (maybe zooming, probably not though)
-- 👩🏼‍💻 Build in Texture X and Y offset
+- ✅ Level Editor panning (maybe zooming, probably not though (Edit: no zooming))
+- ✅ Build in Texture X and Y offset
 - 👩🏼‍💻 Build in sector texture scale
 
 

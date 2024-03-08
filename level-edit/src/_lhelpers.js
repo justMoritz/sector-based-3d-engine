@@ -58,11 +58,6 @@ _lhelpers = {
     const endX = startX + visibleWidth;
     const endY = startY + visibleHeight;
 
-    // Check if (0, 0) is within the visible range
-    const zeroXVisible = startX <= 0 && 0 <= endX;
-    const zeroYVisible = startY <= 0 && 0 <= endY;
-
-
     // Draw sub-rules
     ctx.beginPath();
     ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
@@ -90,15 +85,13 @@ _lhelpers = {
     ctx.stroke();
 
     // Draw red line at (0, 0) if it's within visible range
-    if (zeroXVisible && zeroYVisible) {
-      ctx.beginPath();
-      ctx.strokeStyle = 'red';
-      ctx.moveTo(0, startY);
-      ctx.lineTo(0, endY);
-      ctx.moveTo(startX, 0);
-      ctx.lineTo(endX, 0);
-      ctx.stroke();
-  }
+    ctx.beginPath();
+    ctx.strokeStyle = 'red';
+    ctx.moveTo(0, startY);
+    ctx.lineTo(0, endY);
+    ctx.moveTo(startX, 0);
+    ctx.lineTo(endX, 0);
+    ctx.stroke();
 
     // iterate over the map object and draw each wall
     for (let i = 0; i < mapdataObj.length; i++) {

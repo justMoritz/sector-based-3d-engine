@@ -107,7 +107,7 @@
         }
 
         .right-sidebar__middle{
-            height: 210px;
+            height: 250px;
         }
 
         h4{
@@ -330,7 +330,7 @@
         </div>
 
         <div class="right-sidebar__sectional right-sidebar__middle">
-            <h4>Edit Sector <span id="editsector">X</span></h4>
+            <h4 style="display: none;">Edit Sector <span id="editsector"></span></h4>
             <label for="floor">
                 <span>Floor Height:</span>
                 <input id="floor" type="number" placeholder="i.e. 0" step="0.1">
@@ -343,10 +343,24 @@
                 <span>Floor Texture:</span>
                 <input id="floorTex" type="text" placeholder="Texture symbol">
             </label>
+            <!-- <label>
+                <span>Floor Tex. Scale:</span>
+                <div class="sort-labels">
+                    <input id="floorTexScaleX" type="number" placeholder="X scale" step="0.1">
+                    <input id="floorTexScaleY" type="number" placeholder="Y scale" step="0.1">
+                </div>
+            </label> -->
             <label for="ceilTex">
                 <span>Ceiling Texture:</span>
                 <input id="ceilTex" type="text" placeholder="Texture symbol">
             </label>
+            <!-- <label>
+                <span>Ceil Tex Scale:</span>
+                <div class="sort-labels">
+                    <input id="ceilTexScaleX" type="number" placeholder="X scale" step="0.1">
+                    <input id="ceilTexScaleY" type="number" placeholder="Y scale" step="0.1">
+                </div>
+            </label> -->
         </div>
 
         <div class="right-sidebar__sectional right-sidebar__bottom">
