@@ -399,6 +399,7 @@ _lhelpers = {
 
 
   // Converts data from the level editor to a workable level file
+  // export, exportlevel, exportdata, levelexport
   generateLevelData: function () {
  
     let tempMapData = [];
@@ -424,6 +425,8 @@ _lhelpers = {
           wall.tex,
           parseFloat(wall.sX),
           parseFloat(wall.sY),
+          parseFloat(wall.oX),
+          parseFloat(wall.oY),
           parseInt(wall.sC)
         ]
         sectorWalls[j] = sectorFormattedWallData;

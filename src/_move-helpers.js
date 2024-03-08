@@ -169,8 +169,8 @@ var _moveHelpers = {
         if(fTestDistanceToWall < 1){
 
           // if this wall we are hitting is considered a portal
-          if(currentWall[7] != false){
-            var collisionSector = currentWall[7];
+          if(currentWall[9] != false){
+            var collisionSector = currentWall[9];
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
             if( fPlayerH - (oLevel.map[collisionSector].floor) < -1 ){

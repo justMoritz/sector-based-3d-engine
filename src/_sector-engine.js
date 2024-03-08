@@ -78,7 +78,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -122,7 +122,7 @@ var gameEngineJS = (function () {
         sPixelToRender = _rh.renderWall(
           fDistanceToWall,
           sWallDirection,
-          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale)
+          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset)
         );
 
       } // End Draw Solid Wall
@@ -203,6 +203,8 @@ var gameEngineJS = (function () {
         var wallSamplePosition = null;
         var fSampleXScale = null;
         var fSampleYScale = null;
+        var fSampleXOffset = null;
+        var fSampleYOffset = null;
       
         // Check for intersection of current view vector with the wall-vector we are testing
         var intersection = intersectionPoint(
@@ -232,10 +234,12 @@ var gameEngineJS = (function () {
           // Wall Type (texture)
           sWallType = currentWall[4];
           // sWallType = "U";
-          // Wall X-Sample Scale Override
+          // Wall X/Y-Sample Scale Override
           fSampleXScale = currentWall[5];
-          // Wall Y-Sample Scale Override
           fSampleYScale = currentWall[6];
+          // Wall Offset Overrides
+          fSampleXOffset = currentWall[7];
+          fSampleYOffset = currentWall[8];
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
           wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
@@ -249,11 +253,11 @@ var gameEngineJS = (function () {
           
           
           // PORTAL FOUND
-          // if the current sector we are looking at has a portal (currentwall[7] !== false)
+          // if the current sector we are looking at has a portal (currentwall[9] !== false)
           // instead of drawing that wall, draw the sector behind the portal where the wall would have been
-          if(currentWall[7] != false){
+          if(currentWall[9] != false){
 
-            nextSector = currentWall[7];
+            nextSector = currentWall[9];
 
             // If the next sector hasn't been visited yet, enqueue it for checking
             if (!visitedSectors[nextSector]) {
@@ -292,6 +296,8 @@ var gameEngineJS = (function () {
                 wallSamplePosition, 
                 fSampleXScale, 
                 fSampleYScale, 
+                fSampleXOffset,
+                fSampleYOffset,
                 sSectorFloorTexture,
                 sSectorCeilingTexture,
                 nDrawStart,
@@ -325,6 +331,8 @@ var gameEngineJS = (function () {
               wallSamplePosition, 
               fSampleXScale, 
               fSampleYScale, 
+              fSampleXOffset,
+              fSampleYOffset,
               sSectorFloorTexture,
               sSectorCeilingTexture,
               nDrawStart,

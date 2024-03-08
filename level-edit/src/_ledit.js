@@ -113,7 +113,7 @@ var ledit = (function(){
       wallTexInput.value = wallPoints.tex;
       texScaleXinput.value = wallPoints.sX;
       texScaleYinput.value = wallPoints.sY;
-      texOffsetXinput.value = wallPoints.oY;
+      texOffsetXinput.value = wallPoints.oX;
       texOffsetYinput.value = wallPoints.oY;
       sectorconnectorinput.value = wallPoints.sC;
       sectorconnectorinput.focus();
@@ -486,6 +486,11 @@ var ledit = (function(){
 
   handleValueChangeWall = function( event, type ){
     const currentWallId = editwallid.innerHTML;
+    console.log(type);
+    console.log(type);
+    console.log(type);
+    console.log(event);
+    console.log(type);
 
     // find the wallID in the mapdataObj[sector] we are editing
     for (let i = 0; i < mapdataObj[currentSector].length; i++) {
