@@ -16,6 +16,8 @@ var ledit = (function(){
       handleDeleteMode(event);
     } else if (appMode === "wall") {
       handleWallMode(event);
+    } else if (appMode === "connect") {
+      handleConnectMode(event);
     }
 
     _lhelpers.generateLevelData();
@@ -31,24 +33,88 @@ var ledit = (function(){
     const clickY = (event.clientY - offsetY) / scale;
 
     let wallPoints = _lhelpers.isClickedOnWall( clickX, clickY, mapdataObj[currentSector] );
-
     _lhelpers.drawGrid(wallPoints.a, wallPoints.b);
-
+    
     if (!wallPoints ){
       document.querySelector(".right-sidebar__walls").classList.add("disabled");
-    }else{
+      
+      if (sectorSelectorIsFocussed) {
+        // test and see if a sector was clicked
+        clickedSectorForWallEditing = _lhelpers.findClickedSector(clickX, clickY, mapdataObj);
+
+        if(clickedSectorForWallEditing == currentSector){
+          alert(`Cannot connect wall to itself`);
+        }
+        else{
+          sectorconnectorinput.value = clickedSectorForWallEditing;
+          lastSelectedWallForEditing.sC = clickedSectorForWallEditing;
+          lastSelectedWallForEditing = false;
+          _lhelpers.drawGrid();
+        }
+        
+      }
+    }
+    else {
+      lastSelectedWallForEditing = wallPoints;
       document.querySelector(".right-sidebar__walls").classList.remove("disabled");
       editwallid.innerHTML = wallPoints.id;
       wallTexInput.value = wallPoints.tex;
       texScaleXinput.value = wallPoints.sX;
       texScaleYinput.value = wallPoints.sY;
       sectorconnectorinput.value = wallPoints.sC;
+      sectorconnectorinput.focus();
     }
     // opens the edit window, and pulls in data
+  };
 
 
+  /**
+   * 
+   * Connect Mode
+   * 
+   */
+  handleConnectMode = function () {
+    const clickX = (event.clientX - offsetX) / scale;
+    const clickY = (event.clientY - offsetY) / scale;
 
+    let wallPoints = _lhelpers.isClickedOnWall( clickX, clickY, mapdataObj[currentSector] );
+    
+    _lhelpers.drawGrid(wallPoints.a, wallPoints.b);
+    
+    if (!wallPoints ){
+      document.querySelector(".right-sidebar__walls").classList.add("disabled");
+      
+      if ( lastSelectedWallForEditing ){
+        // test and see if a sector was clicked
+        clickedSectorForWallEditing = _lhelpers.findClickedSector(clickX, clickY, mapdataObj);
 
+        if(clickedSectorForWallEditing == currentSector){
+          alert(`Cannot connect wall to itself`);
+        }
+        else{
+          sectorconnectorinput.value = clickedSectorForWallEditing;
+          lastSelectedWallForEditing.sC = clickedSectorForWallEditing;
+          lastSelectedWallForEditing = false;
+
+          _lhelpers.drawGrid();
+        }
+        
+      }else {
+        alert('select a wall first');
+      }
+
+    }
+    else {
+      lastSelectedWallForEditing = wallPoints;
+      document.querySelector(".right-sidebar__walls").classList.remove("disabled");
+      editwallid.innerHTML = wallPoints.id;
+      wallTexInput.value = wallPoints.tex;
+      texScaleXinput.value = wallPoints.sX;
+      texScaleYinput.value = wallPoints.sY;
+      sectorconnectorinput.value = wallPoints.sC;
+      sectorconnectorinput.focus();
+    }
+    // opens the edit window, and pulls in data
   };
 
 
@@ -486,6 +552,12 @@ var ledit = (function(){
       else if (keyCode === 119 ){ // letter W
         document.querySelector('[data-mode="wall"]').click();
       }
+      else if (keyCode === 99 ){ // letter W
+        document.querySelector('[data-mode="connect"]').click();
+      }
+      else if (keyCode === 12 ){ // letter W
+        document.querySelector('[data-mode="pan"]').click();
+      }
     };
 
 
@@ -550,11 +622,21 @@ var ledit = (function(){
     texScaleXinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sX"); });
     texScaleYinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sY"); });
     sectorconnectorinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sC"); });
+    sectorconnectorinput.addEventListener('focus', () => { sectorSelectorIsFocussed = true; });
+    // sectorconnectorinput.addEventListener('blur', () => { sectorSelectorIsFocussed = false; });
 
     floorInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floor"); });
     ceilInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceil"); });
     ceilTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTex"); });
     floorTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTex"); });
+
+    // io elements
+    outputareaTA = document.querySelector("#outputarea");
+    inputareaTA = document.querySelector("#inputarea");
+    inputButton = document.querySelector("#inputButton");
+    outputButton = document.querySelector("#outputButton");
+
+    outputButton.addEventListener( "click", () =>{ _lhelpers.copyToClipBoard() });
 
 
     // Initial draw

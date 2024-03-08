@@ -93,3 +93,13 @@ let floorInput;
 let ceilInput;
 let ceilTexInput;
 let floorTexInput;
+
+let outputareaTA;
+let inputareaTA;
+let outputButton;
+let inputButton;
+
+
+let lastSelectedWallForEditing;
+let clickedSectorForWallEditing;
+let sectorSelectorIsFocussed = false;

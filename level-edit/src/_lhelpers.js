@@ -411,9 +411,9 @@ _lhelpers = {
           wall.b.x/100,
           wall.b.y/100,
           wall.tex,
-          wall.sX,
-          wall.sY,
-          wall.sC
+          parseFloat(wall.sX),
+          parseFloat(wall.sY),
+          parseInt(wall.sC)
         ]
         sectorWalls[j] = sectorFormattedWallData;
       }
@@ -422,10 +422,10 @@ _lhelpers = {
       tempMapData[i] = {
         "id": "sector"+i,
         "walls": sectorWalls,
-        "floor": 0,
-        "ceil": 2,
-        "floorTex": "Y",
-        "ceilTex": "U"
+        "floor": parseFloat(mapSecMeta[i].floor),
+        "ceil": parseFloat(mapSecMeta[i].ceil),
+        "floorTex": mapSecMeta[i].floorTex,
+        "ceilTex": mapSecMeta[i].ceilTex
       }
     }
 
@@ -443,6 +443,7 @@ _lhelpers = {
     }
 
     console.log(leveldata);
+    outputareaTA.value = JSON.stringify(leveldata);
 
   },
 
@@ -514,6 +515,63 @@ _lhelpers = {
     _lhelpers.drawGrid();
   },
 
+  findClickedSector: function (clickX, clickY, sectors) {
+    // Iterate through each sector
+    for (let i = 0; i < sectors.length; i++) {
+      if (i==0) {
+        continue;
+      }
+
+      const walls = sectors[i];
+      // Initialize counters for winding number algorithm
+      let wn = 0;
+
+      // Iterate through each wall in the sector
+      for (let j = 0; j < walls.length; j++) {
+        const wall = walls[j];
+        const startX = wall.a.x;
+        const startY = wall.a.y;
+        const endX = wall.b.x;
+        const endY = wall.b.y;
+
+        // Check if the click point is within the vertical range of the wall
+        if ((startY <= clickY && clickY < endY) || (endY <= clickY && clickY < startY)) {
+          // Calculate the edge slope
+          const slope = (endX - startX) / (endY - startY);
+          // Calculate the x-coordinate of the point on the edge at the same y-coordinate as the click point
+          const edgeX = startX + (clickY - startY) * slope;
+
+          // Check if the click point falls to the right of the edge
+          if (clickX < edgeX) {
+            // Increment or decrement winding number based on the edge orientation
+            if (startY < endY) {
+              wn++;
+            } else {
+              wn--;
+            }
+          }
+        }
+      }
+
+      // If the winding number is non-zero, the click point is inside the sector
+      if (wn !== 0) {
+          // Return the ID of the sector
+          return i;
+      }
+    }
+
+    // If no sector contains the click point, return null
+    return null;
+  },
+
+
+  copyToClipBoard: function(){
+    navigator.clipboard.writeText( outputareaTA.value ).then().catch();
+    // console.log(navigator.clipboard);
+    // old version
+    // document.querySelector("textarea").select();
+    // document.execCommand('copy');
+  },
 
 
 }
