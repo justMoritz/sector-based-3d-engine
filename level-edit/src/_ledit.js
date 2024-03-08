@@ -419,15 +419,14 @@ var ledit = (function(){
 
 
   handleValueChangeSector = function( event, type ){
-    console.log('running');
     // find the wallID in the mapSecMeta we are editing
     for (let i = 0; i < mapSecMeta.length; i++) {
       const thisSector = mapSecMeta[i];
-      console.log(thisSector);
       if( thisSector.id == "sector"+currentSector ){
         thisSector[type] = event.target.value
       }
     }
+    _lhelpers.drawGrid();
   }
 
 
