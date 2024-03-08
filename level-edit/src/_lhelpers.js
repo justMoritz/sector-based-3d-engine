@@ -173,7 +173,7 @@ _lhelpers = {
     }
 
 
-    if(mapdataObj.length > 1){
+    if(mapdataObj.length > 1 && currentSector !== 0 ){
       // Draws the current sector on top again
       for (const wall of mapdataObj[currentSector]) {
 
@@ -571,6 +571,90 @@ _lhelpers = {
     // old version
     // document.querySelector("textarea").select();
     // document.execCommand('copy');
+  },
+
+
+  handleImportFromFile: function(){
+    console.log('Importing');
+    // console.log( inputareaTA.value );
+
+    try {
+      importedJSON = JSON.parse( inputareaTA.value); 
+    } catch (e) {
+      alert(`Level file format corrupt`);
+      return console.error(e); 
+    }
+
+    // sets global map variables
+    fPlayerX = importedJSON.fPlayerX;
+    fPlayerY = importedJSON.fPlayerY;
+    fPlayerA = importedJSON.fPlayerA;
+    fPlayerH = importedJSON.fPlayerH;
+    startingSector = importedJSON.startingSector;
+    // TODO: Sprites
+
+
+    // imports all the walls into the mapdata object
+    let tempSectors = importedJSON.map;
+
+    for (let i = 0; i < tempSectors.length; i++) {
+      if (i == 0) {
+        continue;
+      }
+      const curSecFromMap = tempSectors[i];
+
+      // assembles the sector meta for sector
+      let curTempSecMeta = {
+        "id": curSecFromMap.id,
+        "ceil": curSecFromMap.ceil,
+        "floor": curSecFromMap.floor,
+        "ceilTex": curSecFromMap.ceilTex,
+        "floorTex": curSecFromMap.floorTex,
+      }
+      
+      mapSecMeta[i] = curTempSecMeta;
+
+
+      // assembles the walls for each sector
+      console.log(curSecFromMap);
+      const curWallsFromSector = curSecFromMap.walls;
+      let curTempMapSecData = [];
+
+      for (let j = 0; j < curWallsFromSector.length; j++) {
+        const curWall = curWallsFromSector[j];
+
+        curTempMapSecData[j] = {
+          "id": _lhelpers.generateRandomId(),
+          "a": {
+            "x": curWall[0]*100,
+            "y": curWall[1]*100,
+          },
+          "b": {
+            "x": curWall[2]*100,
+            "y": curWall[3]*100,
+          },
+          "tex": curWall[4],
+          "sX": curWall[5],
+          "sY": curWall[6],
+          "sC": curWall[7],
+        }
+      }
+
+      mapdataObj[i] = curTempMapSecData;
+    }
+    // console.log(mapdataObj);
+
+
+    // Adds the required amount and numbers of sector selectors in the UI
+    for (let s = 1; s < tempSectors.length; s++) {
+      let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), s);
+      selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
+    }
+
+    _lhelpers.drawGrid();
+
+    // console.log( importedJSON );
+    // console.log( importedJSON.fPlayerA );
   },
 
 

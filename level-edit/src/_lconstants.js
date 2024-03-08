@@ -103,3 +103,7 @@ let inputButton;
 let lastSelectedWallForEditing;
 let clickedSectorForWallEditing;
 let sectorSelectorIsFocussed = false;
+
+
+
+let importedJSON;

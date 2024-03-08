@@ -329,8 +329,8 @@ var ledit = (function(){
       drawMeta[currentSector].DMdrawCounter++
     }
   
-    // console.log('drew this:')
-    // console.log(mapdataObj[currentSector])
+    console.log('drew this:')
+    console.log(mapdataObj[currentSector])
 
     _lhelpers.drawGrid()
   }
@@ -637,6 +637,8 @@ var ledit = (function(){
     outputButton = document.querySelector("#outputButton");
 
     outputButton.addEventListener( "click", () =>{ _lhelpers.copyToClipBoard() });
+
+    inputButton.addEventListener( "click", () =>{ _lhelpers.handleImportFromFile() });
 
 
     // Initial draw
