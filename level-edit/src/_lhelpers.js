@@ -48,6 +48,7 @@ _lhelpers = {
     ctx.scale(scale, scale);
     ctx.translate(offsetX, offsetY);
     
+    
 
     // Calculate visible grid range
     const visibleWidth = gridCanvas.width / scale;
@@ -56,6 +57,10 @@ _lhelpers = {
     const startY = -offsetY / scale;
     const endX = startX + visibleWidth;
     const endY = startY + visibleHeight;
+
+    // Check if (0, 0) is within the visible range
+    const zeroXVisible = startX <= 0 && 0 <= endX;
+    const zeroYVisible = startY <= 0 && 0 <= endY;
 
 
     // Draw sub-rules
@@ -83,6 +88,17 @@ _lhelpers = {
         ctx.lineTo(endX, y);
     }
     ctx.stroke();
+
+    // Draw red line at (0, 0) if it's within visible range
+    if (zeroXVisible && zeroYVisible) {
+      ctx.beginPath();
+      ctx.strokeStyle = 'red';
+      ctx.moveTo(0, startY);
+      ctx.lineTo(0, endY);
+      ctx.moveTo(startX, 0);
+      ctx.lineTo(endX, 0);
+      ctx.stroke();
+  }
 
     // iterate over the map object and draw each wall
     for (let i = 0; i < mapdataObj.length; i++) {
@@ -426,12 +442,12 @@ _lhelpers = {
 
     // combines all the data into level data
     leveldata = { 
-      "fDepth": fDepth,
-      "fPlayerX": fPlayerX,
-      "fPlayerY": fPlayerY,
-      "fPlayerA": fPlayerA,
-      "fPlayerH": fPlayerH,
-      "startingSector": startingSector,
+      "fDepth": parseFloat(fDepth),
+      "fPlayerX": parseFloat(fPlayerX),
+      "fPlayerY": parseFloat(fPlayerY),
+      "fPlayerA": parseFloat(fPlayerA),
+      "fPlayerH": parseFloat(fPlayerH),
+      "startingSector": parseInt(startingSector),
       "sprites": {
       },
       "map": tempMapData
@@ -644,6 +660,7 @@ _lhelpers = {
     for (let s = 1; s < tempSectors.length; s++) {
       let buttonToAppend = sectorSelectorTemplate.replace(new RegExp("XXX", 'g'), s);
       selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
+      sectorCounter = s+1;
     }
 
     _lhelpers.drawGrid();

@@ -103,7 +103,7 @@
         }
 
         .right-sidebar__top{
-            height: 170px;
+            height: 210px;
         }
 
         .right-sidebar__middle{
@@ -164,6 +164,7 @@
             padding: 0.25rem;
             margin: 0.5rem;
             border-radius: 0.25rem;
+            cursor: pointer;
         }
 
         .sector-selector{
@@ -181,6 +182,10 @@
             cursor: pointer;
         }
 
+        .remove-sector{
+            pointer-events: none;
+        }
+
         .remove-sector:hover{
             background: #e9e9e955;
         }
@@ -194,6 +199,9 @@
             pointer-events: none;
         }
 
+        .sector-name{
+            pointer-events: none;
+        }
 
         .sector-add{
             width: 1.5rem;
@@ -201,8 +209,11 @@
             left: 0.5rem;
             top: auto;
             bottom: 0.5rem;
-            background: white;
+            background: #eee;
             border-radius: 0.25rem;
+            position: relative;
+            top: 0.4rem;
+            left: 0;
 
         }
         .sector-add:hover{
@@ -238,6 +249,10 @@
             padding: 0.5rem 0.5rem;
             position: relative;
             cursor: pointer;
+        }
+
+        .top-nav__item label{
+            display: block;
         }
 
         .top-nav .top-nav__level2{
@@ -282,7 +297,7 @@
         <div class="super-tiny">Edit Walls</div>
         <button data-mode="wall" title="Wall edit mode" class="left-sidebar__button">W</button>
         <button data-mode="connect" title="Connect mode" class="left-sidebar__button">C</button>
-        <div class="super-tiny">Navigate</div>
+        <div class="super-tiny">Pan</div>
         <button data-mode="pan" title="pan" class="left-sidebar__button">P</button>
     </div>
 
@@ -296,8 +311,15 @@
                 <label>
                     <span>Texture scale:</span>
                     <div class="sort-labels">
-                        <input id="texScaleX" type="number" placeholder="X scale">
-                        <input id="texScaleY" type="number" placeholder="Y scale">
+                        <input id="texScaleX" type="number" placeholder="X scale" step="0.5">
+                        <input id="texScaleY" type="number" placeholder="Y scale" step="0.5">
+                    </div>
+                </label>
+                <label>
+                    <span>Texture Offset:</span>
+                    <div class="sort-labels">
+                        <input id="texOffsetX" type="number" placeholder="X offset" step="0.1">
+                        <input id="texOffsetY" type="number" placeholder="Y offset" step="0.1">
                     </div>
                 </label>
             </label>
@@ -361,6 +383,39 @@
                         <h5>Input</h5>
                         <textarea id="inputarea"></textarea>
                         <button id="inputButton" class="small">Import</button>
+                    </li>
+                </ul>
+            </li>
+            <li class="top-nav__item">
+                Defaults
+                <ul class="top-nav__level2">
+                    <li class="top-nav__item">
+                        <div style="min-width: 200px">
+                            <label>Default Texture <input id="defaultTex" type="text" placeholder=""> </label>
+                            <label>X Sample Size <input id="defaultSx" type="number" placeholder=""> </label>
+                            <label>Y Sample Size <input id="defaultSy" type="number" placeholder=""> </label>
+                            <label>X Offset <input id="defaultOx" type="number" placeholder=""> </label>
+                            <label>Y Offset <input id="defaultOy" type="number" placeholder=""> </label>
+                            <label>Floor Height <input id="defaultFloor" type="number" placeholder=""> </label>
+                            <label>Ceiling Height <input id="defaultCeil" type="number" placeholder=""> </label>
+                            <label>Floor Texture <input id="defaultFloorTex" type="text" placeholder=""> </label>
+                            <label>Ceiling Texture <input id="defaultCeilTex" type="text" placeholder=""> </label>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="top-nav__item">
+                Player Start
+                <ul class="top-nav__level2">
+                    <li class="top-nav__item">
+                        <div style="min-width: 200px">
+                            <label>Map Depth <input id="fDepth" type="number" placeholder=""> </label>
+                            <label>Player X <input id="fPlayerX" type="number" placeholder=""> </label>
+                            <label>Player Y <input id="fPlayerY" type="number" placeholder=""> </label>
+                            <label>Angle (radiants) <input id="fPlayerA" type="number" placeholder=""> </label>
+                            <label>Height <input id="fPlayerH" type="number" placeholder=""> </label>
+                            <label>Starting Sec <input id="startingSector" type="number" placeholder=""> </label>
+                        </div>
                     </li>
                 </ul>
             </li>

@@ -65,15 +65,21 @@ let fPlayerH = 0;
 let startingSector = 1;
 
 
+let fDepthInput;
+let fPlayerXInput;
+let fPlayerYInput;
+let fPlayerAInput;
+let fPlayerHInput;
+let startingSectorInput;
 
 
 const wallDefaults = {
     "tex": "#",
-    "sX": 2,
+    "sX": 2, // scale
     "sY": 2,
-    "sC": 0,
-    "xO": 0,
-    "yO": 0,
+    "sC": 0, // sector connector
+    "oX": 0, 
+    "oY": 0, // offset
 }
 
 const sectorDefaults = {

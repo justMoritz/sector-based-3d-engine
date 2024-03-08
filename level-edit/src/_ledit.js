@@ -61,6 +61,8 @@ var ledit = (function(){
       wallTexInput.value = wallPoints.tex;
       texScaleXinput.value = wallPoints.sX;
       texScaleYinput.value = wallPoints.sY;
+      texOffsetXinput.value = wallPoints.oX;
+      texOffsetYinput.value = wallPoints.oY;
       sectorconnectorinput.value = wallPoints.sC;
       sectorconnectorinput.focus();
     }
@@ -111,6 +113,8 @@ var ledit = (function(){
       wallTexInput.value = wallPoints.tex;
       texScaleXinput.value = wallPoints.sX;
       texScaleYinput.value = wallPoints.sY;
+      texOffsetXinput.value = wallPoints.oY;
+      texOffsetYinput.value = wallPoints.oY;
       sectorconnectorinput.value = wallPoints.sC;
       sectorconnectorinput.focus();
     }
@@ -195,9 +199,11 @@ var ledit = (function(){
         "a": newStartingPoint, 
         "b": newEndingPoint, 
         "tex": wallDefaults.tex,
-        "sX": wallDefaults.sX,
-        "sY": wallDefaults.sY,
-        "sC": wallDefaults.sC,
+        "sX": parseFloat(wallDefaults.sX),
+        "sY": parseFloat(wallDefaults.sY),
+        "oX": parseFloat(wallDefaults.oX),
+        "oY": parseFloat(wallDefaults.oY),
+        "sC": parseFloat(wallDefaults.sC),
       };
 
       
@@ -247,18 +253,22 @@ var ledit = (function(){
             "a": startPoint, 
             "b": clickPoint, 
             "tex": wallDefaults.tex,
-            "sX": wallDefaults.sX,
-            "sY": wallDefaults.sY,
-            "sC": wallDefaults.sC,
+            "sX": parseFloat(wallDefaults.sX),
+            "sY": parseFloat(wallDefaults.sY),
+            "oX": parseFloat(wallDefaults.oX),
+            "oY": parseFloat(wallDefaults.oY),
+            "sC": parseFloat(wallDefaults.sC),
           };
           const newWall2 = { 
             "id": _lhelpers.generateRandomId() ,
             "a": clickPoint, 
             "b": endPoint, 
             "tex": wallDefaults.tex,
-            "sX": wallDefaults.sX,
-            "sY": wallDefaults.sY,
-            "sC": wallDefaults.sC,
+            "sX": parseFloat(wallDefaults.sX),
+            "sY": parseFloat(wallDefaults.sY),
+            "oX": parseFloat(wallDefaults.oX),
+            "oY": parseFloat(wallDefaults.oY),
+            "sC": parseFloat(wallDefaults.sC),
           };
 
           // Replace the old wall with the new ones
@@ -301,9 +311,11 @@ var ledit = (function(){
         "a": { x: drawMeta[currentSector].DMprevPoint.x, y: drawMeta[currentSector].DMprevPoint.y }, 
         "b": { x: clickX, y: clickY },
         "tex": wallDefaults.tex,
-        "sX": wallDefaults.sX,
-        "sY": wallDefaults.sY,
-        "sC": wallDefaults.sC,
+        "sX": parseFloat(wallDefaults.sX),
+        "sY": parseFloat(wallDefaults.sY),
+        "oX": parseFloat(wallDefaults.oX),
+        "oY": parseFloat(wallDefaults.oY),
+        "sC": parseFloat(wallDefaults.sC),
       };
 
       mapdataObj[currentSector].push(wallSegment);
@@ -317,9 +329,11 @@ var ledit = (function(){
           "a": { x: clickX, y: clickY }, 
           "b": { x: drawMeta[currentSector].DMfirstPoint.x, y: drawMeta[currentSector].DMfirstPoint.y },
           "tex": wallDefaults.tex,
-          "sX": wallDefaults.sX,
-          "sY": wallDefaults.sY,
-          "sC": wallDefaults.sC,
+          "sX": parseFloat(wallDefaults.sX),
+          "sY": parseFloat(wallDefaults.sY),
+          "oX": parseFloat(wallDefaults.oX),
+          "oY": parseFloat(wallDefaults.oY),
+          "sC": parseFloat(wallDefaults.sC),
         };
         mapdataObj[currentSector].push(closingSegment);
       }
@@ -532,32 +546,34 @@ var ledit = (function(){
         console.log(`${appMode} mode`);
       });
     });
-    document.onkeypress = function (e) {
-      e = e || window.event;
-      let keyCode = e.keyCode;
-      console.log(keyCode);
-      if( keyCode === 100 ){ // letter D
+
+    document.addEventListener('keydown', function(event) {
+      console.log(event);
+      if (event.shiftKey && event.key === 'S') {
+        document.querySelector('#sectorAdd').click();
+      }
+      else if( event.key === 'd' ){ // letter D
         document.querySelector('[data-mode="draw"]').click();
       }
-      else if (keyCode === 97 ){ // letter A
+      else if ( event.key === 'a' ){ // letter A
         document.querySelector('[data-mode="add"]').click();
       }
-      else if (keyCode === 101 ){ // letter E
+      else if ( event.key === 'e' ){ // letter E
         document.querySelector('[data-mode="edit"]').click();
       }
-      else if (keyCode === 120 ){ // letter X
+      else if ( event.key === 'x' ){ // letter X
         document.querySelector('[data-mode="delete"]').click();
       }
-      else if (keyCode === 119 ){ // letter W
+      else if ( event.key === 'w' ){ // letter W
         document.querySelector('[data-mode="wall"]').click();
       }
-      else if (keyCode === 99 ){ // letter W
+      else if ( event.key === 'c' ){ // letter C
         document.querySelector('[data-mode="connect"]').click();
       }
-      else if (keyCode === 112 ){ // letter W
+      else if ( event.key === 'p' ){ // letter P
         document.querySelector('[data-mode="pan"]').click();
       }
-    };
+    });
 
 
     // Attach event listeners for mouse events
@@ -610,6 +626,8 @@ var ledit = (function(){
     wallTexInput = document.querySelector("#wallTex");
     texScaleXinput = document.querySelector("#texScaleX");
     texScaleYinput = document.querySelector("#texScaleY");
+    texOffsetXinput = document.querySelector("#texOffsetX");
+    texOffsetYinput = document.querySelector("#texOffsetY");
     sectorconnectorinput = document.querySelector("#sectorconnectorinput");
 
     floorInput = document.querySelector("#floor");
@@ -620,6 +638,8 @@ var ledit = (function(){
     wallTexInput.addEventListener('input', (e) => { handleValueChangeWall(e, "tex"); });
     texScaleXinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sX"); });
     texScaleYinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sY"); });
+    texOffsetXinput.addEventListener('input', (e) => { handleValueChangeWall(e, "oX"); });
+    texOffsetYinput.addEventListener('input', (e) => { handleValueChangeWall(e, "oY"); });
     sectorconnectorinput.addEventListener('input', (e) => { handleValueChangeWall(e, "sC"); });
     sectorconnectorinput.addEventListener('focus', () => { sectorSelectorIsFocussed = true; });
     // sectorconnectorinput.addEventListener('blur', () => { sectorSelectorIsFocussed = false; });
@@ -642,9 +662,75 @@ var ledit = (function(){
     document.querySelector('#exportTrigger').addEventListener("mouseover", () => { _lhelpers.generateLevelData() });
 
 
+    // Default Variables 
+    fDepthInput = document.querySelector("#fDepth");
+    fPlayerXInput = document.querySelector("#fPlayerX");
+    fPlayerYInput = document.querySelector("#fPlayerY");
+    fPlayerAInput = document.querySelector("#fPlayerA");
+    fPlayerHInput = document.querySelector("#fPlayerH");
+    startingSectorInput = document.querySelector("#startingSector");
+    defaultTexInput = document.querySelector("#defaultTex");
+    defaultSxInput = document.querySelector("#defaultSx");
+    defaultSyInput = document.querySelector("#defaultSy");
+    defaultOxInput = document.querySelector("#defaultOx");
+    defaultOyInput = document.querySelector("#defaultOy");
+    defaultFloorInput = document.querySelector("#defaultFloor");
+    defaultCeilInput = document.querySelector("#defaultCeil");
+    defaultFloorTexInput = document.querySelector("#defaultFloorTex");
+    defaultCeilTexInput = document.querySelector("#defaultCeilTex");
+
+    fDepthInput.value = fDepth;
+    fPlayerXInput.value = fPlayerX;
+    fPlayerYInput.value = fPlayerY;
+    fPlayerAInput.value = fPlayerA;
+    fPlayerHInput.value = fPlayerH;
+    startingSectorInput.value = startingSector;
+    defaultTexInput.value = wallDefaults.tex;
+    defaultSxInput.value = wallDefaults.sX;
+    defaultSyInput.value = wallDefaults.sY;
+    defaultOxInput.value = wallDefaults.oX;
+    defaultOyInput.value = wallDefaults.oY;
+    defaultFloorInput.value = sectorDefaults.floor;
+    defaultCeilInput.value = sectorDefaults.ceil;
+    defaultFloorTexInput.value = sectorDefaults.floorTex;
+    defaultCeilTexInput.value = sectorDefaults.ceilTex;
+
+    fDepthInput.addEventListener('input', (e) => { fDepth = e.target.value });
+    fPlayerXInput.addEventListener('input', (e) => { fPlayerX = e.target.value });
+    fPlayerYInput.addEventListener('input', (e) => { fPlayerY = e.target.value });
+    fPlayerAInput.addEventListener('input', (e) => { fPlayerA = e.target.value });
+    fPlayerHInput.addEventListener('input', (e) => { fPlayerH = e.target.value });
+    startingSectorInput.addEventListener('input', (e) => { startingSector = e.target.value });
+    defaultTexInput.addEventListener('input', (e) => { wallDefaults.tex = e.target.value });
+    defaultSxInput.addEventListener('input', (e) => { wallDefaults.sX = e.target.value });
+    defaultSyInput.addEventListener('input', (e) => { wallDefaults.sY = e.target.value });
+    defaultOxInput.addEventListener('input', (e) => { wallDefaults.oX = e.target.value });
+    defaultOyInput.addEventListener('input', (e) => { wallDefaults.oY = e.target.value });
+    defaultFloorInput.addEventListener('input', (e) => { sectorDefaults.floor = e.target.value });
+    defaultCeilInput.addEventListener('input', (e) => { sectorDefaults.ceil = e.target.value });
+    defaultFloorTexInput.addEventListener('input', (e) => { sectorDefaults.floorTex = e.target.value });
+    defaultCeilTexInput.addEventListener('input', (e) => { sectorDefaults.ceilTex = e.target.value });
+
+
+
 
     // Initial draw
     _lhelpers.drawGrid();
+
+
+
+
+    window.addEventListener('beforeunload', function(event) {
+      // Cancel the event as per the standard.
+      event.preventDefault();
+      // Chrome requires returnValue to be set.
+      event.returnValue = '';
+    
+      // Display a warning message
+      const confirmationMessage = 'Changes will not be saved. Confirm you want to start over';
+      event.returnValue = confirmationMessage; // This works in some older browsers
+      return confirmationMessage; // This works in most modern browsers
+    });
   };
 
 

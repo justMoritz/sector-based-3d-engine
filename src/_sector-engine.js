@@ -363,12 +363,11 @@ var gameEngineJS = (function () {
 
       if(bDrawSrpites) _updateSpriteBuffer();
 
-      // about every second or so, check that the player is still in the correct sector.
+      // every 5 frames or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
       // but it could have missed the player in especially small sectors
-      if( gameTimer % 33 === 0 ){
+      if( gameTimer % 5 === 0 ){
         _moveHelpers.playerSectorCheck();
-        // _debugOutput(debugWrite)
         gameTimer= 0;
       }
 
