@@ -493,7 +493,12 @@ var ledit = (function(){
     gridCanvas.addEventListener('mousedown', function (event) {
       if (appMode === "edit") {
         handleMouseInteraction(event);
-      }else{
+      }
+      else if ( appMode === "pan"){
+        isDragging = false;
+        _lhelpers.handleMouseDown(event);
+      }
+      else{
         isDragging = false;
         handleMouseInteraction(event);
       }
@@ -502,6 +507,9 @@ var ledit = (function(){
     gridCanvas.addEventListener('mousemove', function (event) {
       if (isDragging && appMode === "edit") {
         handleMouseInteraction(event);
+      }
+      else if ( appMode === "pan"){
+        _lhelpers.handleMouseMove(event);
       }
     });
 

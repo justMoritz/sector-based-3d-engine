@@ -42,6 +42,13 @@ _lhelpers = {
   drawGrid: function(wall1, wall2) {
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
+    // XXXXX
+    // Apply transformations for zooming and panning
+    ctx.save();
+    ctx.scale(scale, scale);
+    ctx.translate(offsetX, offsetY);
+    
+
     // Calculate visible grid range
     const visibleWidth = gridCanvas.width / scale;
     const visibleHeight = gridCanvas.height / scale;
@@ -488,6 +495,25 @@ _lhelpers = {
   pointsAreEqual: function (point1, point2) {
     return point1.x === point2.x && point1.y === point2.y;
   },
+
+  handleZoom: function(delta) {
+    scale += delta; // Adjust the scale factor
+
+    // Ensure scale is within reasonable bounds
+    scale = Math.max(0.1, Math.min(scale, 10)); // Example bounds
+
+    // Redraw the canvas with the updated scale
+    _lhelpers.drawGrid();
+  },
+
+  handlePan: function (deltaX, deltaY) {
+    offsetX += deltaX;
+    offsetY += deltaY;
+
+    // Redraw the canvas with the updated offset
+    _lhelpers.drawGrid();
+  },
+
 
 
 }
