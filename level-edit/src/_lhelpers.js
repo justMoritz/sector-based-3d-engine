@@ -643,7 +643,9 @@ _lhelpers = {
           "tex": curWall[4],
           "sX": curWall[5],
           "sY": curWall[6],
-          "sC": curWall[7],
+          "oY": curWall[7],
+          "oY": curWall[8],
+          "sC": curWall[9],
         }
       }
 
