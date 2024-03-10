@@ -195,7 +195,7 @@ var _rh = {
     var fDepthRatio1 = fDepth/2 / 4;
     var fDepthRatio2 = fDepth/2 / 2.5;
     var fDepthRatio3 = fDepth/2 / 1.25;
-    var fDepthRatio4 = fDepth/2 / 1;
+    var fDepthRatio4 = fDepth/2 / 1.15;
 
     // var fDepthRatio1 = 4;
     // var fDepthRatio2 = 8;
@@ -284,7 +284,7 @@ var _rh = {
       case "E":
         if (fDistanceToWall < fDepthRatio1) {
           if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b50;
+          else if (pixel === "7") fill = b75;
           else if (pixel === "*" ) fill = b50;
           else if ( pixel === "o") fill = b25;
           else fill = b0;
@@ -297,7 +297,7 @@ var _rh = {
         } else if (fDistanceToWall < fDepthRatio3) {
           if (pixel === "#")fill = b75;
           else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "*" ) fill = b25;
           else if ( pixel === "o") fill = b25;
           else fill = b0;
         } else if (fDistanceToWall < fDepthRatio4) {
