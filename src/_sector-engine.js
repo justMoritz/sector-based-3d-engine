@@ -124,6 +124,7 @@ var gameEngineJS = (function () {
           sWallDirection,
           _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset)
         );
+        fFloorBuffer[j * nScreenWidth + i] = fDistanceToWall
 
       } // End Draw Solid Wall
 
@@ -317,7 +318,7 @@ var gameEngineJS = (function () {
           else{
             // Regular wall
 
-            fDepthBuffer[i] = fDistanceToWall;  
+            // fDepthBuffer[i] = fDistanceToWall;  
             // We don't actually need the return array from this function call
             drawSectorInformation(
               i , 

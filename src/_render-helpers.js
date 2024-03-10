@@ -287,7 +287,7 @@ var _rh = {
           else if (pixel === "7") fill = b75;
           else if (pixel === "*" ) fill = b50;
           else if ( pixel === "o") fill = b25;
-          else fill = b0;
+          else fill = b25;
         } else if (fDistanceToWall < fDepthRatio2) {
           if (pixel === "#")fill = b75;
           else if (pixel === "7") fill = b50;
