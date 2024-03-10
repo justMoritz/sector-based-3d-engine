@@ -87,7 +87,7 @@ var gameEngineJS = (function () {
 
     for (var j = start; j < end; j++) {
 
-      fFloorBuffer[j * nScreenWidth + i] = fDepth;
+      fDepthBuffer[j * nScreenWidth + i] = fDistanceToWall;
       
       // sky or ceiling
       if (j < nCeiling) {
@@ -124,14 +124,12 @@ var gameEngineJS = (function () {
           sWallDirection,
           _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset)
         );
-        fFloorBuffer[j * nScreenWidth + i] = fDistanceToWall
 
       } // End Draw Solid Wall
 
       // Draw Floor
       else {
         sPixelToRender = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
-        fFloorBuffer[j * nScreenWidth + i] = fDistanceToWall
       }
 
       // draw

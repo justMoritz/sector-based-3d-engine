@@ -171,8 +171,7 @@ function _drawSpritesNew (i) {
         // not hidden by any floor pixel
         // and we're drawing within the sprite-height
         if( 
-          // fDepthBuffer[i] >= fDistanceToSprite  && 
-          fFloorBuffer[sj * nScreenWidth + i] >= fDistanceToSprite  &&
+          fDepthBuffer[sj * nScreenWidth + i] >= fDistanceToSprite  &&
           sj > fSpriteCeil && sj <= fSpriteFloor
           )
         {
