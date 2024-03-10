@@ -88,14 +88,16 @@ var gameEngineJS = (function () {
     for (var j = start; j < end; j++) {
 
       fDepthBuffer[j * nScreenWidth + i] = fDistanceToWall;
+      fDepthBufferR[j * nScreenWidth + i] = fDistanceToWall;
       
       // sky or ceiling
       if (j < nCeiling) {
         if(sSectorCeilingTexture === "bg"){
           sPixelToRender = drawBackground(i, j);
+          fDepthBufferR[j * nScreenWidth + i] = 1;
         }
         else{
-          sPixelToRender = drawCeiling(j, sectorCeilingFactor, sSectorCeilingTexture );
+          sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture);
         }
       }
 
@@ -129,7 +131,7 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(j, sectorFloorFactor, sSectorFloorTexture );
+        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture);
       }
 
       // draw

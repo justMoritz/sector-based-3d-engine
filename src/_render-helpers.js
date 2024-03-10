@@ -205,6 +205,13 @@ var _rh = {
     // Set default fill value
     let fill = b0;
 
+    // if (pixel === "#")fill = b100;
+    // else if (pixel === "7") fill = b75;
+    // else if (pixel === "*" ) fill = b50;
+    // else if (pixel === "o") fill = b25;
+    // else fill = b25;
+    // return fill;
+
     
     // "&#9109;"; // ⎕
     // var b0   = ".";
@@ -787,10 +794,15 @@ var _drawToCanvas = function ( pixels ) {
   // Convert values to shades of colors
   for (var i = 0; i < pixels.length; i++) {
     var pixelValue = pixels[i];
+    var depthValue = fDepthBufferR[i];
+    // var shadingFactor = (1 - depthValue*2 / fDepth);
+    var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+    // var shadingFactor = 1;
     var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
-    imageData.data[i * 4] = color[0]; // Red 
-    imageData.data[i * 4 + 1] = color[1]; // Green 
-    imageData.data[i * 4 + 2] = color[2]; // Blue 
+    
+    imageData.data[i * 4] = color[0] * shadingFactor ; // Red 
+    imageData.data[i * 4 + 1] = color[1] * shadingFactor ; // Green 
+    imageData.data[i * 4 + 2] = color[2] * shadingFactor ; // Blue 
     imageData.data[i * 4 + 3] = 255; // Alpha 
   }
   // Use putImageData to draw the pixels onto the canvas
@@ -908,7 +920,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
 
 
 
-function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
+function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
 
   var nStandardHeight = 2;
   var fPlayerHinSector;
@@ -925,6 +937,7 @@ function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
   fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
   
   fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   
   // Calculate real-world coordinates with the player angle
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
@@ -939,7 +952,7 @@ function drawFloor(j, fSectorFloorHeight, sSectorFloorTexture ){
 }
 
 
-function drawCeiling(j, fSectorCeilingHeight, sSectorCeilTexture ){
+function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
 
   var nStandardHeight = 2;
   var fPlayerHinSector;
@@ -957,6 +970,7 @@ function drawCeiling(j, fSectorCeilingHeight, sSectorCeilTexture ){
   fDirectDistCeil = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
   
   fRealDistance = fDirectDistCeil / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   
   // Calculate real-world coordinates with the player angle
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;

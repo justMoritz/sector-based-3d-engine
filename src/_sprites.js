@@ -177,9 +177,11 @@ function _drawSpritesNew (i) {
         {
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
           var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1);
+          
 
           // transparency
           if( fSamplePixel[0] !== "." ){
+            fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
             screen[sj * nScreenWidth + i] = _rh.renderWall(
               fDistanceToSprite,
               "V",
