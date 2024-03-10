@@ -192,9 +192,15 @@ var _rh = {
     var b25  = _rh.colorReferenceTable[color][0];
     var b0   = "0";
 
-    var fDepthRatio1 = fDepth/2 / 5.5;
-    var fDepthRatio2 = fDepth/2 /3.66;
-    var fDepthRatio3 = fDepth/2 /2.33;
+    var fDepthRatio1 = fDepth/2 / 4;
+    var fDepthRatio2 = fDepth/2 / 2.5;
+    var fDepthRatio3 = fDepth/2 / 1.25;
+    var fDepthRatio4 = fDepth/2 / 1;
+
+    // var fDepthRatio1 = 4;
+    // var fDepthRatio2 = 8;
+    // var fDepthRatio3 = 12;
+    // var fDepthRatio4 = 20;
 
     // Set default fill value
     let fill = b0;
@@ -248,19 +254,26 @@ var _rh = {
           else if (pixel === "o") fill = b25;
           else fill = b25;
         } else if (fDistanceToWall < fDepthRatio2) {
-          if (pixel === "#") fill = b100;
-          else if (pixel === "7") fill = b75;
+          if (pixel === "#")fill = b100;
+          else if (pixel === "7") fill = b50;
           else if (pixel === "*" ) fill = b50;
           else if (pixel === "o") fill = b25;
           else fill = b25;
         } else if (fDistanceToWall < fDepthRatio3) {
-          if (pixel === "#") fill = b75;
+          if (pixel === "#")fill = b75;
           else if (pixel === "7") fill = b50;
-          else if (pixel === "*" || pixel === "o") fill = b25;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio4) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
           else fill = b25;
         } else if (fDistanceToWall < fDepth) {
           if (pixel === "#") fill = b50;
-          else if (pixel === "7") fill = b25;
+          else if (pixel === "7") fill = b50;
           else if (pixel === "*" || pixel === "o") fill = b25;
           else fill = b0;
         }
@@ -276,20 +289,28 @@ var _rh = {
           else if ( pixel === "o") fill = b25;
           else fill = b0;
         } else if (fDistanceToWall < fDepthRatio2) {
-          if (pixel === "#") fill = b75;
+          if (pixel === "#")fill = b75;
           else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b25;
-          else if (pixel === "o") fill = b25;
+          else if (pixel === "*" ) fill = b50;
+          else if ( pixel === "o") fill = b25;
           else fill = b0;
         } else if (fDistanceToWall < fDepthRatio3) {
-          if (pixel === "#") fill = b50;
+          if (pixel === "#")fill = b75;
           else if (pixel === "7") fill = b50;
-          else if (pixel === "*" || pixel === "o") fill = b25;
+          else if (pixel === "*" ) fill = b50;
+          else if ( pixel === "o") fill = b25;
+          else fill = b0;
+        } else if (fDistanceToWall < fDepthRatio4) {
+          if (pixel === "#")fill = b50;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b25;
+          else if ( pixel === "o") fill = b25;
           else fill = b0;
         } else if (fDistanceToWall < fDepth) {
-          if (pixel === "#") fill = b25;
+          if (pixel === "#")fill = b50;
           else if (pixel === "7") fill = b25;
-          else if (pixel === "*" || pixel === "o") fill = b25;
+          else if (pixel === "*" ) fill = b25;
+          else if ( pixel === "o") fill = b25;
           else fill = b0;
         }
         break;
@@ -848,6 +869,7 @@ var _fDrawFrameRGB = function (screen, target) {
 
 
 var _fDrawFrameWithSkew = function (screen, target) {
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} `)
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 

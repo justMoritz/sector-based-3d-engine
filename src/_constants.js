@@ -34,7 +34,7 @@ var fFOV_div2 = fFOV / 2;
 var fDepth = 16.0; // viewport depth
 var nLookLimit = 10;
 
-var bUseSkew = true;
+var bUseSkew = false;
 var bDrawRGB = false;
 var bDrawSrpites = true;
 
