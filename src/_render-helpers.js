@@ -783,7 +783,6 @@ var _convertPixelToAscii = function( input, color ){
 
 
 var _drawToCanvas = function ( pixels ) {
-  // Assuming your canvas has a width and height
 
   eCanvas.width = nScreenWidth;
   eCanvas.height = nScreenHeight;
