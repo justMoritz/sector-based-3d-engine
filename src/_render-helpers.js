@@ -177,7 +177,9 @@ var _rh = {
     w: "b0",
     x: "b25",
   },
-  renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
+  renderWall: function (fDistanceToWall, sWallDirection, pixelColor) {
+
+    return pixelColor;
 
     var pixel = pixelArray[0];
     var color = pixelArray[1] || 'm';
@@ -205,12 +207,14 @@ var _rh = {
     // Set default fill value
     let fill = b0;
 
-    // if (pixel === "#")fill = b100;
-    // else if (pixel === "7") fill = b75;
-    // else if (pixel === "*" ) fill = b50;
-    // else if (pixel === "o") fill = b25;
-    // else fill = b25;
-    // return fill;
+
+    // TODO: Fill
+    if (pixel === "#")fill = b100;
+    else if (pixel === "7") fill = b75;
+    else if (pixel === "*" ) fill = b50;
+    else if (pixel === "o") fill = b25;
+    else fill = b25;
+    return fill;
 
     
     // "&#9109;"; // ⎕
@@ -409,74 +413,66 @@ var _rh = {
  * @param  {float} y -                    The y coordinate of the sample
  * @return {string}
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+var _getSamplePixel = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
 
-  // defaults
-  var scaleFactor = texture["scale"] || defaultTexScale;
-  var texWidth = texture["width"] || defaultTexWidth;
-  var texHeight = texture["height"] || defaultTexHeight;
-  var noColor = texture["noColor"] || false;
-  
+  var texWidth = texture.width || defaultTexWidth;
+  var texHeight = texture.height || defaultTexHeight;
+  var noColor = texture.noColor || false;
+  var texpixels = texture.texture;
 
-  var texpixels = texture["texture"];
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
 
-  if (texture["texture"] == "DIRECTIONAL") {
-    // Different Texture based on viewport
-    if (nDegrees > 0 && nDegrees < 180) {
-        texpixels = texture["S"];
-    } else {
-        texpixels = texture["N"];
-    }
-  }
-
-  scaleFactor = scaleFactor || 2;
-
-  var scaleFactorX = scaleFactor;
-  var scaleFactorY = scaleFactor;
-  var offsetX = 0;
-  var offsetY = 0;
-
-  if(fSampleXScale != null){
-    scaleFactorX = fSampleXScale;
-  }
-  if(fSampleYScale != null){
-    scaleFactorY = fSampleYScale;
-  }
-  if(fSampleXOffset != null){
-    offsetX = fSampleXOffset;
-  }
-  if(fSampleYOffset != null){
-    offsetY = fSampleYOffset;
-  }
-
-  
+  // Calculate texture coordinates with seamless wrapping
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
 
-  var sampleX = ~~(texWidth * x);
-  var sampleY = ~~(texHeight * y);
+  // Adjust coordinates to handle negative values (wrap around)
+  if (x < 0) x += 1;
+  if (y < 0) y += 1;
 
-  var samplePosition = texWidth * sampleY + sampleX;
-  var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+  // Scale coordinates to texture size
+  x *= texWidth;
+  y *= texHeight;
 
-  var currentColor;
-  var currentPixel;
+  // Calculate integer and fractional parts
+  var x0 = Math.floor(x);
+  var y0 = Math.floor(y);
+  var dx = x - x0;
+  var dy = y - y0;
 
-  if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-    return "+";
-  } else {
-    
-    if( noColor ){
-      currentPixel = texpixels[samplePosition];
-      currentColor = 'm';
-    }else{
-      currentPixel = texpixels[samplePosition2];
-      currentColor = texpixels[samplePosition2+1];
-    }
+  // Handle wrapping for integer coordinates
+  var x1 = (x0 + 1) % texWidth;
+  var y1 = (y0 + 1) % texHeight;
 
-    return [currentPixel, currentColor];
-  }
+  // Sample the four surrounding pixels
+  var samplePosition00 = (y0 * texWidth + x0) * 2;
+  var samplePosition01 = (y0 * texWidth + x1) * 2;
+  var samplePosition10 = (y1 * texWidth + x0) * 2;
+  var samplePosition11 = (y1 * texWidth + x1) * 2;
+
+  // Interpolate color and brightness values
+  var color00 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00])];
+  var color01 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01])];
+  var color10 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10])];
+  var color11 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11])];
+
+  // Bilinear interpolation for each color component
+  var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
+  var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
+  var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
+
+  // Round color components
+  var finalColor = [Math.round(colorR), Math.round(colorG), Math.round(colorB)];
+
+  return finalColor;
 };
+
+
+
+
 
 
 
@@ -486,6 +482,23 @@ var _everyAofB = function (a, b) {
 };
 
 
+var _getColorPixel = function(color, pixel){
+  var b100 = _rh.colorReferenceTable[color][3];
+  var b75  = _rh.colorReferenceTable[color][2];
+  var b50  = _rh.colorReferenceTable[color][1];
+  var b25  = _rh.colorReferenceTable[color][0];
+  var b0   = "0";
+
+  // Set default fill value
+  let fill = b0;
+
+  if (pixel === "#")fill = b100;
+  else if (pixel === "7") fill = b75;
+  else if (pixel === "*" ) fill = b50;
+  else if (pixel === "o") fill = b25;
+  else fill = b0;
+  return fill;
+}
 
 
 // lookup-table “for fine-control” or “for performance”
@@ -576,9 +589,6 @@ var _skipEveryXrow = function (input) {
       return 0;
   }
 };
-
-
-
 
 
   
@@ -777,12 +787,39 @@ var _convertPixelToAscii = function( input, color ){
         return "&#9608;";
     }
   }
-
-
 };
 
 
 var _drawToCanvas = function ( pixels ) {
+
+  eCanvas.width = nScreenWidth;
+  eCanvas.height = nScreenHeight;
+  
+  // Create an ImageData object with the pixel data
+  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
+      
+  // Convert values to shades of colors
+  for (var i = 0; i < pixels.length; i++) {
+    var color = pixels[i];
+    // console.log(pixels);
+    var depthValue = fDepthBufferR[i];
+    // var shadingFactor = (1 - depthValue*2 / fDepth);
+    var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+    // var shadingFactor = 1;
+    // var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
+    
+    imageData.data[i * 4] = color[0] * shadingFactor ; // Red 
+    imageData.data[i * 4 + 1] = color[1] * shadingFactor ; // Green 
+    imageData.data[i * 4 + 2] = color[2] * shadingFactor ; // Blue 
+    imageData.data[i * 4 + 3] = 255; // Alpha 
+  }
+  // Use putImageData to draw the pixels onto the canvas
+  cCtx.putImageData(imageData, 0, 0);
+}
+
+
+
+var _drawToCanvasOld = function ( pixels ) {
 
   eCanvas.width = nScreenWidth;
   eCanvas.height = nScreenHeight;
@@ -813,30 +850,30 @@ var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
 
   _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
-  var frame = screen
-  var target = target || eScreen;
+  // var frame = screen
+  // var target = target || eScreen;
 
-  var sOutput = "";  
-  var sCanvasOutput = "";
+  // var sOutput = "";  
+  // var sCanvasOutput = "";
 
-  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  nPrintIndex = 0;
+  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  // nPrintIndex = 0;
 
-  for (var row = 0 ; row < nScreenHeight ; row++) {
   // for (var row = 0 ; row < nScreenHeight ; row++) {
-    for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      if (nPrintIndex % nScreenWidth == 0) {
-        sOutput += "<br>";
-      }
-      // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
-      sOutput += frame[nPrintIndex];
-      sCanvasOutput += frame[nPrintIndex];
-      nPrintIndex++;
-    }
-  }
-  eScreen.innerHTML = sOutput;
-  _drawToCanvas( sCanvasOutput );
+  // // for (var row = 0 ; row < nScreenHeight ; row++) {
+  //   for (var pix = 0; pix < nScreenWidth; pix++) {
+  //     // H-blank based on screen-width
+  //     if (nPrintIndex % nScreenWidth == 0) {
+  //       sOutput += "<br>";
+  //     }
+  //     // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
+  //     sOutput += frame[nPrintIndex];
+  //     sCanvasOutput += frame[nPrintIndex];
+  //     nPrintIndex++;
+  //   }
+  // }
+  // eScreen.innerHTML = sOutput;
+  _drawToCanvas( screen );
 };
 
 

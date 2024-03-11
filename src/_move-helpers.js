@@ -22,6 +22,7 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
+    console.log(sectorName)
     var allCurrentWalls = oMap[sectorName].walls;
     var nWallsHit = 0;
 

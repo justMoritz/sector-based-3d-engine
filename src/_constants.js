@@ -80,7 +80,7 @@ var fPlayerY = 1.0;
 var fPlayerA = 1.5;
 var fPlayerH = 0;
 
-var sLastKnownSector = 'sector0';
+var sLastKnownSector = 0;
 var sPlayerSector = 'sector0';
 var nSectorCeilingHeight = 1;
 var nSectorFloorHeight = 0;
