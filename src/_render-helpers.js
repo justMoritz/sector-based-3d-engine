@@ -177,158 +177,6 @@ var _rh = {
     w: "b0",
     x: "b25",
   },
-  renderWall: function (fDistanceToWall, sWallDirection, pixelColor) {
-
-    return pixelColor;
-
-    var pixel = pixelArray[0];
-    var color = pixelArray[1] || 'm';
-
-    // There are 4 lightness values in each color
-    // This assigns the appropriate color value to the current pixel
-
-    var b255 = "4";
-    var b100 = _rh.colorReferenceTable[color][3];
-    var b75  = _rh.colorReferenceTable[color][2];
-    var b50  = _rh.colorReferenceTable[color][1];
-    var b25  = _rh.colorReferenceTable[color][0];
-    var b0   = "0";
-
-    var fDepthRatio1 = fDepth/2 / 4;
-    var fDepthRatio2 = fDepth/2 / 2.5;
-    var fDepthRatio3 = fDepth/2 / 1.25;
-    var fDepthRatio4 = fDepth/2 / 1.15;
-
-    // var fDepthRatio1 = 4;
-    // var fDepthRatio2 = 8;
-    // var fDepthRatio3 = 12;
-    // var fDepthRatio4 = 20;
-
-    // Set default fill value
-    let fill = b0;
-
-
-    // TODO: Fill
-    if (pixel === "#")fill = b100;
-    else if (pixel === "7") fill = b75;
-    else if (pixel === "*" ) fill = b50;
-    else if (pixel === "o") fill = b25;
-    else fill = b25;
-    return fill;
-
-    
-    // "&#9109;"; // ⎕
-    // var b0   = ".";
-    // var b20  = "&#9617;"; // ░
-    // var b40  = "&#9618;"; // ▒
-    // var b60  = "&#9618;"; // ▒
-    // var b80  = "&#9619;"; // ▓
-    // var b100 = "&#9608;"; // █
-
-    // TODO: (maybe) Convert to lookuptable?
-    // Controls the depth shading
-    switch (sWallDirection) {
-      // Sprites and voxels
-      case "V":
-        if (fDistanceToWall < fDepthRatio1) {
-          if (pixel === "#")fill = b100;
-          else if (pixel === "7") fill = b75;
-          else if (pixel === "*" ) fill = b50;
-          else if (pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepthRatio2) {
-          if (pixel === "#") fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b25;
-          else if (pixel === "o") fill = b25;
-          else fill = b0;
-        } else if (fDistanceToWall < fDepthRatio3) {
-          if (pixel === "#") fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" || pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepth) {
-          if (pixel === "#") fill = b50;
-          else if (pixel === "7") fill = b25;
-          else if (pixel === "*" || pixel === "o") fill = b25;
-          else fill = b0;
-        }
-        break;
-
-      // North/South direction
-      case "N":
-      case "S":
-        if (fDistanceToWall < fDepthRatio1) {
-          if (pixel === "#")fill = b100;
-          else if (pixel === "7") fill = b75;
-          else if (pixel === "*" ) fill = b50;
-          else if (pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepthRatio2) {
-          if (pixel === "#")fill = b100;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b50;
-          else if (pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepthRatio3) {
-          if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b50;
-          else if (pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepthRatio4) {
-          if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b50;
-          else if (pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepth) {
-          if (pixel === "#") fill = b50;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" || pixel === "o") fill = b25;
-          else fill = b0;
-        }
-        break;
-
-      // West/East direction
-      case "W":
-      case "E":
-        if (fDistanceToWall < fDepthRatio1) {
-          if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b75;
-          else if (pixel === "*" ) fill = b50;
-          else if ( pixel === "o") fill = b25;
-          else fill = b25;
-        } else if (fDistanceToWall < fDepthRatio2) {
-          if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b50;
-          else if ( pixel === "o") fill = b25;
-          else fill = b0;
-        } else if (fDistanceToWall < fDepthRatio3) {
-          if (pixel === "#")fill = b75;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b25;
-          else if ( pixel === "o") fill = b25;
-          else fill = b0;
-        } else if (fDistanceToWall < fDepthRatio4) {
-          if (pixel === "#")fill = b50;
-          else if (pixel === "7") fill = b50;
-          else if (pixel === "*" ) fill = b25;
-          else if ( pixel === "o") fill = b25;
-          else fill = b0;
-        } else if (fDistanceToWall < fDepth) {
-          if (pixel === "#")fill = b50;
-          else if (pixel === "7") fill = b25;
-          else if (pixel === "*" ) fill = b25;
-          else if ( pixel === "o") fill = b25;
-          else fill = b0;
-        }
-        break;
-    
-    }
-    return fill;
-  },
 
   renderFloor: function (j) {
     var fill = "`";
@@ -450,12 +298,12 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var color10 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10])];
   var color11 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11])];
 
-
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
   var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
+  // Adding shading based on depth Value
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   colorR *= shadingFactor;
   colorG *= shadingFactor;
@@ -1027,11 +875,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  sFloorPixelToRender = _rh.renderWall(
-    fRealDistance,
-    "N",
-    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance)
-  );
+  sFloorPixelToRender = _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance);
   return sFloorPixelToRender;
 }
 
@@ -1060,11 +904,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  var sCeilPixelToRender = _rh.renderWall(
-    fRealDistance,
-    "W",
-    _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance)
-  );
+  var sCeilPixelToRender = _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance);
   return sCeilPixelToRender;
 }
 
@@ -1085,11 +925,7 @@ function drawBackground (i, j) {
     fBgY -= fLooktimer / 20; // up
   }
   
-  sPixelToDraw = _rh.renderWall(
-    0,
-    "N",
-    _getSamplePixelDirect(textures['bg'], fBgX, fBgY, 1, 1)
-  );
+  sPixelToDraw = _getSamplePixelDirect(textures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
 }

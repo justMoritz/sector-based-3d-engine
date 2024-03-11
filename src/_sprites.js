@@ -185,11 +185,7 @@ function _drawSpritesNew (i) {
           // if( fSamplePixel[0] !== "." ){
           if( !bIsTransparentPix ){
             fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
-            screen[sj * nScreenWidth + i] = _rh.renderWall(
-              fDistanceToSprite,
-              "V",
-              fSamplePixel
-            );
+            screen[sj * nScreenWidth + i] = fSamplePixel
           }
         
         }

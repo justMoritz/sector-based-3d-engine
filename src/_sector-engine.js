@@ -121,11 +121,7 @@ var gameEngineJS = (function () {
         var sPixelToRender = "0";
 
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        sPixelToRender = _rh.renderWall(
-          fDistanceToWall,
-          sWallDirection,
-          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall)
-        );
+        sPixelToRender = _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
 
       } // End Draw Solid Wall
 
