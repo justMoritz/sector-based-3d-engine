@@ -176,7 +176,13 @@ var gameEngineJS = (function () {
       // Mark the current sector as visited
       visitedSectors[currentSector] = true;
 
-      // the actual sector object from the level file
+
+      try {
+        var sectorWalls = oMap[currentSector].walls; 
+      } catch (error) {
+          console.error(`Sector ${currentSector} Not found`);
+      }
+
       var sectorWalls = oMap[currentSector].walls; 
 
 

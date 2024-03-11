@@ -827,7 +827,7 @@ var _drawToCanvasOld = function ( pixels ) {
 var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
 
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
   // var frame = screen
   // var target = target || eScreen;
 
@@ -895,7 +895,7 @@ var _fDrawFrameRGB = function (screen, target) {
 
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} `)
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerY }`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
