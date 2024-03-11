@@ -795,8 +795,8 @@ var _drawToCanvas = function ( pixels ) {
     var pixelValue = pixels[i];
     var depthValue = fDepthBufferR[i];
     // var shadingFactor = (1 - depthValue*2 / fDepth);
-    var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-    // var shadingFactor = 1;
+    // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+    var shadingFactor = 1;
     var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
     
     imageData.data[i * 4] = color[0] * shadingFactor ; // Red 
