@@ -177,70 +177,152 @@ var _rh = {
     w: "b0",
     x: "b25",
   },
+  renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
 
-  renderFloor: function (j) {
-    var fill = "`";
+    var pixel = pixelArray[0];
+    var color = pixelArray[1] || 'm';
 
-    // b = 1 - (j - nScreenHeight / 2) / (nScreenHeight / 2);
+    // There are 4 lightness values in each color
+    // This assigns the appropriate color value to the current pixel
 
-    // draw floor, in different shades
-    b = 1 - (j - nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15))  / (nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) );
+    var b255 = "4";
+    var b100 = _rh.colorReferenceTable[color][3];
+    var b75  = _rh.colorReferenceTable[color][2];
+    var b50  = _rh.colorReferenceTable[color][1];
+    var b25  = _rh.colorReferenceTable[color][0];
+    var b0   = "0";
 
-    if (b < 0.25) {
-      fill = "t";
-    } else if (b < 0.5) {
-      fill = "s";
-    } else if (b < 0.75) {
-      fill = "r";
-    } else if (b < 0.9) {
-      fill = "q";
-    } else {
-      fill = "v";
-    }
+    var fDepthRatio1 = fDepth/2 / 4;
+    var fDepthRatio2 = fDepth/2 / 2.5;
+    var fDepthRatio3 = fDepth/2 / 1.25;
+    var fDepthRatio4 = fDepth/2 / 1.15;
 
-    return fill;
-  },
+    // var fDepthRatio1 = 4;
+    // var fDepthRatio2 = 8;
+    // var fDepthRatio3 = 12;
+    // var fDepthRatio4 = 20;
 
-  renderObjectTop: function (j) {
-    var fill = "`";
+    // Set default fill value
+    let fill = b0;
+
+    // if (pixel === "#")fill = b100;
+    // else if (pixel === "7") fill = b75;
+    // else if (pixel === "*" ) fill = b50;
+    // else if (pixel === "o") fill = b25;
+    // else fill = b25;
+    // return fill;
+
     
-    // draw floor, in different shades
-    b = 1 -
-      (j - nScreenHeight / (2 - fLooktimer * 0.15)) /
-        (nScreenHeight / (2 - fLooktimer * 0.15));
+    // "&#9109;"; // ⎕
+    // var b0   = ".";
+    // var b20  = "&#9617;"; // ░
+    // var b40  = "&#9618;"; // ▒
+    // var b60  = "&#9618;"; // ▒
+    // var b80  = "&#9619;"; // ▓
+    // var b100 = "&#9608;"; // █
 
-    if (b < 0.25) {
-      fill = "a";
-    } else if (b < 0.5) {
-      fill = "a";
-    } else if (b < 0.75) {
-      fill = "b";
-    } else if (b < 0.9) {
-      fill = "b";
-    } else {
-      fill = "d";
+    // TODO: (maybe) Convert to lookuptable?
+    // Controls the depth shading
+    switch (sWallDirection) {
+      // Sprites and voxels
+      case "V":
+        if (fDistanceToWall < fDepthRatio1) {
+          if (pixel === "#")fill = b100;
+          else if (pixel === "7") fill = b75;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio2) {
+          if (pixel === "#") fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b25;
+          else if (pixel === "o") fill = b25;
+          else fill = b0;
+        } else if (fDistanceToWall < fDepthRatio3) {
+          if (pixel === "#") fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" || pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepth) {
+          if (pixel === "#") fill = b50;
+          else if (pixel === "7") fill = b25;
+          else if (pixel === "*" || pixel === "o") fill = b25;
+          else fill = b0;
+        }
+        break;
+
+      // North/South direction
+      case "N":
+      case "S":
+        if (fDistanceToWall < fDepthRatio1) {
+          if (pixel === "#")fill = b100;
+          else if (pixel === "7") fill = b75;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio2) {
+          if (pixel === "#")fill = b100;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio3) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio4) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b50;
+          else if (pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepth) {
+          if (pixel === "#") fill = b50;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" || pixel === "o") fill = b25;
+          else fill = b0;
+        }
+        break;
+
+      // West/East direction
+      case "W":
+      case "E":
+        if (fDistanceToWall < fDepthRatio1) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b75;
+          else if (pixel === "*" ) fill = b50;
+          else if ( pixel === "o") fill = b25;
+          else fill = b25;
+        } else if (fDistanceToWall < fDepthRatio2) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b50;
+          else if ( pixel === "o") fill = b25;
+          else fill = b0;
+        } else if (fDistanceToWall < fDepthRatio3) {
+          if (pixel === "#")fill = b75;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b25;
+          else if ( pixel === "o") fill = b25;
+          else fill = b0;
+        } else if (fDistanceToWall < fDepthRatio4) {
+          if (pixel === "#")fill = b50;
+          else if (pixel === "7") fill = b50;
+          else if (pixel === "*" ) fill = b25;
+          else if ( pixel === "o") fill = b25;
+          else fill = b0;
+        } else if (fDistanceToWall < fDepth) {
+          if (pixel === "#")fill = b50;
+          else if (pixel === "7") fill = b25;
+          else if (pixel === "*" ) fill = b25;
+          else if ( pixel === "o") fill = b25;
+          else fill = b0;
+        }
+        break;
+    
     }
-
-    return fill;
-  },
-
-  renderCeiling: function (j) {
-    var fill = "`";
-
-    // draw ceiling, in different shades
-    b = 1 - (j - nScreenHeight / 2) / (nScreenHeight / 2);
-    if (b < 0.25) {
-      fill = "`";
-    } else if (b < 0.5) {
-      fill = "-";
-    } else if (b < 0.75) {
-      fill = "=";
-    } else if (b < 0.9) {
-      fill = "x";
-    } else {
-      fill = "#";
-    }
-
     return fill;
   },
 };

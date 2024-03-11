@@ -37,7 +37,7 @@ var nLookLimit = 10;
 var bUseSkew = false;
 var bDrawRGB = false;
 var bDrawSrpites = true;
-var bTexFiltering = true;
+var bTexFiltering = false;
 
 
 if (bDrawRGB){
