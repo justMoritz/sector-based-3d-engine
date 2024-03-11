@@ -3,7 +3,7 @@
  */
 
 // Line with two points on the grid system
-// Not used, just still nostalig :,)
+// Not used, just still nostalic :,)
 // a: x=4 y=2
 // b: x=5 y=4
 testline = [
@@ -124,7 +124,7 @@ var gameEngineJS = (function () {
         sPixelToRender = _rh.renderWall(
           fDistanceToWall,
           sWallDirection,
-          _getSamplePixelBilinear( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall)
+          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall)
         );
 
       } // End Draw Solid Wall

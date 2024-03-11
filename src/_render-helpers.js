@@ -402,16 +402,7 @@ var _rh = {
 
 
 /**
- * Function will get the pixel to be sampled from the sprite
- *
- * @param  {object/string} texture -      EITHER: 
- *                                          A complete texture object to be sampled, 
- *                                        OR: 
- *                                          the name of the texture key in either the global
- *                                          / level-side side texture object
- * @param  {float} x -                    The x coordinate of the sample (how much across)
- * @param  {float} y -                    The y coordinate of the sample
- * @return {string}
+ * Function will get the pixel to be sampled from the sprite WITH bilinear filtering
  */
 var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
 
@@ -480,18 +471,9 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
 
 
 /**
- * Function will get the pixel to be sampled from the sprite
- *
- * @param  {object/string} texture -      EITHER: 
- *                                          A complete texture object to be sampled, 
- *                                        OR: 
- *                                          the name of the texture key in either the global
- *                                          / level-side side texture object
- * @param  {float} x -                    The x coordinate of the sample (how much across)
- * @param  {float} y -                    The y coordinate of the sample
- * @return {string}
+ * Function will get the pixel to be sampled from the sprite without bilinear filtering
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
 
   // defaults
   var texWidth = texture.width || defaultTexWidth;
@@ -532,6 +514,15 @@ var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSa
 };
 
 
+
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+  if(bTexFiltering){
+    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+  }
+  else {
+    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+  }
+}
 
 
 
@@ -734,7 +725,7 @@ var _fPrepareFrame = function (oInput, eTarget) {
 
     // print filler pixels
     for (var i = 0; i < fLookModifier; i++) {
-      sOutput.push(".");
+      sOutput.push([255,255,255]);
     }
 
     var toBeRemoved = 2 * fLookModifier;
@@ -1039,7 +1030,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   sFloorPixelToRender = _rh.renderWall(
     fRealDistance,
     "N",
-    _getSamplePixelBilinear( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance)
+    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance)
   );
   return sFloorPixelToRender;
 }
@@ -1072,7 +1063,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var sCeilPixelToRender = _rh.renderWall(
     fRealDistance,
     "W",
-    _getSamplePixelBilinear( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0, fRealDistance)
+    _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance)
   );
   return sCeilPixelToRender;
 }
@@ -1097,7 +1088,7 @@ function drawBackground (i, j) {
   sPixelToDraw = _rh.renderWall(
     0,
     "N",
-    _getSamplePixel(textures['bg'], fBgX, fBgY, 1, 1)
+    _getSamplePixelDirect(textures['bg'], fBgX, fBgY, 1, 1)
   );
 
   return sPixelToDraw;
