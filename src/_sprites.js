@@ -180,7 +180,10 @@ function _drawSpritesNew (i) {
           
 
           // transparency
-          if( fSamplePixel[0] !== "." ){
+
+          const bIsTransparentPix = fSamplePixel.every(element => element === 0);
+          // if( fSamplePixel[0] !== "." ){
+          if( !bIsTransparentPix ){
             fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
             screen[sj * nScreenWidth + i] = _rh.renderWall(
               fDistanceToSprite,

@@ -413,11 +413,10 @@ var _rh = {
  * @param  {float} y -                    The y coordinate of the sample
  * @return {string}
  */
-var _getSamplePixel = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
 
   var texWidth = texture.width || defaultTexWidth;
   var texHeight = texture.height || defaultTexHeight;
-  var noColor = texture.noColor || false;
   var texpixels = texture.texture;
 
   var scaleFactorX = fSampleXScale || 2;
@@ -438,8 +437,8 @@ var _getSamplePixel = function(texture, x, y, fSampleXScale, fSampleYScale, fSam
   y *= texHeight;
 
   // Calculate integer and fractional parts
-  var x0 = Math.floor(x);
-  var y0 = Math.floor(y);
+  var x0 = ~~(x);
+  var y0 = ~~(y);
   var dx = x - x0;
   var dy = y - y0;
 
@@ -465,9 +464,59 @@ var _getSamplePixel = function(texture, x, y, fSampleXScale, fSampleYScale, fSam
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
   // Round color components
-  var finalColor = [Math.round(colorR), Math.round(colorG), Math.round(colorB)];
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
 
   return finalColor;
+};
+
+
+
+
+/**
+ * Function will get the pixel to be sampled from the sprite
+ *
+ * @param  {object/string} texture -      EITHER: 
+ *                                          A complete texture object to be sampled, 
+ *                                        OR: 
+ *                                          the name of the texture key in either the global
+ *                                          / level-side side texture object
+ * @param  {float} x -                    The x coordinate of the sample (how much across)
+ * @param  {float} y -                    The y coordinate of the sample
+ * @return {string}
+ */
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+
+  // defaults
+  var texWidth = texture.width || defaultTexWidth;
+  var texHeight = texture.height || defaultTexHeight;
+  var texpixels = texture.texture;
+
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
+
+  x = (scaleFactorX * x + offsetX) % 1;
+  y = (scaleFactorY * y + offsetY) % 1;
+
+  var sampleX = ~~(texWidth * x);
+  var sampleY = ~~(texHeight * y);
+
+  var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+
+  var currentColor;
+  var currentPixel;
+  var currentColorPixel;
+  var finalColor = [];
+
+  currentPixel = texpixels[samplePosition2];
+  currentColor = texpixels[samplePosition2+1];
+  currentColorPixel = _getColorPixel(currentColor, currentPixel);
+  finalColor = _rh.pixelLookupTable[currentColorPixel] || [0, 0, 0]; 
+
+  // return currentColorPixel;
+  return finalColor;
+
 };
 
 
@@ -933,24 +982,24 @@ var _fDrawFrameWithSkew = function (screen, target) {
     for (var pix = 0; pix < nScreenWidth; pix++) {
       // H-blank based on screen-width
       if (printIndex % nScreenWidth == 0) {
-        sOutput += "<br>";
+        // sOutput += "<br>";
       }
 
       if (pix < removePixels) {
         sOutput += "";
-        sCanvasOutput += "4";
+        sCanvasOutput += "[0,0,0]";
       } else if (pix > nScreenWidth - removePixels) {
         sOutput += "";
-        sCanvasOutput += "4";
+        sCanvasOutput += "[0,0,0]";
       } else {
-        sOutput += frame[printIndex];
-        sCanvasOutput += frame[printIndex];
+        // sOutput += frame[printIndex];
+        sCanvasOutput += screen[printIndex];
       }
 
       printIndex++;
     }
   }
-  target.innerHTML = sOutput;
+  // target.innerHTML = sOutput;
   _drawToCanvas( sCanvasOutput, removePixels );
 };
 
@@ -982,7 +1031,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   sFloorPixelToRender = _rh.renderWall(
     fRealDistance,
     "N",
-    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
+    _getSamplePixelBilinear( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
   );
   return sFloorPixelToRender;
 }
@@ -1015,7 +1064,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var sCeilPixelToRender = _rh.renderWall(
     fRealDistance,
     "W",
-    _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5)
+    _getSamplePixelBilinear( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5)
   );
   return sCeilPixelToRender;
 }
@@ -1040,7 +1089,7 @@ function drawBackground (i, j) {
   sPixelToDraw = _rh.renderWall(
     0,
     "N",
-    _getSamplePixel(textures['bg'], fBgX, fBgY)
+    _getSamplePixel(textures['bg'], fBgX, fBgY, 1, 1)
   );
 
   return sPixelToDraw;
