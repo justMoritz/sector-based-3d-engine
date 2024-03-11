@@ -176,7 +176,7 @@ function _drawSpritesNew (i) {
           )
         {
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
-          var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1);
+          var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite);
           
 
           // transparency

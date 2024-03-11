@@ -413,7 +413,7 @@ var _rh = {
  * @param  {float} y -                    The y coordinate of the sample
  * @return {string}
  */
-var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
 
   var texWidth = texture.width || defaultTexWidth;
   var texHeight = texture.height || defaultTexHeight;
@@ -423,6 +423,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var scaleFactorY = fSampleYScale || 2;
   var offsetX = fSampleXOffset || 0;
   var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
 
   // Calculate texture coordinates with seamless wrapping
   x = (scaleFactorX * x + offsetX) % 1;
@@ -458,10 +459,16 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var color10 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10])];
   var color11 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11])];
 
+
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
   var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
+
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR *= shadingFactor;
+  colorG *= shadingFactor;
+  colorB *= shadingFactor;
 
   // Round color components
   var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
@@ -484,7 +491,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * @param  {float} y -                    The y coordinate of the sample
  * @return {string}
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
 
   // defaults
   var texWidth = texture.width || defaultTexWidth;
@@ -495,6 +502,7 @@ var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSa
   var scaleFactorY = fSampleYScale || 2;
   var offsetX = fSampleXOffset || 0;
   var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
 
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
@@ -502,19 +510,23 @@ var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSa
   var sampleX = ~~(texWidth * x);
   var sampleY = ~~(texHeight * y);
 
-  var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+  var samplePosition = (texWidth * sampleY + sampleX) * 2;
 
   var currentColor;
   var currentPixel;
   var currentColorPixel;
-  var finalColor = [];
 
-  currentPixel = texpixels[samplePosition2];
-  currentColor = texpixels[samplePosition2+1];
-  currentColorPixel = _getColorPixel(currentColor, currentPixel);
-  finalColor = _rh.pixelLookupTable[currentColorPixel] || [0, 0, 0]; 
+  currentPixel = texpixels[samplePosition];
+  currentColor = texpixels[samplePosition+1];
+  currentColorPixel = _rh.pixelLookupTable[_getColorPixel(currentColor, currentPixel)] || [0, 0, 0]; 
+
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR = currentColorPixel[0] * shadingFactor;
+  colorG = currentColorPixel[1] * shadingFactor;
+  colorB = currentColorPixel[2] * shadingFactor;
 
   // return currentColorPixel;
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
   return finalColor;
 
 };
@@ -851,15 +863,11 @@ var _drawToCanvas = function ( pixels ) {
   for (var i = 0; i < pixels.length; i++) {
     var color = pixels[i];
     // console.log(pixels);
-    var depthValue = fDepthBufferR[i];
-    // var shadingFactor = (1 - depthValue*2 / fDepth);
-    var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-    // var shadingFactor = 1;
-    // var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
+   
     
-    imageData.data[i * 4] = color[0] * shadingFactor ; // Red 
-    imageData.data[i * 4 + 1] = color[1] * shadingFactor ; // Green 
-    imageData.data[i * 4 + 2] = color[2] * shadingFactor ; // Blue 
+    imageData.data[i * 4] = color[0] ; // Red 
+    imageData.data[i * 4 + 1] = color[1] ; // Green 
+    imageData.data[i * 4 + 2] = color[2] ; // Blue 
     imageData.data[i * 4 + 3] = 255; // Alpha 
   }
   // Use putImageData to draw the pixels onto the canvas
@@ -970,37 +978,37 @@ var _fDrawFrameWithSkew = function (screen, target) {
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
-  var sOutput = "";
-  var sCanvasOutput = "";
+  // var sOutput = "";
+  // var sCanvasOutput = "";
 
-  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  var printIndex = 0;
-  var removePixels = nScreenHeight / 2;
+  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  // var printIndex = 0;
+  // var removePixels = nScreenHeight / 2;
 
   
-  for (var row = 0; row < nScreenHeight; row++) {
-    for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      if (printIndex % nScreenWidth == 0) {
-        // sOutput += "<br>";
-      }
+  // for (var row = 0; row < nScreenHeight; row++) {
+  //   for (var pix = 0; pix < nScreenWidth; pix++) {
+  //     // H-blank based on screen-width
+  //     if (printIndex % nScreenWidth == 0) {
+  //       // sOutput += "<br>";
+  //     }
 
-      if (pix < removePixels) {
-        sOutput += "";
-        sCanvasOutput += "[0,0,0]";
-      } else if (pix > nScreenWidth - removePixels) {
-        sOutput += "";
-        sCanvasOutput += "[0,0,0]";
-      } else {
-        // sOutput += frame[printIndex];
-        sCanvasOutput += screen[printIndex];
-      }
+  //     // if (pix < removePixels) {
+  //     //   sOutput += "";
+  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
+  //     // } else if (pix > nScreenWidth - removePixels) {
+  //     //   sOutput += "";
+  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
+  //     // } else {
+  //     //   // sOutput += frame[printIndex];)
+  //     //   sCanvasOutput[printIndex] = frame[printIndex];
+  //     // }
 
-      printIndex++;
-    }
-  }
-  // target.innerHTML = sOutput;
-  _drawToCanvas( sCanvasOutput, removePixels );
+  //     printIndex++;
+  //   }
+  // }
+  // // target.innerHTML = sCanvasOutput;
+  _drawToCanvas( frame );
 };
 
 
@@ -1031,7 +1039,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   sFloorPixelToRender = _rh.renderWall(
     fRealDistance,
     "N",
-    _getSamplePixelBilinear( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
+    _getSamplePixelBilinear( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance)
   );
   return sFloorPixelToRender;
 }
@@ -1064,7 +1072,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var sCeilPixelToRender = _rh.renderWall(
     fRealDistance,
     "W",
-    _getSamplePixelBilinear( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5)
+    _getSamplePixelBilinear( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0, fRealDistance)
   );
   return sCeilPixelToRender;
 }

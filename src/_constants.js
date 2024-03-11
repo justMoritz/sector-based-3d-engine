@@ -34,7 +34,7 @@ var fFOV_div2 = fFOV / 2;
 var fDepth = 16.0; // viewport depth
 var nLookLimit = 10;
 
-var bUseSkew = false;
+var bUseSkew = true;
 var bDrawRGB = false;
 var bDrawSrpites = true;
 
@@ -44,11 +44,11 @@ if (bDrawRGB){
     nScreenHeight = 110;
 }
 if (bUseSkew){
-    nScreenWidth = 576;
-    nScreenHeight = 160;
+    nScreenWidth = 512;
+    // nScreenHeight = 160;
     nLookLimit = 8;
-    var fFOV = PI___ / 2.25;
-    var fFOV_div2 = fFOV / 2;
+    // var fFOV = PI___ / 2.25;
+    // var fFOV_div2 = fFOV / 2;
 }
 
 
