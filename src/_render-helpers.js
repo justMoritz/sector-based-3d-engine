@@ -20,6 +20,86 @@ var _rh = {
     g: ['q', 'r', 's', 't'],
     t: ['u', 'v', 'w', 'x'],
   },
+  colorPixelLookupTable: {
+    // Black
+    '.q': [0, 0, 0],
+    '*q': [0, 0, 0],
+    '7q': [255, 255, 255],
+    '#q': [255, 255, 255],
+    
+    // Grays
+    '.m': [0, 0, 0],
+    'om': [82, 82, 82],
+    '*m': [102, 102, 102],
+    '7m': [171, 171, 171],
+    '#m': [200, 200, 200],
+
+    // Blues
+    'ob': [1, 36, 123],
+    '*b': [39, 89, 201],
+    '7b': [120, 171, 255],
+    '#b': [202, 219, 255],
+
+    // Indigos
+    'oi': [27, 20, 137],
+    '*i': [72, 69, 219],
+    '7i': [152, 151, 255],
+    '#i': [216, 210, 255],
+
+    // Purples
+    'ou': [57, 8, 124],
+    '*u': [111, 52, 202],
+    '7u': [192, 134, 255],
+    '#u': [231, 204, 255],
+
+    // Pink
+    'op': [82, 2, 87],
+    '*p': [146, 43, 155],
+    '7p': [226, 125, 239],
+    '#p': [244, 201, 249],
+
+    // Reds
+    'or': [92, 7, 37],
+    '*r': [161, 48, 90],
+    '7r': [242, 129, 175],
+    '#r': [250, 203, 223],
+
+    // Oranges
+    'oo': [87, 19, 0],
+    '*o': [155, 64, 24],
+    '7o': [237, 145, 109],
+    '#o': [247, 210, 196],
+
+    // Yellows
+    'oy': [71, 35, 0],
+    '*y': [136, 84, 0],
+    '7y': [219, 164, 59],
+    '#y': [220, 207, 112],
+
+    // Army
+    'oa': [45, 51, 0],
+    '*a': [104, 103, 0],
+    '7a': [189, 184, 37],
+    '#a': [225, 227, 165],
+
+    // Green
+    'og': [14, 64, 0],
+    '*g': [62, 122, 0],
+    '7g': [146, 203, 51],
+    '#g': [208, 235, 171],
+
+    // Sea
+    'os': [0, 69, 0],
+    '*s': [27, 130, 19],
+    '7s': [109, 212, 99],
+    '#s': [194, 238, 191],
+
+    // Teals
+    'ot': [0, 65, 36],
+    '*t': [13, 124, 87],
+    '7t': [94, 206, 168],
+    '#t': [189, 235, 219],
+  },
   // the color values
   pixelLookupTable: {
     0: [0, 0, 0], // Black
@@ -367,10 +447,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var samplePosition01 = (y0 * texWidth + x1) * 2;
   var samplePosition10 = (y1 * texWidth + x0) * 2;
   var samplePosition11 = (y1 * texWidth + x1) * 2;
-  var color00 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00])];
-  var color01 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01])];
-  var color10 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10])];
-  var color11 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11])];
+  var color00 = _getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00]);
+  var color01 = _getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01]);
+  var color10 = _getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10]);
+  var color11 = _getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11]);
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
@@ -456,6 +536,18 @@ var _everyAofB = function (a, b) {
 
 
 var _getColorPixel = function(color, pixel){
+  var sColPixName = ""+pixel+color;
+  // console.log(sColPixName);
+  var color = _rh.colorPixelLookupTable[sColPixName];
+
+  if (Array.isArray(color)) {
+    return _rh.colorPixelLookupTable[sColPixName];
+
+} else {
+  console.log(sColPixName);
+}
+
+
   var b100 = _rh.colorReferenceTable[color][3];
   var b75  = _rh.colorReferenceTable[color][2];
   var b50  = _rh.colorReferenceTable[color][1];
@@ -948,7 +1040,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  sFloorPixelToRender = _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5, 0, 0, fRealDistance);
+  sFloorPixelToRender = _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance);
   return sFloorPixelToRender;
 }
 

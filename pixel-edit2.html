@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Art Editor</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    small {
+      font-weight: bold;
+      display: block;
+      margin: 0.25rem 0;
+    }
+
+    .layout {
+      display: flex;
+    }
+
+    .canvasholder {
+      width: auto;
+      padding: 1rem;
+    }
+
+    .dimensioninput {
+      margin: 1rem auto;
+      display: flex;
+    }
+
+    .dimensioninput>* {
+      padding: 0 1rem;
+    }
+
+    .controls {
+      width: 50%;
+      padding: 1rem;
+    }
+
+    canvas {
+      /* transform: scale(10); */
+      image-rendering: pixelated;
+      transform-origin: top left;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: none;
+    }
+
+    .canvas-sizer {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .import-export {
+      margin: 0 auto;
+    }
+
+    .color-palette {
+      display: flex;
+      flex-wrap: wrap;
+      width: 140px;
+    }
+
+    .color {
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    textarea {
+      width: 100%;
+      min-width: 400px;
+      height: 50px;
+    }
+
+    input {
+      /* margin-top: 1rem; */
+      width: 50px;
+    }
+
+    #pngimport {
+      width: 200px;
+    }
+
+    h1,
+    h3 {
+      margin: 0.5rem auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Pixel Edit</h1>
+  <h3>The official pixel editor for the raycaster engine</h3>
+
+  <hr>
+
+  <div class="layout">
+
+    <div class="canvasholder">
+      <div class="canvas-sizer">
+        <div class="">
+          <canvas id="pixelCanvas" width="8" height="8"></canvas>
+          <canvas id="cursorCanvas" width="8" height="8"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="color-palette">
+        <div class="color" style="background-color: #525252;"></div>
+        <div class="color" style="background-color: #666666;"></div>
+        <div class="color" style="background-color: #ababab;"></div>
+        <div class="color" style="background-color: #c8c8c8;"></div>
+        
+        <!-- Blue -->
+        <div class="color" style="background-color: #01247b;"></div>
+        <div class="color" style="background-color: #2759c9;"></div>
+        <div class="color" style="background-color: #78abff;"></div>
+        <div class="color" style="background-color: #cadbff;"></div>
+
+        <!-- Indigo -->
+        <div class="color" style="background-color: #1b1489;"></div>
+        <div class="color" style="background-color: #4845db;"></div>
+        <div class="color" style="background-color: #9897ff;"></div>
+        <div class="color" style="background-color: #d8d2ff;"></div>
+        
+        <!-- Purple -->
+        <div class="color" style="background-color: #39087c;"></div>
+        <div class="color" style="background-color: #6f34ca;"></div>
+        <div class="color" style="background-color: #c086ff;"></div>
+        <div class="color" style="background-color: #e7ccff;"></div>
+        
+        <!-- Pink -->
+        <div class="color" style="background-color: #520257;"></div>
+        <div class="color" style="background-color: #922b9b;"></div>
+        <div class="color" style="background-color: #e27def;"></div>
+        <div class="color" style="background-color: #f4c9f9;"></div>
+        
+        <!-- Red -->
+        <div class="color" style="background-color: #5c0725;"></div>
+        <div class="color" style="background-color: #a1305a;"></div>
+        <div class="color" style="background-color: #f281af;"></div>
+        <div class="color" style="background-color: #facbdf;"></div>
+
+        <!-- Orange -->
+        <div class="color" style="background-color: #571300;"></div>
+        <div class="color" style="background-color: #9b4018;"></div>
+        <div class="color" style="background-color: #ed916d;"></div>
+        <div class="color" style="background-color: #f7d2c4;"></div>
+
+        <!-- Yellow -->
+        <div class="color" style="background-color: #472300;"></div>
+        <div class="color" style="background-color: #885400;"></div>
+        <div class="color" style="background-color: #dba43b;"></div>
+        <div class="color" style="background-color: #eedaaf;"></div>
+
+        <!-- Army -->
+        <div class="color" style="background-color: #2d3300;"></div>
+        <div class="color" style="background-color: #686700;"></div>
+        <div class="color" style="background-color: #bdb825;"></div>
+        <div class="color" style="background-color: #e1e3a5;"></div>
+
+        <!-- Green -->
+        <div class="color" style="background-color: #0e4000;"></div>
+        <div class="color" style="background-color: #3e7a00;"></div>
+        <div class="color" style="background-color: #92cb33;"></div>
+        <div class="color" style="background-color: #d0ebab;"></div>
+
+        <!-- Sea -->
+        <div class="color" style="background-color: #004500;"></div>
+        <div class="color" style="background-color: #1b8213;"></div>
+        <div class="color" style="background-color: #6dd463;"></div>
+        <div class="color" style="background-color: #c2eebf;"></div>
+
+        <!-- Teal -->
+        <div class="color" style="background-color: #004124;"></div>
+        <div class="color" style="background-color: #0d7c57;"></div>
+        <div class="color" style="background-color: #5ecea8;"></div>
+        <div class="color" style="background-color: #bdebdb;"></div>
+  
+        <!-- BW -->
+        <div class="color" style="background-color: #000000;"></div>
+        <div class="color" style="background-color: #ffffff;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dimensioninput">
+    <div>
+      <label for="widthInput">Width:</label>
+      <input type="number" id="widthInput" value="8" min="2">
+      <label for="heightInput">Height:</label>
+      <input type="number" id="heightInput" value="8" min="2">
+    </div>
+    <div>
+      <button id="updateDimensions">Update & Clear</button>
+      <br />
+      <small>WARNING: Clears the canvas.</small>
+    </div>
+  </div>
+
+  <div class="import-export">
+    <hr />
+    <textarea id="exportTextArea" data-not-readonly></textarea>
+    <small>To import pixels, paste an existing texture array into this field. Make sure you set the correct height and
+      width.</small>
+    <button onclick="importPixels()">Import Texture</button>
+    <br />
+    <button onclick="importOSPixels()">Import Monochrome (legacy)</button>
+    <br />
+    <hr />
+    <label for="pngimport">
+      <div>Import 128 color PNG</div>
+      <input type="file" id="pngimport" accept="image/png">
+    </label>
+  </div>
+
+  <script>
+    const targetPalette = [
+      "#525252", "#666666", "#ababab", "#c8c8c8",
+      "#01247b", "#2759c9", "#78abff", "#cadbff",
+      "#1b1489", "#4845db", "#9897ff", "#d8d2ff",
+      "#39087c", "#6f34ca", "#c086ff", "#e7ccff",
+      "#520257", "#922b9b", "#e27def", "#f4c9f9",
+      "#5c0725", "#a1305a", "#f281af", "#facbdf",
+      "#571300", "#9b4018", "#ed916d", "#f7d2c4",
+      "#472300", "#885400", "#dba43b", "#eedaaf",
+      "#2d3300", "#686700", "#bdb825", "#e1e3a5",
+      "#0e4000", "#3e7a00", "#92cb33", "#d0ebab",
+      "#004500", "#1b8213", "#6dd463", "#c2eebf",
+      "#004124", "#0d7c57", "#5ecea8", "#bdebdb",
+      "#000000"
+   ];
+
+    const texelLookupTable = {
+      "#000000": ['.', 'm'], // Black
+      "#FFFFFF": ['.', 'q'], // white
+
+      "#525252": ['o', 'm'], // Grays
+      "#666666": ['*', 'm'],
+      "#ababab": ['7', 'm'],
+      "#c8c8c8": ['#', 'm'],
+
+      "#01247b": ['o', 'b'], // Blues
+      "#2759c9": ['*', 'b'],
+      "#78abff": ['7', 'b'],
+      "#cadbff": ['#', 'b'],
+
+      "#1b1489": ['o', 'i'], // Indigos
+      "#4845db": ['*', 'i'],
+      "#9897ff": ['7', 'i'],
+      "#d8d2ff": ['#', 'i'],
+
+      "#39087c": ['o', 'u'], // Purples
+      "#6f34ca": ['*', 'u'],
+      "#c086ff": ['7', 'u'],
+      "#e7ccff": ['#', 'u'],
+
+      "#520257": ['o', 'p'], // Pinks
+      "#922b9b": ['*', 'p'],
+      "#e27def": ['7', 'p'],
+      "#f4c9f9": ['#', 'p'],
+
+      "#5c0725": ['o', 'r'], // Reds
+      "#a1305a": ['*', 'r'],
+      "#f281af": ['7', 'r'],
+      "#facbdf": ['#', 'r'],
+
+      "#571300": ['o', 'o'], // Oranges
+      "#9b4018": ['*', 'o'],
+      "#ed916d": ['7', 'o'],
+      "#f7d2c4": ['#', 'o'],
+
+      "#472300": ['o', 'y'], // Yellows
+      "#885400": ['*', 'y'],
+      "#dba43b": ['7', 'y'],
+      "#dccf70": ['#', 'y'],
+
+      "#2d3300": ['o', 'a'], // Army
+      "#686700": ['*', 'a'],
+      "#bdb825": ['7', 'a'],
+      "#e1e3a5": ['#', 'a'],
+
+      "#0e4000": ['o', 'g'], // Greens
+      "#3e7a00": ['*', 'g'],
+      "#92cb33": ['7', 'g'],
+      "#d0ebab": ['#', 'g'],
+
+      "#004500": ['o', 's'], // Sea
+      "#1b8213": ['*', 's'],
+      "#6dd463": ['7', 's'],
+      "#c2eebf": ['#', 's'],
+
+      "#004124": ['o', 't'], // Teals
+      "#0d7c57": ['*', 't'],
+      "#5ecea8": ['7', 't'],
+      "#bdebdb": ['#', 't'],
+    };
+
+    const widthInput = document.getElementById("widthInput");
+    const heightInput = document.getElementById("heightInput");
+    const updateDimensionsButton = document.getElementById("updateDimensions");
+
+    const canvas = document.getElementById("pixelCanvas");
+    const cCanvas = document.getElementById("cursorCanvas");
+    const ctx = canvas.getContext("2d");
+    const cCtx = cCanvas.getContext("2d");
+    let currentColor = "#000"; // Default color is black
+
+    // Set every pixel on the canvas to black initially
+    resetCanvas();
+
+    // Gets user confirm, then erases the canvas
+    updateDimensionsButton.addEventListener("click", () => {
+      let conf = confirm('Are you sure? You will ease your curent art. Consider exporting first.');
+      if (conf === true) {
+        resetCanvas();
+      }
+    });
+
+    // Cursor interaction layer
+    cCanvas.addEventListener("mousemove", showCursorPreview);
+
+    cCanvas.addEventListener("mousedown", function (e) {
+      drawPixel(e);
+      cCanvas.addEventListener("mousemove", drawPixel);
+    });
+
+    cCanvas.addEventListener("mouseup", function () {
+      cCanvas.removeEventListener("mousemove", drawPixel);
+    });
+    cCanvas.addEventListener("mouseleave", function () {
+      cCanvas.removeEventListener("mousemove", drawPixel);
+    });
+
+    // Reset Canvas function
+    function resetCanvas() {
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      canvas.width = width;
+      canvas.height = height;
+      cCanvas.width = width;
+      cCanvas.height = height;
+
+      document.querySelector(".canvas-sizer").style.width = width * 10 + 'px';
+      document.querySelector(".canvas-sizer").style.height = height * 10 + 'px';
+
+      ctx.fillStyle = currentColor;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    // Cursor of where the pixel will be drawn
+    function showCursorPreview(e) {
+      const x = Math.floor((e.offsetX / cCanvas.clientWidth) * cCanvas.width);
+      const y = Math.floor((e.offsetY / cCanvas.clientHeight) * cCanvas.height);
+
+      // Clear previous preview
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+
+      // Draw preview pixel
+      cCtx.fillStyle = currentColor;
+      cCtx.fillRect(x, y, 1, 1);
+    }
+
+    // Draws Pixel on the screen
+    function drawPixel(e) {
+      const x = Math.floor((e.offsetX / canvas.clientWidth) * canvas.width);
+      const y = Math.floor((e.offsetY / canvas.clientHeight) * canvas.height);
+
+      ctx.fillStyle = currentColor;
+      ctx.fillRect(x, y, 1, 1);
+
+      exportPixels();
+    }
+
+    // Color Selector
+    document.querySelectorAll(".color").forEach((element) => {
+      element.addEventListener("click", () => {
+        currentColor = element.style.backgroundColor;
+      });
+    });
+
+    // Pixel Export
+    function exportPixels() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let pixelArray = [];
+      let outputString = '';
+
+      for (let i = 0; i < imageData.length; i += 4) {
+        const red = imageData[i].toString(16).padStart(2, '0');
+        const green = imageData[i + 1].toString(16).padStart(2, '0');
+        const blue = imageData[i + 2].toString(16).padStart(2, '0');
+
+        const hexValue = `#${red}${green}${blue}`;
+
+        // convert the hexValue to the corresponding Texel Value
+        const currentTexel = texelLookupTable[hexValue];
+
+        pixelArray.push(currentTexel);
+
+        outputString += currentTexel[0];
+        outputString += currentTexel[1];
+      }
+
+      const arrayString = JSON.stringify(pixelArray, null, 2)
+        .replace(/\n/g, '')
+        .replace(/\s{2,}/g, ' ');
+
+      const exportTextArea = document.getElementById("exportTextArea");
+
+      // exportTextArea.value = arrayString;
+      exportTextArea.value = outputString;
+    }
+
+
+    // Pixel Import
+    function importPixels() {
+      const importTextArea = document.getElementById("exportTextArea");
+      const importedData = importTextArea.value;
+
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      // Clear the canvas
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+
+      let index = 0;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          // Extract lightness and color values from the imported data string
+          const lightness = importedData[index++];
+          let color = importedData[index++];
+          const texel = [lightness, color];
+
+          // Looks up the RGB value from the lookuptable;
+          for (const [key, value] of Object.entries(texelLookupTable)) {
+            if (JSON.stringify(value) == JSON.stringify(texel)) {
+              color = key;
+              continue;
+            }
+          }
+
+          // Set the corresponding color on the canvas
+          if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+
+    // Pixel Import OLD STYLE
+    function importOSPixels() {
+      const importTextArea = document.getElementById("exportTextArea");
+      const importedData = importTextArea.value;
+
+      const width = parseInt(widthInput.value);
+      const height = parseInt(heightInput.value);
+
+      // Clear the canvas
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+
+      let index = 0;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          // Extract lightness and color values from the imported data string
+          const lightness = importedData[index++];
+          let color = "#000000";
+          // const texel = [lightness, color];
+          // console.log(lightness);
+
+          if (lightness === '#') {
+            color = "#ffffff";
+          }
+          else if (lightness === "7") {
+            color = "#c8c8c8";
+          }
+          else if (lightness === "*") {
+            color = "#858585";
+          }
+          else if (lightness === "0") {
+            color = "#424242";
+          }
+
+          // Set the corresponding color on the canvas
+          if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+
+
+
+    // Function to find the closest color in the palette
+    function findClosestColor(rgb) {
+      let minDistance = Infinity;
+      let closestColor = targetPalette[0];
+
+      for (let i = 0; i < targetPalette.length; i++) {
+        const paletteColor = targetPalette[i];
+        const paletteRgb = hexToRgb(paletteColor);
+        const distance = calculateDistance(rgb, paletteRgb);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestColor = paletteColor;
+        }
+      }
+      return closestColor;
+    }
+
+    // Function to convert hex color to RGB object
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.substring(1), 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    }
+
+
+    // Function to calculate Euclidean distance between two colors
+    function calculateDistance(rgb1, rgb2) {
+      const rDiff = rgb1.r - rgb2.r;
+      const gDiff = rgb1.g - rgb2.g;
+      const bDiff = rgb1.b - rgb2.b;
+      return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+    }
+
+    // Modify the image with color quantization
+    function modifyImageWithColorQuantization(img) {
+      const canvasCopy = document.createElement("canvas");
+      const context = canvasCopy.getContext("2d");
+      canvasCopy.width = img.width;
+      canvasCopy.height = img.height;
+      context.drawImage(img, 0, 0);
+
+      const imageData = context.getImageData(0, 0, img.width, img.height);
+      const pixels = imageData.data;
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
+        const a = pixels[i + 3];
+
+        // Check if the pixel is transparent
+        if (a === 0) {
+          // Set transparent pixels to black
+          pixels[i] = 0; // R
+          pixels[i + 1] = 0; // G
+          pixels[i + 2] = 0; // B
+        } else {
+          const rgb = { r, g, b };
+          const closestColor = findClosestColor(rgb);
+          const closestRgb = hexToRgb(closestColor);
+
+          pixels[i] = closestRgb.r;
+          pixels[i + 1] = closestRgb.g;
+          pixels[i + 2] = closestRgb.b;
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+      return canvasCopy.toDataURL();
+    }
+
+
+
+    document.getElementById("pngimport").addEventListener("change", function (e) {
+      const fileInput = e.target;
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        // Read the content of the file as an image
+        reader.onload = function (event) {
+          const img = new Image();
+          img.onload = function () {
+            // Resize the canvas to match the dimensions of the image
+            canvas.width = img.width;
+            canvas.height = img.height;
+            cCanvas.width = img.width;
+            cCanvas.height = img.height;
+
+            document.querySelector(".canvas-sizer").style.width = img.width * 10 + 'px';
+            document.querySelector(".canvas-sizer").style.height = img.height * 10 + 'px';
+
+            // Modify the image with color quantization
+            const modifiedImageUrl = modifyImageWithColorQuantization(img);
+
+            // Draw the modified image onto the canvas
+            const modifiedImg = new Image();
+            modifiedImg.onload = function () {
+              ctx.drawImage(modifiedImg, 0, 0);
+              // Update the pixel export
+              exportPixels();
+            };
+            modifiedImg.src = modifiedImageUrl;
+          };
+          img.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      }
+    });
+
+
+  </script>
+</body>
+
+</html>
