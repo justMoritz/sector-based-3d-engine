@@ -346,35 +346,27 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var offsetY = fSampleYOffset || 0;
   var depthValue = fDistance || 1;
 
-  // Calculate texture coordinates with seamless wrapping
+  // Actual sample point
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
 
-  // Adjust coordinates to handle negative values (wrap around)
-  if (x < 0) x += 1;
-  if (y < 0) y += 1;
-
-  // Scale coordinates to texture size
+  // Scales coordinates to texture size
   x *= texWidth;
   y *= texHeight;
 
-  // Calculate integer and fractional parts
+  // Integer and fractionals
   var x0 = ~~(x);
   var y0 = ~~(y);
   var dx = x - x0;
   var dy = y - y0;
-
-  // Handle wrapping for integer coordinates
-  var x1 = (x0 + 1) % texWidth;
+  var x1 = (x0 + 1) % texWidth;  
   var y1 = (y0 + 1) % texHeight;
 
-  // Sample the four surrounding pixels
+  // Sampling the four surrounding pixels
   var samplePosition00 = (y0 * texWidth + x0) * 2;
   var samplePosition01 = (y0 * texWidth + x1) * 2;
   var samplePosition10 = (y1 * texWidth + x0) * 2;
   var samplePosition11 = (y1 * texWidth + x1) * 2;
-
-  // Interpolate color and brightness values
   var color00 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00])];
   var color01 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01])];
   var color10 = _rh.pixelLookupTable[_getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10])];
@@ -391,9 +383,8 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   colorG *= shadingFactor;
   colorB *= shadingFactor;
 
-  // Round color components
+  // Rounding and return color components
   var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
-
   return finalColor;
 };
 
@@ -1007,7 +998,7 @@ function drawBackground (i, j) {
     fBgY -= fLooktimer / 20; // up
   }
   
-  sPixelToDraw = _getSamplePixelDirect(textures['bg'], fBgX, fBgY, 1, 1);
+  sPixelToDraw = _getSamplePixel(textures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
 }
