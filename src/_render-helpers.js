@@ -501,7 +501,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   currentPixel = texpixels[samplePosition];
   currentColor = texpixels[samplePosition+1];
-  currentColorPixel = _rh.pixelLookupTable[_getColorPixel(currentColor, currentPixel)] || [0, 0, 0]; 
+  currentColorPixel = _getColorPixel(currentColor, currentPixel) || [0, 0, 0]; 
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   colorR = currentColorPixel[0] * shadingFactor;
