@@ -20,6 +20,92 @@ var _rh = {
     g: ['q', 'r', 's', 't'],
     t: ['u', 'v', 'w', 'x'],
   },
+  colorPixelLookupTable: {
+    // Black
+    '.m': [0, 0, 0],
+    '.q': [0, 0, 0],
+    '*q': [0, 0, 0],
+    '7q': [255, 255, 255],
+    '#q': [255, 255, 255],
+    
+    // Grays
+    'om': [66, 66, 66],
+    '*m': [133, 133, 133],
+    '7m': [171, 171, 171],
+    '#m': [248, 248, 248], // 200
+
+    // Blues
+    'ob': [0, 0, 168],
+    '*b': [0, 112, 232],
+    '7b': [56, 184, 248],
+    '#b': [168, 224, 248],
+
+    // Indigos
+    'oi': [32, 24, 136],
+    '*i': [32, 56, 232],
+    '7i': [88, 144, 248],
+    '#i': [192, 208, 248],
+
+    // Purples
+    'ou': [64, 0, 152],
+    '*u': [128, 0, 240],
+    '7u': [160, 136, 248],
+    '#u': [208, 200, 248],
+
+    // Pink
+    'op': [136, 0, 112],
+    '*p': [184, 0, 184],
+    '7p': [240, 120, 248],
+    '#p': [248, 192, 248],
+
+    // Roses
+    'os': [168, 0, 16],
+    '*s': [224, 0, 88],
+    '7s': [248, 112, 176],
+    '#s': [248, 184, 216],
+
+    // Reds
+    'or': [160, 0, 0],
+    '*r': [216, 40, 66],
+    '7r': [248, 112, 96],
+    '#r': [248, 184, 176],
+
+    // Oranges
+    'oo': [120, 8, 0],
+    '*o': [197, 72, 8],
+    '7o': [248, 152, 56],
+    '#o': [248, 216, 168],
+
+    // Yellows
+    'oy': [114, 64, 7],
+    '*y': [136, 112, 0],
+    '7y': [199, 178, 28],
+    '#y': [220, 206, 112],
+
+    // Army
+    'oa': [16, 64, 0],
+    '*a': [56, 144, 0],
+    '7a': [128, 208, 16],
+    '#a': [224, 248, 160],
+
+    // Green
+    'og': [0, 80, 0],
+    '*g': [0, 168, 0], 
+    '7g': [72, 216, 72],
+    '#g': [168, 240, 184],
+
+    // Sea 
+    'os': [0, 56, 16],
+    '*s': [0, 144, 56],
+    '7s': [88, 248, 152],
+    '#s': [176, 248, 200],
+
+    // Teal
+    'ot': [24, 56, 88],
+    '*t': [0, 128, 136],
+    '7t': [0, 232, 217],
+    '#t': [152, 248, 240],
+  },
   // the color values
   pixelLookupTable: {
     0: [0, 0, 0], // Black
@@ -325,72 +411,6 @@ var _rh = {
     }
     return fill;
   },
-
-  renderFloor: function (j) {
-    var fill = "`";
-
-    // b = 1 - (j - nScreenHeight / 2) / (nScreenHeight / 2);
-
-    // draw floor, in different shades
-    b = 1 - (j - nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15))  / (nScreenHeight / (2 - nJumptimer * 0.15 - fLooktimer * 0.15) );
-
-    if (b < 0.25) {
-      fill = "t";
-    } else if (b < 0.5) {
-      fill = "s";
-    } else if (b < 0.75) {
-      fill = "r";
-    } else if (b < 0.9) {
-      fill = "q";
-    } else {
-      fill = "v";
-    }
-
-    return fill;
-  },
-
-  renderObjectTop: function (j) {
-    var fill = "`";
-    
-    // draw floor, in different shades
-    b = 1 -
-      (j - nScreenHeight / (2 - fLooktimer * 0.15)) /
-        (nScreenHeight / (2 - fLooktimer * 0.15));
-
-    if (b < 0.25) {
-      fill = "a";
-    } else if (b < 0.5) {
-      fill = "a";
-    } else if (b < 0.75) {
-      fill = "b";
-    } else if (b < 0.9) {
-      fill = "b";
-    } else {
-      fill = "d";
-    }
-
-    return fill;
-  },
-
-  renderCeiling: function (j) {
-    var fill = "`";
-
-    // draw ceiling, in different shades
-    b = 1 - (j - nScreenHeight / 2) / (nScreenHeight / 2);
-    if (b < 0.25) {
-      fill = "`";
-    } else if (b < 0.5) {
-      fill = "-";
-    } else if (b < 0.75) {
-      fill = "=";
-    } else if (b < 0.9) {
-      fill = "x";
-    } else {
-      fill = "#";
-    }
-
-    return fill;
-  },
 };
 
 
@@ -398,85 +418,120 @@ var _rh = {
 
 
 /**
- * Function will get the pixel to be sampled from the sprite
- *
- * @param  {object/string} texture -      EITHER: 
- *                                          A complete texture object to be sampled, 
- *                                        OR: 
- *                                          the name of the texture key in either the global
- *                                          / level-side side texture object
- * @param  {float} x -                    The x coordinate of the sample (how much across)
- * @param  {float} y -                    The y coordinate of the sample
- * @return {string}
+ * Function will get the pixel to be sampled from the sprite WITH bilinear filtering
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+
+  var texWidth = texture.width || defaultTexWidth;
+  var texHeight = texture.height || defaultTexHeight;
+  var texpixels = texture.texture;
+
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
+
+  // Actual sample point
+  x = (scaleFactorX * x + offsetX) % 1;
+  y = (scaleFactorY * y + offsetY) % 1;
+
+  // Scales coordinates to texture size
+  x *= texWidth;
+  y *= texHeight;
+
+  // Integer and fractionals
+  var x0 = ~~(x);
+  var y0 = ~~(y);
+  var dx = x - x0;
+  var dy = y - y0;
+  var x1 = (x0 + 1) % texWidth;  
+  var y1 = (y0 + 1) % texHeight;
+
+  // Sampling the four surrounding pixels
+  var samplePosition00 = (y0 * texWidth + x0) * 2;
+  var samplePosition01 = (y0 * texWidth + x1) * 2;
+  var samplePosition10 = (y1 * texWidth + x0) * 2;
+  var samplePosition11 = (y1 * texWidth + x1) * 2;
+  var color00 = _getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00]);
+  var color01 = _getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01]);
+  var color10 = _getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10]);
+  var color11 = _getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11]);
+
+  // Bilinear interpolation for each color component
+  var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
+  var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
+  var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
+
+  // Adding shading based on depth Value
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR *= shadingFactor;
+  colorG *= shadingFactor;
+  colorB *= shadingFactor;
+
+  // Rounding and return color components
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
+  return finalColor;
+};
+
+
+
+
+/**
+ * Function will get the pixel to be sampled from the sprite without bilinear filtering
+ */
+var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
 
   // defaults
-  var scaleFactor = texture["scale"] || defaultTexScale;
-  var texWidth = texture["width"] || defaultTexWidth;
-  var texHeight = texture["height"] || defaultTexHeight;
-  var noColor = texture["noColor"] || false;
-  
+  var texWidth = texture.width || defaultTexWidth;
+  var texHeight = texture.height || defaultTexHeight;
+  var texpixels = texture.texture;
 
-  var texpixels = texture["texture"];
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
 
-  if (texture["texture"] == "DIRECTIONAL") {
-    // Different Texture based on viewport
-    if (nDegrees > 0 && nDegrees < 180) {
-        texpixels = texture["S"];
-    } else {
-        texpixels = texture["N"];
-    }
-  }
-
-  scaleFactor = scaleFactor || 2;
-
-  var scaleFactorX = scaleFactor;
-  var scaleFactorY = scaleFactor;
-  var offsetX = 0;
-  var offsetY = 0;
-
-  if(fSampleXScale != null){
-    scaleFactorX = fSampleXScale;
-  }
-  if(fSampleYScale != null){
-    scaleFactorY = fSampleYScale;
-  }
-  if(fSampleXOffset != null){
-    offsetX = fSampleXOffset;
-  }
-  if(fSampleYOffset != null){
-    offsetY = fSampleYOffset;
-  }
-
-  
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
 
   var sampleX = ~~(texWidth * x);
   var sampleY = ~~(texHeight * y);
 
-  var samplePosition = texWidth * sampleY + sampleX;
-  var samplePosition2 = (texWidth * sampleY + sampleX) * 2;
+  var samplePosition = (texWidth * sampleY + sampleX) * 2;
 
   var currentColor;
   var currentPixel;
+  var currentColorPixel;
 
-  if (x < 0 || x > texWidth || y < 0 || y > texHeight) {
-    return "+";
-  } else {
-    
-    if( noColor ){
-      currentPixel = texpixels[samplePosition];
-      currentColor = 'm';
-    }else{
-      currentPixel = texpixels[samplePosition2];
-      currentColor = texpixels[samplePosition2+1];
-    }
+  currentPixel = texpixels[samplePosition];
+  currentColor = texpixels[samplePosition+1];
+  currentColorPixel = _getColorPixel(currentColor, currentPixel) || [0, 0, 0]; 
 
-    return [currentPixel, currentColor];
-  }
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR = currentColorPixel[0] * shadingFactor;
+  colorG = currentColorPixel[1] * shadingFactor;
+  colorB = currentColorPixel[2] * shadingFactor;
+
+  // return currentColorPixel;
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
+  return finalColor;
+
 };
+
+
+
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+  if(bTexFiltering){
+    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+  }
+  else {
+    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+  }
+}
+
+
 
 
 
@@ -486,6 +541,10 @@ var _everyAofB = function (a, b) {
 };
 
 
+var _getColorPixel = function(color, pixel){
+  var sColPixName = ""+pixel+color;
+  return _rh.colorPixelLookupTable[sColPixName];
+}
 
 
 // lookup-table “for fine-control” or “for performance”
@@ -578,9 +637,6 @@ var _skipEveryXrow = function (input) {
 };
 
 
-
-
-
   
 /**
  * Retrieve a fixed number of elements from an array, evenly distributed but
@@ -663,7 +719,7 @@ var _fPrepareFrame = function (oInput, eTarget) {
 
     // print filler pixels
     for (var i = 0; i < fLookModifier; i++) {
-      sOutput.push(".");
+      sOutput.push([255,255,255]);
     }
 
     var toBeRemoved = 2 * fLookModifier;
@@ -777,12 +833,35 @@ var _convertPixelToAscii = function( input, color ){
         return "&#9608;";
     }
   }
-
-
 };
 
 
 var _drawToCanvas = function ( pixels ) {
+
+  eCanvas.width = nScreenWidth;
+  eCanvas.height = nScreenHeight;
+  
+  // Create an ImageData object with the pixel data
+  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
+      
+  // Convert values to shades of colors
+  for (var i = 0; i < pixels.length; i++) {
+    var color = pixels[i];
+    // console.log(pixels);
+   
+    
+    imageData.data[i * 4] = color[0] ; // Red 
+    imageData.data[i * 4 + 1] = color[1] ; // Green 
+    imageData.data[i * 4 + 2] = color[2] ; // Blue 
+    imageData.data[i * 4 + 3] = 255; // Alpha 
+  }
+  // Use putImageData to draw the pixels onto the canvas
+  cCtx.putImageData(imageData, 0, 0);
+}
+
+
+
+var _drawToCanvasOld = function ( pixels ) {
 
   eCanvas.width = nScreenWidth;
   eCanvas.height = nScreenHeight;
@@ -812,31 +891,31 @@ var _drawToCanvas = function ( pixels ) {
 var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
 
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + Lt: ${ changeLookTimer }`)
-  var frame = screen
-  var target = target || eScreen;
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
+  // var frame = screen
+  // var target = target || eScreen;
 
-  var sOutput = "";  
-  var sCanvasOutput = "";
+  // var sOutput = "";  
+  // var sCanvasOutput = "";
 
-  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  nPrintIndex = 0;
+  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  // nPrintIndex = 0;
 
-  for (var row = 0 ; row < nScreenHeight ; row++) {
   // for (var row = 0 ; row < nScreenHeight ; row++) {
-    for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      if (nPrintIndex % nScreenWidth == 0) {
-        sOutput += "<br>";
-      }
-      // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
-      sOutput += frame[nPrintIndex];
-      sCanvasOutput += frame[nPrintIndex];
-      nPrintIndex++;
-    }
-  }
-  eScreen.innerHTML = sOutput;
-  _drawToCanvas( sCanvasOutput );
+  // // for (var row = 0 ; row < nScreenHeight ; row++) {
+  //   for (var pix = 0; pix < nScreenWidth; pix++) {
+  //     // H-blank based on screen-width
+  //     if (nPrintIndex % nScreenWidth == 0) {
+  //       sOutput += "<br>";
+  //     }
+  //     // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
+  //     sOutput += frame[nPrintIndex];
+  //     sCanvasOutput += frame[nPrintIndex];
+  //     nPrintIndex++;
+  //   }
+  // }
+  // eScreen.innerHTML = sOutput;
+  _drawToCanvas( screen );
 };
 
 
@@ -880,41 +959,41 @@ var _fDrawFrameRGB = function (screen, target) {
 
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} `)
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerY }`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
-  var sOutput = "";
-  var sCanvasOutput = "";
+  // var sOutput = "";
+  // var sCanvasOutput = "";
 
-  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  var printIndex = 0;
-  var removePixels = nScreenHeight / 2;
+  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  // var printIndex = 0;
+  // var removePixels = nScreenHeight / 2;
 
   
-  for (var row = 0; row < nScreenHeight; row++) {
-    for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      if (printIndex % nScreenWidth == 0) {
-        sOutput += "<br>";
-      }
+  // for (var row = 0; row < nScreenHeight; row++) {
+  //   for (var pix = 0; pix < nScreenWidth; pix++) {
+  //     // H-blank based on screen-width
+  //     if (printIndex % nScreenWidth == 0) {
+  //       // sOutput += "<br>";
+  //     }
 
-      if (pix < removePixels) {
-        sOutput += "";
-        sCanvasOutput += "4";
-      } else if (pix > nScreenWidth - removePixels) {
-        sOutput += "";
-        sCanvasOutput += "4";
-      } else {
-        sOutput += frame[printIndex];
-        sCanvasOutput += frame[printIndex];
-      }
+  //     // if (pix < removePixels) {
+  //     //   sOutput += "";
+  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
+  //     // } else if (pix > nScreenWidth - removePixels) {
+  //     //   sOutput += "";
+  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
+  //     // } else {
+  //     //   // sOutput += frame[printIndex];)
+  //     //   sCanvasOutput[printIndex] = frame[printIndex];
+  //     // }
 
-      printIndex++;
-    }
-  }
-  target.innerHTML = sOutput;
-  _drawToCanvas( sCanvasOutput, removePixels );
+  //     printIndex++;
+  //   }
+  // }
+  // // target.innerHTML = sCanvasOutput;
+  _drawToCanvas( frame );
 };
 
 
@@ -942,11 +1021,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  sFloorPixelToRender = _rh.renderWall(
-    fRealDistance,
-    "N",
-    _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1.5, 1.5)
-  );
+  sFloorPixelToRender = _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance);
   return sFloorPixelToRender;
 }
 
@@ -975,11 +1050,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  var sCeilPixelToRender = _rh.renderWall(
-    fRealDistance,
-    "W",
-    _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5)
-  );
+  var sCeilPixelToRender = _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance);
   return sCeilPixelToRender;
 }
 
@@ -1000,11 +1071,7 @@ function drawBackground (i, j) {
     fBgY -= fLooktimer / 20; // up
   }
   
-  sPixelToDraw = _rh.renderWall(
-    0,
-    "N",
-    _getSamplePixel(textures['bg'], fBgX, fBgY)
-  );
+  sPixelToDraw = _getSamplePixel(textures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
 }

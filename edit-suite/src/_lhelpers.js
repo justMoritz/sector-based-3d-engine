@@ -361,7 +361,7 @@ _lhelpers = {
 
 
   roundToNearest: function ( number, nearest ){
-    const roundToNearest = nearest || 25;
+    const roundToNearest = nearest || 12.5;
     return  Math.round(number / roundToNearest) * roundToNearest;
   },
 

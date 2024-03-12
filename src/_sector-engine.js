@@ -3,7 +3,7 @@
  */
 
 // Line with two points on the grid system
-// Not used, just still nostalig :,)
+// Not used, just still nostalic :,)
 // a: x=4 y=2
 // b: x=5 y=4
 testline = [
@@ -121,11 +121,7 @@ var gameEngineJS = (function () {
         var sPixelToRender = "0";
 
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        sPixelToRender = _rh.renderWall(
-          fDistanceToWall,
-          sWallDirection,
-          _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset)
-        );
+        sPixelToRender = _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
 
       } // End Draw Solid Wall
 
@@ -180,7 +176,13 @@ var gameEngineJS = (function () {
       // Mark the current sector as visited
       visitedSectors[currentSector] = true;
 
-      // the actual sector object from the level file
+
+      try {
+        var sectorWalls = oMap[currentSector].walls; 
+      } catch (error) {
+          console.error(`Sector ${currentSector} Not found`);
+      }
+
       var sectorWalls = oMap[currentSector].walls; 
 
 

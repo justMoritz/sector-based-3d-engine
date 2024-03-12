@@ -37,6 +37,7 @@ var nLookLimit = 10;
 var bUseSkew = false;
 var bDrawRGB = false;
 var bDrawSrpites = true;
+var bTexFiltering = true;
 
 
 if (bDrawRGB){
@@ -44,11 +45,11 @@ if (bDrawRGB){
     nScreenHeight = 110;
 }
 if (bUseSkew){
-    nScreenWidth = 576;
-    nScreenHeight = 160;
+    nScreenWidth = 512;
+    // nScreenHeight = 160;
     nLookLimit = 8;
-    var fFOV = PI___ / 2.25;
-    var fFOV_div2 = fFOV / 2;
+    // var fFOV = PI___ / 2.25;
+    // var fFOV_div2 = fFOV / 2;
 }
 
 
@@ -80,7 +81,7 @@ var fPlayerY = 1.0;
 var fPlayerA = 1.5;
 var fPlayerH = 0;
 
-var sLastKnownSector = 'sector0';
+var sLastKnownSector = 0;
 var sPlayerSector = 'sector0';
 var nSectorCeilingHeight = 1;
 var nSectorFloorHeight = 0;
