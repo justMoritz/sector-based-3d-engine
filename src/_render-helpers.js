@@ -537,32 +537,7 @@ var _everyAofB = function (a, b) {
 
 var _getColorPixel = function(color, pixel){
   var sColPixName = ""+pixel+color;
-  // console.log(sColPixName);
-  var color = _rh.colorPixelLookupTable[sColPixName];
-
-  if (Array.isArray(color)) {
-    return _rh.colorPixelLookupTable[sColPixName];
-
-} else {
-  console.log(sColPixName);
-}
-
-
-  var b100 = _rh.colorReferenceTable[color][3];
-  var b75  = _rh.colorReferenceTable[color][2];
-  var b50  = _rh.colorReferenceTable[color][1];
-  var b25  = _rh.colorReferenceTable[color][0];
-  var b0   = "0";
-
-  // Set default fill value
-  let fill = b0;
-
-  if (pixel === "#")fill = b100;
-  else if (pixel === "7") fill = b75;
-  else if (pixel === "*" ) fill = b50;
-  else if (pixel === "o") fill = b25;
-  else fill = b0;
-  return fill;
+  return _rh.colorPixelLookupTable[sColPixName];
 }
 
 
