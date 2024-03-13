@@ -386,3 +386,411 @@ function drawFloor(j, sectorFloorFactor, sSectorFloorTexture ){
     }
   }
   
+
+
+
+
+  var _rh = {
+    // The 4 color values for these start at this point in the array  
+    colorReferenceTable:{
+      m: ['1', '2', '3', '4'],
+      b: ['a', 'b', 'c', 'd'],
+      p: ['e', 'f', 'g', 'h'],
+      r: ['i', 'j', 'k', 'l'],
+      o: ['m', 'n', 'o', 'p'],
+      g: ['q', 'r', 's', 't'],
+      t: ['u', 'v', 'w', 'x'],
+    },
+    colorPixelLookupTable: {
+      // Black
+      '.m': [0, 0, 0],
+      '.q': [0, 0, 0],
+      '*q': [0, 0, 0],
+      '7q': [255, 255, 255],
+      '#q': [255, 255, 255],
+      
+      // Grays
+      'om': [66, 66, 66],
+      '*m': [133, 133, 133],
+      '7m': [171, 171, 171],
+      '#m': [248, 248, 248], // 200
+  
+      // Blues
+      'ob': [0, 0, 168],
+      '*b': [0, 112, 232],
+      '7b': [56, 184, 248],
+      '#b': [168, 224, 248],
+  
+      // Indigos
+      'oi': [32, 24, 136],
+      '*i': [32, 56, 232],
+      '7i': [88, 144, 248],
+      '#i': [192, 208, 248],
+  
+      // Purples
+      'ou': [64, 0, 152],
+      '*u': [128, 0, 240],
+      '7u': [160, 136, 248],
+      '#u': [208, 200, 248],
+  
+      // Pink
+      'op': [136, 0, 112],
+      '*p': [184, 0, 184],
+      '7p': [240, 120, 248],
+      '#p': [248, 192, 248],
+  
+      // Roses
+      'os': [168, 0, 16],
+      '*s': [224, 0, 88],
+      '7s': [248, 112, 176],
+      '#s': [248, 184, 216],
+  
+      // Reds
+      'or': [160, 0, 0],
+      '*r': [216, 40, 66],
+      '7r': [248, 112, 96],
+      '#r': [248, 184, 176],
+  
+      // Oranges
+      'oo': [120, 8, 0],
+      '*o': [197, 72, 8],
+      '7o': [248, 152, 56],
+      '#o': [248, 216, 168],
+  
+      // Yellows
+      'oy': [114, 64, 7],
+      '*y': [136, 112, 0],
+      '7y': [199, 178, 28],
+      '#y': [220, 206, 112],
+  
+      // Army
+      'oa': [16, 64, 0],
+      '*a': [56, 144, 0],
+      '7a': [128, 208, 16],
+      '#a': [224, 248, 160],
+  
+      // Green
+      'og': [0, 80, 0],
+      '*g': [0, 168, 0], 
+      '7g': [72, 216, 72],
+      '#g': [168, 240, 184],
+  
+      // Sea 
+      'os': [0, 56, 16],
+      '*s': [0, 144, 56],
+      '7s': [88, 248, 152],
+      '#s': [176, 248, 200],
+  
+      // Teal
+      'ot': [24, 56, 88],
+      '*t': [0, 128, 136],
+      '7t': [0, 232, 217],
+      '#t': [152, 248, 240],
+    },
+    // the color values
+    pixelLookupTable: {
+      0: [0, 0, 0], // Black
+      1: [66, 66, 66], // 4 Grey Values
+      2: [133, 133, 133],
+      3: [200, 200, 200],
+      4: [255, 255, 255], // White
+      a: [32, 24, 136], // 4 Blues
+      b: [32, 56, 232],
+      c: [88, 144, 248],
+      d: [192, 208, 248],
+      e: [136, 0, 112], // 4 pinks (consider replacing with orange/brown)
+      f: [184, 0, 184],
+      g: [240, 120, 248],
+      h: [248, 192, 248],
+      i: [160, 0, 0], // 4 reds
+      j: [216, 40, 66],
+      k: [248, 112, 96],
+      l: [248, 184, 176],
+      m: [114, 64, 7], // 4 oranges (really yellow)
+      n: [136, 112, 0],
+      o: [199, 178, 28],
+      p: [220, 206, 112],
+      q: [0, 80, 0], // 4 greens
+      r: [0, 168, 0], 
+      s: [72, 216, 72],
+      t: [168, 240, 184],
+      u: [24, 56, 88], // 4 teals
+      v: [0, 128, 136],
+      w: [0, 232, 217],
+      x: [152, 248, 240],
+      // Add more entries as needed
+    },
+    pixelToAscii : {
+      0: "b0",
+      1: "b25",
+      2: "b50",
+      3: "b75",
+      4: "b100",
+      a: "b0", // 4 Blues
+      b: "b25",
+      c: "b50",
+      d: "b75",
+      e: "b25", // 4 pinks (consider replacing with orange/brown)
+      f: "b50",
+      g: "b75",
+      h: "b100",
+      i: "b0", // 4 reds
+      j: "b50",
+      k: "b75",
+      l: "b100",
+      m: "b0", // 4 oranges (really yellow)
+      n: "b25",
+      o: "b75",
+      p: "b100",
+      q: "b0", // 4 greens
+      r: "b25",
+      s: "b75",
+      t: "b100",
+      u: "b0", // 4 teals
+      v: "b50",
+      w: "b100",
+      x: "b100",
+    },
+    pixelToAsciiGreen : {
+      0: "b0",
+      1: "b0",
+      2: "b50",
+      3: "b75",
+      4: "b100",
+      a: "b0", // 4 Blues
+      b: "b0",
+      c: "b25",
+      d: "b50",
+      e: "b0", // 4 pinks (consider replacing with orange/brown)
+      f: "b75",
+      g: "b100",
+      h: "b100",
+      i: "b0", // 4 reds
+      j: "b0",
+      k: "b75",
+      l: "b75",
+      m: "b25", // 4 oranges (really yellow)
+      n: "b100",
+      o: "b75",
+      p: "b100",
+      q: "b25", // 4 greens
+      r: "b50",
+      s: "b100",
+      t: "b75",
+      u: "b25", // 4 teals
+      v: "b100",
+      w: "b75",
+      x: "b75",
+    },
+    pixelToAsciiBlue : {
+      0: "b0",
+      1: "b25",
+      2: "b25",
+      3: "b50",
+      4: "b50",
+      a: "b25", // 4 Blues
+      b: "b50",
+      c: "b50",
+      d: "b50",
+      e: "b50", // 4 pinks (consider replacing with orange/brown)
+      f: "b100",
+      g: "b100",
+      h: "b75",
+      i: "b0", // 4 reds
+      j: "b25",
+      k: "b0",
+      l: "b25",
+      m: "b0", // 4 oranges (really yellow)
+      n: "b0",
+      o: "b25",
+      p: "b0",
+      q: "b0", // 4 greens
+      r: "b0",
+      s: "b0",
+      t: "b0",
+      u: "b50", // 4 teals
+      v: "b50",
+      w: "b25",
+      x: "b50",
+    },
+    pixelToAsciiRed : {
+      0: "b0",
+      1: "b0",
+      2: "b0",
+      3: "b0",
+      4: "b25",
+      a: "b0", // 4 Blues
+      b: "b0",
+      c: "b0",
+      d: "b0",
+      e: "b25", // 4 pinks (consider replacing with orange/brown)
+      f: "b100",
+      g: "b75",
+      h: "b75",
+      i: "b25", // 4 reds
+      j: "b50",
+      k: "b75",
+      l: "b50",
+      m: "b25", // 4 oranges (really yellow)
+      n: "b50",
+      o: "b50",
+      p: "b50",
+      q: "b0", // 4 greens
+      r: "b25",
+      s: "b25",
+      t: "b0",
+      u: "b0", // 4 teals
+      v: "b0",
+      w: "b0",
+      x: "b25",
+    },
+    renderWall: function (fDistanceToWall, sWallDirection, pixelArray) {
+  
+      var pixel = pixelArray[0];
+      var color = pixelArray[1] || 'm';
+  
+      // There are 4 lightness values in each color
+      // This assigns the appropriate color value to the current pixel
+  
+      var b255 = "4";
+      var b100 = _rh.colorReferenceTable[color][3];
+      var b75  = _rh.colorReferenceTable[color][2];
+      var b50  = _rh.colorReferenceTable[color][1];
+      var b25  = _rh.colorReferenceTable[color][0];
+      var b0   = "0";
+  
+      var fDepthRatio1 = fDepth/2 / 4;
+      var fDepthRatio2 = fDepth/2 / 2.5;
+      var fDepthRatio3 = fDepth/2 / 1.25;
+      var fDepthRatio4 = fDepth/2 / 1.15;
+  
+      // var fDepthRatio1 = 4;
+      // var fDepthRatio2 = 8;
+      // var fDepthRatio3 = 12;
+      // var fDepthRatio4 = 20;
+  
+      // Set default fill value
+      let fill = b0;
+  
+      // if (pixel === "#")fill = b100;
+      // else if (pixel === "7") fill = b75;
+      // else if (pixel === "*" ) fill = b50;
+      // else if (pixel === "o") fill = b25;
+      // else fill = b25;
+      // return fill;
+  
+      
+      // "&#9109;"; // ⎕
+      // var b0   = ".";
+      // var b20  = "&#9617;"; // ░
+      // var b40  = "&#9618;"; // ▒
+      // var b60  = "&#9618;"; // ▒
+      // var b80  = "&#9619;"; // ▓
+      // var b100 = "&#9608;"; // █
+  
+      // TODO: (maybe) Convert to lookuptable?
+      // Controls the depth shading
+      switch (sWallDirection) {
+        // Sprites and voxels
+        case "V":
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b100;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio2) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b25;
+            else if (pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepthRatio3) {
+            if (pixel === "#") fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#") fill = b50;
+            else if (pixel === "7") fill = b25;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
+          }
+          break;
+  
+        // North/South direction
+        case "N":
+        case "S":
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b100;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio2) {
+            if (pixel === "#")fill = b100;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio3) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio4) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if (pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#") fill = b50;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" || pixel === "o") fill = b25;
+            else fill = b0;
+          }
+          break;
+  
+        // West/East direction
+        case "W":
+        case "E":
+          if (fDistanceToWall < fDepthRatio1) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b75;
+            else if (pixel === "*" ) fill = b50;
+            else if ( pixel === "o") fill = b25;
+            else fill = b25;
+          } else if (fDistanceToWall < fDepthRatio2) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b50;
+            else if ( pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepthRatio3) {
+            if (pixel === "#")fill = b75;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b25;
+            else if ( pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepthRatio4) {
+            if (pixel === "#")fill = b50;
+            else if (pixel === "7") fill = b50;
+            else if (pixel === "*" ) fill = b25;
+            else if ( pixel === "o") fill = b25;
+            else fill = b0;
+          } else if (fDistanceToWall < fDepth) {
+            if (pixel === "#")fill = b50;
+            else if (pixel === "7") fill = b25;
+            else if (pixel === "*" ) fill = b25;
+            else if ( pixel === "o") fill = b25;
+            else fill = b0;
+          }
+          break;
+      
+      }
+      return fill;
+    },
+  };
+  
