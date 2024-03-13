@@ -81,7 +81,7 @@ var fPlayerA = 1.5;
 var fPlayerH = 0;
 
 var sLastKnownSector = 0;
-var sPlayerSector = 'sector0';
+var sPlayerSector = 0;
 var nSectorCeilingHeight = 1;
 var nSectorFloorHeight = 0;
 
@@ -95,10 +95,7 @@ var fRayAngleGlob;
 
 var oMap;
 
-var nMapHeight = 16;
-var nMapWidth = 16;
-
 var gameRun;
 
-// holds the frames we"re going to send to the renderer
+// holds the frames we're going to send to the renderer
 var screen = [];

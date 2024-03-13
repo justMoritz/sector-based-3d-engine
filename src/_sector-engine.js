@@ -404,7 +404,6 @@ var gameEngineJS = (function () {
 
         if(bDrawSrpites) _drawSpritesNew(i);
 
-
       } // end column loop
 
       
