@@ -101,30 +101,34 @@ var _rh = {
   // …(but really because I couldn"t figure out the logic [apparently] )
   skipEveryXrow: function (input) {
     input = ~~(input);
+    // input = (~~(input * 4) / 4).toFixed(2);
     if(input < -16){
       return 2;
     }
+
+    var factor = nScreenWidth/20
+
     switch (Number(input)) {
       case 0:
         return 0;
         break;
       case 1:
-        return 8;
+        return 24
         break;
       case 2:
-        return 6;
+        return 16;
         break;
       case 3:
-        return 4;
+        return 8;
         break;
       case 4:
-        return 3;
+        return 5;
         break;
       case 5:
-        return 2;
+        return 4;
         break;
       case 6:
-        return 2;
+        return 3;
         break;
       case 7:
         return 2;
@@ -410,15 +414,18 @@ var _fPrepareFrame = function (oInput, eTarget) {
     nScreenHeight / _rh.skipEveryXrow(fLooktimer) - 1
   );
 
+  
   // used to skew the image
   var globalPrintIndex = 0;
   var fLookModifier = 0;
-
+  
   // if looking up, the starting point is the max number of pixesl to indent,
   // which will be decremented, otherwise it remains 0, which will be incremented
   if (fLooktimer > 0 && isFinite(neverMoreThan)) {
-    fLookModifier = neverMoreThan;
+    fLookModifier = neverMoreThan *2;
   }
+
+  _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
 
   // iterate each row at a time
   for (var row = 0; row < nScreenHeight; row++) {
@@ -426,6 +433,7 @@ var _fPrepareFrame = function (oInput, eTarget) {
     if (_everyAofB(row, _rh.skipEveryXrow(fLooktimer))) {
       if (fLooktimer > 0) {
         // looking up
+        fLookModifier--;
         fLookModifier--;
       } else {
         fLookModifier++;
@@ -469,85 +477,11 @@ var _fPrepareFrame = function (oInput, eTarget) {
 
     // print filler pixels
     for (var i = 0; i < fLookModifier; i++) {
-      sOutput.push(".");
+      sOutput.push([255,255,255]);
     }
   } // end for(row
 
   return sOutput;
-};
-
-
-var _convertPixelToAscii = function( input, color ){
-  // var b0   = ".";
-  // var b20  = "&#9617;"; // ░
-  // var b40  = "&#9618;"; // ▒
-  // var b60  = "&#9618;"; // ▒
-  // var b80  = "&#9619;"; // ▓
-  // var b100 = "&#9608;"; // █
-
-  if(color === 0){
-    pixelToRender = _rh.pixelToAscii[input];
-    switch (pixelToRender) {
-      case "b0":
-        return "&nbsp;";
-      case "b25":
-        return "&#9617;";
-      case "b50":
-        return "&#9618;";
-      case "b75":
-        return "&#9619;";
-      case "b100":
-        return "&#9608;";
-    }
-  }
-
-  else if(color === 1){
-    pixelToRender = _rh.pixelToAsciiRed[input];
-    switch (pixelToRender) {
-      case "b0":
-        return "&nbsp;";
-      case "b25":
-        return "&#9617;";
-      case "b50":
-        return "&#9618;";
-      case "b75":
-        return "&#9619;";
-      case "b100":
-        return "&#9608;";
-    }
-  }
-
-  else if(color === 2){
-    pixelToRender = _rh.pixelToAsciiGreen[input];
-    switch (pixelToRender) {
-      case "b0":
-        return "&nbsp;";
-      case "b25":
-        return "&#9617;";
-      case "b50":
-        return "&#9618;";
-      case "b75":
-        return "&#9619;";
-      case "b100":
-        return "&#9608;";
-    }
-  }
-
-  else if(color === 3){
-    pixelToRender = _rh.pixelToAsciiBlue[input];
-    switch (pixelToRender) {
-      case "b0":
-        return "&nbsp;";
-      case "b25":
-        return "&#9617;";
-      case "b50":
-        return "&#9618;";
-      case "b75":
-        return "&#9619;";
-      case "b100":
-        return "&#9608;";
-    }
-  }
 };
 
 
@@ -564,7 +498,6 @@ var _drawToCanvas = function ( pixels ) {
     var color = pixels[i];
     // console.log(pixels);
    
-    
     imageData.data[i * 4] = color[0] ; // Red 
     imageData.data[i * 4 + 1] = color[1] ; // Green 
     imageData.data[i * 4 + 2] = color[2] ; // Blue 
@@ -574,33 +507,6 @@ var _drawToCanvas = function ( pixels ) {
   cCtx.putImageData(imageData, 0, 0);
 }
 
-
-
-var _drawToCanvasOld = function ( pixels ) {
-
-  eCanvas.width = nScreenWidth;
-  eCanvas.height = nScreenHeight;
-  
-  // Create an ImageData object with the pixel data
-  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
-      
-  // Convert values to shades of colors
-  for (var i = 0; i < pixels.length; i++) {
-    var pixelValue = pixels[i];
-    var depthValue = fDepthBufferR[i];
-    // var shadingFactor = (1 - depthValue*2 / fDepth);
-    // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-    var shadingFactor = 1;
-    var color = _rh.pixelLookupTable[pixelValue] || [0, 0, 0]; // Default to black if not found
-    
-    imageData.data[i * 4] = color[0] * shadingFactor ; // Red 
-    imageData.data[i * 4 + 1] = color[1] * shadingFactor ; // Green 
-    imageData.data[i * 4 + 2] = color[2] * shadingFactor ; // Blue 
-    imageData.data[i * 4 + 3] = 255; // Alpha 
-  }
-  // Use putImageData to draw the pixels onto the canvas
-  cCtx.putImageData(imageData, 0, 0);
-}
 
 
 var _fDrawFrame = function (screen, target) {
@@ -633,48 +539,8 @@ var _fDrawFrame = function (screen, target) {
   _drawToCanvas( screen );
 };
 
-
-var _fDrawFrameRGB = function (screen, target) {
-  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}`)
-  var frame = screen
-  var target = target || eScreen;
-
-  var sOutputG = "";
-  var sOutputB = "";
-  var sOutputR = "";
-  
-  // var sCanvasOutput = "";
-
-  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  var printIndex = 0;
-
-  for (var row = 0; row < nScreenHeight; row++) {
-    for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      if (printIndex % nScreenWidth == 0) {
-        sOutputG += "<br>";
-        sOutputB += "<br>";
-        sOutputR += "<br>";
-      }
-      sOutputG += _convertPixelToAscii(frame[printIndex], 2);
-      sOutputB += _convertPixelToAscii(frame[printIndex], 3);
-      sOutputR += _convertPixelToAscii(frame[printIndex], 1);
-
-      // sCanvasOutput += frame[printIndex];
-      printIndex++;
-    }
-  }
-  eScreenG.innerHTML = sOutputG;
-  eScreenB.innerHTML = sOutputB;
-  eScreenR.innerHTML = sOutputR;
-
-  // _drawToCanvas( sCanvasOutput );
-};
-
-
-
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerY }`);
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fLooktimer }`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
