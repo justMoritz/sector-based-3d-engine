@@ -100,7 +100,7 @@ var _rh = {
   // lookup-table “for fine-control” or “for performance”
   // …(but really because I couldn"t figure out the logic [apparently] )
   skipEveryXrow: function (input) {
-    input = Math.round(input);
+    input = ~~(input);
     if(input < -16){
       return 2;
     }
