@@ -1,15 +1,15 @@
 /**
- * SECTOR ENGINE
+ * SECTOR ENGINE (Possibly `techsas engine`)
  */
 
 // Line with two points on the grid system
-// Not used, just still nostalic :,)
+// Not used, just still nostalgic :,)
 // a: x=4 y=2
 // b: x=5 y=4
-testline = [
-  [4,2],
-  [5,4]
-]
+// testline = [
+//   [4,2],
+//   [5,4]
+// ]
 
 
 var gameEngineJS = (function () {
@@ -42,7 +42,6 @@ var gameEngineJS = (function () {
     var levelLoaded = loadScriptAsync(level, sLevelstring);
 
     levelLoaded.then(function () {
-
       console.log( window[sLevelstring] )
 
       // updates the level map, dimensions and textures
@@ -78,16 +77,14 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, sWallDirection, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
     var nNewScreenEnd   = 0;
 
-
-    for (var j = start; j < end; j++) {
-
-      fDepthBuffer[j * nScreenWidth + i] = fDistanceToWall;
+    for (var j = start; j < end
+      ; j++) {
       fDepthBufferR[j * nScreenWidth + i] = fDistanceToWall;
       
       // sky or ceiling
@@ -104,7 +101,6 @@ var gameEngineJS = (function () {
       // Draws the wall portion that's above or below the ‘window’ through which we are looking into the next sector
       else if (j > nNextSectorCeiling && j <= nNextSectorFloor) {
         // as well as
-        sPixelToRender = "1";
         // sets the new screen start (the first screen-height-pixel is a wall) 
         // and new screen end variable (whatever last screen-height-pixel of wall we found)
         if(!bScreenStartSet){
@@ -114,16 +110,11 @@ var gameEngineJS = (function () {
         nNewScreenEnd = j+1;
       }
 
-      // Draw Solid Wall
+      // Draw Walls
       else if (j > nCeiling && j <= nFloor) {
-
-        // Default Pixel (probably don't need)
-        var sPixelToRender = "0";
-
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
         sPixelToRender = _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
-
-      } // End Draw Solid Wall
+      }
 
       // Draw Floor
       else {
@@ -153,7 +144,6 @@ var gameEngineJS = (function () {
    */
   function checkSectors( startingSector, i ){
 
-    var sWallDirection = "N";
     var fDistanceToWall;
     
     var currentSector = startingSector;
@@ -227,13 +217,6 @@ var gameEngineJS = (function () {
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
           
-          // preliminary wall shading: different shade every other wall
-          if(w % 2 == 0){
-            sWallDirection = "S";
-          }else{
-            sWallDirection = "E";
-          }
-
           // Wall Type (texture)
           sWallType = currentWall[4];
           // sWallType = "U";
@@ -291,7 +274,6 @@ var gameEngineJS = (function () {
                 i , 
                 fDistanceToWall, 
                 sWallType, 
-                sWallDirection, 
                 nCeiling, 
                 nFloor, 
                 sectorFloorFactor,
@@ -320,13 +302,11 @@ var gameEngineJS = (function () {
           else{
             // Regular wall
 
-            // fDepthBuffer[i] = fDistanceToWall;  
             // We don't actually need the return array from this function call
             drawSectorInformation(
               i , 
               fDistanceToWall, 
               sWallType, 
-              sWallDirection, 
               nCeiling, 
               nFloor, 
               sectorFloorFactor,
@@ -351,9 +331,7 @@ var gameEngineJS = (function () {
         
       } // end iterate over all walls
 
-      
-
-    }
+    } // end while sectorQueue length
 
   };
 
@@ -399,7 +377,7 @@ var gameEngineJS = (function () {
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
 
 
-      // for the length of the screenwidth (one frame)
+      // for each screen-column
       for (var i = 0; i < nScreenWidth; i++) {
               
         // Calculate the direction of the current ray
@@ -411,7 +389,6 @@ var gameEngineJS = (function () {
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
         
         fAngleDifferences =  fPlayerA - fRayAngle ;
-        
         // normalize
         if ( fAngleDifferences < 0) {
           fAngleDifferences += PIx2;

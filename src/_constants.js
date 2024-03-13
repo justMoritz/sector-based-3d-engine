@@ -72,7 +72,6 @@ var nNewHeight = 0;
 
 var debugWrite;
 
-var fDepthBuffer = [];
 var fDepthBufferR = [];
 
 // defaults
