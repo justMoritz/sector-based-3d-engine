@@ -113,38 +113,38 @@ var _rh = {
         return 0;
         break;
       case 1:
-        return 24
+        return skewValues[0];
         break;
       case 2:
-        return 16;
+        return skewValues[1];
         break;
       case 3:
-        return 8;
+        return skewValues[2];
         break;
       case 4:
-        return 5;
+        return skewValues[3];
         break;
       case 5:
-        return 4;
+        return skewValues[4];
         break;
       case 6:
-        return 3;
+        return skewValues[4];
         break;
       case 7:
-        return 2;
+        return skewValues[4];
         break;
       case 8:
-        return 1;
+        return skewValues[5];
         break;
 
       case -1:
-        return 8;
+        return 24;
         break;
       case -2:
-        return 8;
+        return 16;
         break;
       case -3:
-        return 7;
+        return 8;
         break;
       case -4:
         return 7;
@@ -177,13 +177,13 @@ var _rh = {
         return 3;
         break;
       case -14:
-        return 3;
+        return 2;
         break;
       case -15:
-        return 3;
+        return 2;
         break;
       case -16:
-        return 3;
+        return 2;
         break;
       default:
         return 0;
@@ -369,18 +369,7 @@ var _everyAofB = function (a, b) {
  * @returns {Array}
  */
 // helper function
-function _toConsumableArray(arr) {
-  return (
-    _arrayWithoutHoles(arr) ||
-    _iterableToArray(arr) ||
-    _unsupportedIterableToArray(arr) ||
-    _nonIterableSpread()
-  );
-}
 function _evenlyPickItemsFromArray(allItems, neededCount) {
-  if (neededCount >= allItems.length) {
-    return _toConsumableArray(allItems);
-  }
 
   var result = [];
   var totalItems = allItems.length;
@@ -414,7 +403,6 @@ var _fPrepareFrame = function (oInput, eTarget) {
     nScreenHeight / _rh.skipEveryXrow(fLooktimer) - 1
   );
 
-  
   // used to skew the image
   var globalPrintIndex = 0;
   var fLookModifier = 0;
@@ -422,18 +410,17 @@ var _fPrepareFrame = function (oInput, eTarget) {
   // if looking up, the starting point is the max number of pixesl to indent,
   // which will be decremented, otherwise it remains 0, which will be incremented
   if (fLooktimer > 0 && isFinite(neverMoreThan)) {
-    fLookModifier = neverMoreThan *2;
+    fLookModifier = neverMoreThan;
   }
 
   _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
-
+  
   // iterate each row at a time
   for (var row = 0; row < nScreenHeight; row++) {
     // increment the fLookModifier every time it needs to grow (grows per row)
     if (_everyAofB(row, _rh.skipEveryXrow(fLooktimer))) {
       if (fLooktimer > 0) {
         // looking up
-        fLookModifier--;
         fLookModifier--;
       } else {
         fLookModifier++;

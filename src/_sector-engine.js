@@ -355,11 +355,12 @@ var gameEngineJS = (function () {
       // every 2 frames or so, check that the player is still in the correct sector.
       // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
       // but it could have missed the player in especially small sectors
-      if( gameTimer % 2 === 0 ){
-        _moveHelpers.playerSectorCheck();
-        gameTimer= 0;
-      }
+      // if( gameTimer % 2 === 0 ){
+      //   _moveHelpers.playerSectorCheck();
+      //   gameTimer= 0;
+      // }
 
+      _moveHelpers.playerSectorCheck();
 
       // normalize player angle
       if (fPlayerA < 0) {

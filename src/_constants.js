@@ -45,7 +45,7 @@ if (bDrawRGB){
     nScreenHeight = 110;
 }
 if (bUseSkew){
-    nScreenWidth = 512;
+    nScreenWidth = 540;
     nScreenHeight = 160;
     nLookLimit = 8;
     var fFOV = PI___ / 2.25;
@@ -99,3 +99,13 @@ var gameRun;
 
 // holds the frames we're going to send to the renderer
 var screen = [];
+
+
+
+var skewValues = [];
+skewValues[0] = 24;
+skewValues[1] = 12;
+skewValues[2] = 6;
+skewValues[3] = 3;
+skewValues[4] = 2;
+skewValues[5] = 1;
