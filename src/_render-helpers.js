@@ -100,7 +100,21 @@ var _rh = {
   // lookup-table “for fine-control” or “for performance”
   // …(but really because I couldn"t figure out the logic [apparently] )
   skipEveryXrow: function (input) {
-    input = ~~(input);
+    // input = ~~(input);
+
+    console.log(input)
+
+    if (input < 0) {
+      fYMoveBy = input * Math.pow(1.2, -input);
+    }else{
+      fYMoveBy = input * Math.pow(1.2, input);
+    }
+
+    returning = nScreenHeight - (nScreenHeight/(2-input));
+    returning = (nScreenHeight*0.25) /fYMoveBy;
+    // console.log(returning)
+    return ~~returning;
+
     // input = (~~(input * 4) / 4).toFixed(2);
     if(input < -16){
       return 2;
@@ -251,7 +265,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
   // Adding shading based on depth Value
+  // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+
+  // console.log(shadingFactor);
   colorR *= shadingFactor;
   colorG *= shadingFactor;
   colorB *= shadingFactor;
@@ -452,11 +469,10 @@ var _fPrepareFrame = function (oInput, eTarget) {
     for (var rpix = 0; rpix < nScreenWidth; rpix++) {
       // print only if the pixel is in the list of pixels to print
       if (removeFrom.includes(rpix)) {
-        // don"t print
+        // don't print
       } else {
         // print
         sOutput.push( oInput[globalPrintIndex] );
-        // sOutput.push(_printCompositPixel(oInput, oOverlay, globalPrintIndex));
       }
 
       globalPrintIndex++;
