@@ -100,112 +100,22 @@ var _rh = {
   // lookup-table “for fine-control” or “for performance”
   // …(but really because I couldn"t figure out the logic [apparently] )
   skipEveryXrow: function (input) {
-    // input = ~~(input);
-
-    console.log(input)
 
     if (input < 0) {
-      fYMoveBy = input * Math.pow(1.2, -input);
+      fYMoveBy = input * 0.7
+      console.log('down')
     }else{
       fYMoveBy = input * Math.pow(1.2, input);
     }
 
-    returning = nScreenHeight - (nScreenHeight/(2-input));
-    returning = (nScreenHeight*0.25) /fYMoveBy;
-    // console.log(returning)
-    return ~~returning;
+    var adjustFactor = 0.25;
 
-    // input = (~~(input * 4) / 4).toFixed(2);
-    if(input < -16){
-      return 2;
-    }
-
-    var factor = nScreenWidth/20
-
-    switch (Number(input)) {
-      case 0:
-        return 0;
-        break;
-      case 1:
-        return skewValues[0];
-        break;
-      case 2:
-        return skewValues[1];
-        break;
-      case 3:
-        return skewValues[2];
-        break;
-      case 4:
-        return skewValues[3];
-        break;
-      case 5:
-        return skewValues[4];
-        break;
-      case 6:
-        return skewValues[4];
-        break;
-      case 7:
-        return skewValues[4];
-        break;
-      case 8:
-        return skewValues[5];
-        break;
-
-      case -1:
-        return 24;
-        break;
-      case -2:
-        return 16;
-        break;
-      case -3:
-        return 8;
-        break;
-      case -4:
-        return 7;
-        break;
-      case -5:
-        return 6;
-        break;
-      case -6:
-        return 6;
-        break;
-      case -7:
-        return 5;
-        break;
-      case -8:
-        return 5;
-        break;
-      case -9:
-        return 4;
-        break;
-      case -10:
-        return 4;
-        break;
-      case -11:
-        return 3;
-        break;
-      case -12:
-        return 3;
-        break;
-      case -13:
-        return 3;
-        break;
-      case -14:
-        return 2;
-        break;
-      case -15:
-        return 2;
-        break;
-      case -16:
-        return 2;
-        break;
-      default:
-        return 0;
-    }
+    var skipEveryXRow = (nScreenHeight * adjustFactor) /fYMoveBy;
+    return ~~skipEveryXRow;
   },
 };
 
-
+   
 
 /**
  * 
