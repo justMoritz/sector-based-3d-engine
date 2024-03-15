@@ -174,7 +174,7 @@ var _moveHelpers = {
             var collisionSector = currentWall[9];
 
             // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            if( fPlayerH - (oLevel.map[collisionSector].floor) < -1 ){
+            if( fPlayerH - (oLevel.map[collisionSector].floor) < -0.5 ){
               return true; // don't allow move
             }
 
@@ -302,10 +302,6 @@ var _moveHelpers = {
       fYMoveBy = fYMoveBy * Math.pow(1.2, fLooktimer);
     }
 
-    // if(bOnObject){
-    //   fYMoveBy /= 4;
-    // }
-  
     // Update the looktimer
     fLooktimer -= fYMoveBy;
   
