@@ -91,7 +91,7 @@ var gameEngineJS = (function () {
       if (j < nCeiling) {
         if(sSectorCeilingTexture === "bg"){
           sPixelToRender = drawBackground(i, j);
-          fDepthBufferR[j * nScreenWidth + i] = 1;
+          fDepthBufferR[j * nScreenWidth + i] = fDepth;
         }
         else{
           sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture);
