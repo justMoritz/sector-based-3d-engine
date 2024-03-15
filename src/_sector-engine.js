@@ -83,8 +83,8 @@ var gameEngineJS = (function () {
     var nNewScreenStart = 0;
     var nNewScreenEnd   = 0;
 
-    for (var j = start; j < end
-      ; j++) {
+    for (var j = start; j < end; j++) {
+
       fDepthBufferR[j * nScreenWidth + i] = fDistanceToWall;
       
       // sky or ceiling

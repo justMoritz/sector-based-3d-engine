@@ -39,6 +39,8 @@ var bDrawRGB = false;
 var bDrawSrpites = true;
 var bTexFiltering = true;
 
+var nDrawWidth = nScreenWidth;
+var nRemovePixels = 0;
 
 if (bDrawRGB){
     nScreenWidth = 320;
@@ -48,8 +50,10 @@ if (bUseSkew){
     nScreenWidth = 540;
     nScreenHeight = 140;
     nLookLimit = 8;
-    var fFOV = PI___ / 2.25;
-    var fFOV_div2 = fFOV / 2;
+    fFOV = PI___ / 2.25;
+    fFOV_div2 = fFOV / 2;
+    nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
+    nDrawWidth = nScreenWidth - nRemovePixels;
 }
 
 

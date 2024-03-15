@@ -18,12 +18,15 @@ var _rh = {
     '*q': [0, 0, 0],
     '7q': [255, 255, 255],
     '#q': [255, 255, 255],
-    
+    // "#525252": ['o', 'm'], // Grays
+    // "#666666": ['*', 'm'],
+    // "#ABABAB": ['7', 'm'],
+    // "#C8C8C8": ['#', 'm'],
     // Grays
     'om': [66, 66, 66],
-    '*m': [133, 133, 133],
-    '7m': [171, 171, 171],
-    '#m': [248, 248, 248], // 200
+    '*m': [102, 102, 102],
+    '7m': [168, 168, 168],
+    '#m': [224, 224, 224], // 200
 
     // Blues
     'ob': [0, 0, 168],
@@ -108,6 +111,10 @@ var _rh = {
       fYMoveBy = input * Math.pow(1.2, input);
     }
 
+    // TODO: Somehow get this factor based on the screen resolution
+    // If the width is 540, 0.25
+    // If the width is 270, 0.5
+    // if the width is 1080, 0.125
     var adjustFactor = 0.25;
 
     var skipEveryXRow = (nScreenHeight * adjustFactor) /fYMoveBy;
@@ -462,7 +469,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
 
   // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
   var printIndex = 0;
-  var removePixels = nScreenWidth - nScreenWidth*0.85;
+  
 
   
   for (var row = 0; row < nScreenHeight; row++) {
@@ -472,12 +479,12 @@ var _fDrawFrameWithSkew = function (screen, target) {
       //   // sOutput += "<br>";
       // }
 
-      if (pix < removePixels) {
+      if (pix < nRemovePixels) {
         // sOutput += "";
-        sCanvasOutput[printIndex] = [0, 0, 0];
-      } else if (pix > nScreenWidth - removePixels) {
+        sCanvasOutput[printIndex] = [55, 0, 0];
+      } else if (pix > nScreenWidth - nRemovePixels) {
         // sOutput += "";
-        sCanvasOutput[printIndex] = [0, 0, 0];
+        sCanvasOutput[printIndex] = [55, 0, 0];
       } else {
         // sOutput += frame[printIndex];)
         sCanvasOutput[printIndex] = frame[printIndex];
@@ -488,6 +495,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
   }
   // target.innerHTML = sCanvasOutput;
   _drawToCanvas( sCanvasOutput );
+  // _drawToCanvas( frame );
 };
 
 

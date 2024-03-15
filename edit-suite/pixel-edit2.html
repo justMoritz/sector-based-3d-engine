@@ -122,10 +122,10 @@
       <div class="color-palette">
 
         <!-- Grays -->
-        <div class="color" style="background-color: #525252;"></div>
+        <div class="color" style="background-color: #424242;"></div>
         <div class="color" style="background-color: #666666;"></div>
-        <div class="color" style="background-color: #ababab;"></div>
-        <div class="color" style="background-color: #c8c8c8;"></div>
+        <div class="color" style="background-color: #A8A8A8;"></div>
+        <div class="color" style="background-color: #C8C8C8;"></div>
         
         <!-- Blues-->
         <div class="color" style="background-color: #0000a8;"></div>
@@ -242,7 +242,7 @@
 
   <script>
     const targetPalette = [
-      "#424242", "#858585", "#ABABAB", "#C8C8C8",
+      "#525252", "#666666", "#a8a8a8", "#C8C8C8",
       "#0000A8", "#0070E8", "#38B8F8", "#A8E0F8",
       "#201888", "#2038E8", "#5890F8", "#C0D0F8",
       "#400098", "#8000F0", "#A088F8", "#D0C8F8",
@@ -295,8 +295,8 @@
     "#FFFFFF": ['.', 'q'], // White
 
     "#424242": ['o', 'm'], // Grays
-    "#858585": ['*', 'm'],
-    "#ABABAB": ['7', 'm'],
+    "#666666": ['*', 'm'],
+    "#A8A8A8": ['7', 'm'],
     "#C8C8C8": ['#', 'm'],
 
     "#0000A8": ['o', 'b'], // Blues
@@ -462,6 +462,8 @@
         // convert the hexValue to the corresponding Texel Value
         const currentTexel = texelLookupTable[hexValue];
 
+        console.log(hexValue);
+
         pixelArray.push(currentTexel);
 
         outputString += currentTexel[0];
@@ -540,13 +542,13 @@
           // console.log(lightness);
 
           if (lightness === '#') {
-            color = "#ffffff";
+            color = "#FFFFFF";
           }
           else if (lightness === "7") {
-            color = "#c8c8c8";
+            color = "#C8C8C8";
           }
           else if (lightness === "*") {
-            color = "#858585";
+            color = "#666666";
           }
           else if (lightness === "0") {
             color = "#424242";
