@@ -46,7 +46,7 @@ if (bDrawRGB){
 }
 if (bUseSkew){
     nScreenWidth = 540;
-    nScreenHeight = 160;
+    nScreenHeight = 140;
     nLookLimit = 8;
     var fFOV = PI___ / 2.25;
     var fFOV_div2 = fFOV / 2;

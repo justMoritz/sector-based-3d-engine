@@ -458,36 +458,36 @@ var _fDrawFrameWithSkew = function (screen, target) {
   var target = target || eScreen;
 
   // var sOutput = "";
-  // var sCanvasOutput = "";
+  var sCanvasOutput = [];
 
   // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  // var printIndex = 0;
-  // var removePixels = nScreenHeight / 2;
+  var printIndex = 0;
+  var removePixels = nScreenWidth - nScreenWidth*0.85;
 
   
-  // for (var row = 0; row < nScreenHeight; row++) {
-  //   for (var pix = 0; pix < nScreenWidth; pix++) {
-  //     // H-blank based on screen-width
-  //     if (printIndex % nScreenWidth == 0) {
-  //       // sOutput += "<br>";
-  //     }
+  for (var row = 0; row < nScreenHeight; row++) {
+    for (var pix = 0; pix < nScreenWidth; pix++) {
+      // H-blank based on screen-width
+      // if (printIndex % nScreenWidth == 0) {
+      //   // sOutput += "<br>";
+      // }
 
-  //     // if (pix < removePixels) {
-  //     //   sOutput += "";
-  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
-  //     // } else if (pix > nScreenWidth - removePixels) {
-  //     //   sOutput += "";
-  //     //   sCanvasOutput[printIndex] = [0, 0, 0];
-  //     // } else {
-  //     //   // sOutput += frame[printIndex];)
-  //     //   sCanvasOutput[printIndex] = frame[printIndex];
-  //     // }
+      if (pix < removePixels) {
+        // sOutput += "";
+        sCanvasOutput[printIndex] = [0, 0, 0];
+      } else if (pix > nScreenWidth - removePixels) {
+        // sOutput += "";
+        sCanvasOutput[printIndex] = [0, 0, 0];
+      } else {
+        // sOutput += frame[printIndex];)
+        sCanvasOutput[printIndex] = frame[printIndex];
+      }
 
-  //     printIndex++;
-  //   }
-  // }
-  // // target.innerHTML = sCanvasOutput;
-  _drawToCanvas( frame );
+      printIndex++;
+    }
+  }
+  // target.innerHTML = sCanvasOutput;
+  _drawToCanvas( sCanvasOutput );
 };
 
 
