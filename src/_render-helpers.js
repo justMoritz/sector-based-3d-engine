@@ -106,7 +106,7 @@ var _rh = {
 
     if (input < 0) {
       fYMoveBy = input * 0.7
-      console.log('down')
+      // console.log('down')
     }else{
       fYMoveBy = input * Math.pow(1.2, input);
     }

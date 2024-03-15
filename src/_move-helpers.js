@@ -178,7 +178,7 @@ var _moveHelpers = {
               return true; // don't allow move
             }
 
-            console.log(`walking into ${collisionSector}`)
+            // console.log(`walking into ${collisionSector}`)
             
             // set new global sector and set new player Height
             sPlayerSector = collisionSector;
