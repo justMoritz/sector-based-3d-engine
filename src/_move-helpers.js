@@ -537,7 +537,7 @@ var _moveHelpers = {
   playerHeight: function(){
 
     // Jumping
-    if (bJumping) {
+    if (bJumping && !bFalling) {
       nJumptimer++;
       fPlayerH += 0.1;
     }
