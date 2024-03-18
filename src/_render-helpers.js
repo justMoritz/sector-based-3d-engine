@@ -167,14 +167,16 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var y1 = (y0 + 1) % texHeight;
 
   // Sampling the four surrounding pixels
-  var samplePosition00 = (y0 * texWidth + x0) * 2;
-  var samplePosition01 = (y0 * texWidth + x1) * 2;
-  var samplePosition10 = (y1 * texWidth + x0) * 2;
-  var samplePosition11 = (y1 * texWidth + x1) * 2;
+  var samplePosition00 = (y0 * texWidth + x0);
+  var samplePosition01 = (y0 * texWidth + x1);
+  var samplePosition10 = (y1 * texWidth + x0);
+  var samplePosition11 = (y1 * texWidth + x1);
   var color00 = texpixels[samplePosition00];
   var color01 = texpixels[samplePosition01];
   var color10 = texpixels[samplePosition10];
   var color11 = texpixels[samplePosition11];
+
+  // console.log(color00[0])
 
 
   // Bilinear interpolation for each color component
@@ -232,7 +234,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   var sampleX = ~~(texWidth * x);
   var sampleY = ~~(texHeight * y);
 
-  var samplePosition = (texWidth * sampleY + sampleX) * 2;
+  var samplePosition = (texWidth * sampleY + sampleX);
 
   var currentColor;
   var currentPixel;
