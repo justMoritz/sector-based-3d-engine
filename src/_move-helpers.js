@@ -558,6 +558,7 @@ var _moveHelpers = {
       else{
         nJumptimer--;
         fPlayerH -= 0.1;
+        bJumping = false;
       }
     }
     else{

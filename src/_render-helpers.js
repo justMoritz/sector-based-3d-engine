@@ -171,10 +171,11 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var samplePosition01 = (y0 * texWidth + x1) * 2;
   var samplePosition10 = (y1 * texWidth + x0) * 2;
   var samplePosition11 = (y1 * texWidth + x1) * 2;
-  var color00 = _getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00]);
-  var color01 = _getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01]);
-  var color10 = _getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10]);
-  var color11 = _getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11]);
+  var color00 = texpixels[samplePosition00];
+  var color01 = texpixels[samplePosition01];
+  var color10 = texpixels[samplePosition10];
+  var color11 = texpixels[samplePosition11];
+
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
@@ -239,7 +240,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   currentPixel = texpixels[samplePosition];
   currentColor = texpixels[samplePosition+1];
-  currentColorPixel = _getColorPixel(currentColor, currentPixel) || [0, 0, 0]; 
+  currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   colorR = currentColorPixel[0] * shadingFactor;
