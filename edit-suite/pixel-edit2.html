@@ -522,20 +522,8 @@
         const blueLookup = rgbLookupReverse[blue];
 
         const pixelString = redLookup+greenLookup+blueLookup;
-        // pixelArray.push(outputString);
-
         outputString += pixelString;
       }
-      
-      console.log(pixelArray)
-
-      const arrayString = JSON.stringify(pixelArray, null, 2)
-        .replace(/\n/g, '')
-        .replace(/\s{2,}/g, ' ');
-
-      const exportTextArea = document.getElementById("exportTextArea");
-
-      // exportTextArea.value = arrayString;
       exportTextArea.value = outputString;
     }
 
