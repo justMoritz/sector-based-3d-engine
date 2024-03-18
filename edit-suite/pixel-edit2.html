@@ -69,7 +69,7 @@
     .color-palette {
       display: flex;
       flex-wrap: wrap;
-      width: 140px;
+      width: 512px;
     }
 
     .color {
@@ -121,89 +121,8 @@
     <div class="controls">
       <div class="color-palette">
 
-        <!-- Grays -->
-        <div class="color" style="background-color: #424242;"></div>
-        <div class="color" style="background-color: #666666;"></div>
-        <div class="color" style="background-color: #A8A8A8;"></div>
-        <div class="color" style="background-color: #C8C8C8;"></div>
-        
-        <!-- Blues-->
-        <div class="color" style="background-color: #0000a8;"></div>
-        <div class="color" style="background-color: #0070e8;"></div>
-        <div class="color" style="background-color: #38B8F8;"></div>
-        <div class="color" style="background-color: #A8E0F8;"></div>
-
-        <!-- Indigos -->
-        <div class="color" style="background-color: #201888;"></div>
-        <div class="color" style="background-color: #2038e8;"></div>
-        <div class="color" style="background-color: #5890f8;"></div>
-        <div class="color" style="background-color: #C0D0F8;"></div>
-    
-    
-        <!-- Purples -->
-        <div class="color" style="background-color: #400098;"></div>
-        <div class="color" style="background-color: #8000F0;"></div>
-        <div class="color" style="background-color: #A088F8;"></div>
-        <div class="color" style="background-color: #D0C8F8;"></div>
-    
-        <!-- Pink -->
-        <div class="color" style="background-color: #880070;"></div>
-        <div class="color" style="background-color: #B800B8;"></div>
-        <div class="color" style="background-color: #F078F8;"></div>
-        <div class="color" style="background-color: #F8C0F8;"></div>
-    
-        <!-- Roses -->
-        <div class="color" style="background-color: #A80010;"></div>
-        <div class="color" style="background-color: #E00058;"></div>
-        <div class="color" style="background-color: #F870B0;"></div>
-        <div class="color" style="background-color: #F8C0D8;"></div>
-    
-        <!-- Reds -->
-        <div class="color" style="background-color: #A00000;"></div>
-        <div class="color" style="background-color: #D82842;"></div>
-        <div class="color" style="background-color: #F87060;"></div>
-        <div class="color" style="background-color: #F8B8B0;"></div>
-    
-        <!-- Oranges -->
-        <div class="color" style="background-color: #780800;"></div>
-        <div class="color" style="background-color: #C5480A;"></div>
-        <div class="color" style="background-color: #F89838;"></div>
-        <div class="color" style="background-color: #FFDA9A;"></div>
-    
-        <!-- Yellows -->
-        <div class="color" style="background-color: #724007;"></div>
-        <div class="color" style="background-color: #887000;"></div>
-        <div class="color" style="background-color: #C7B21C;"></div>
-        <div class="color" style="background-color: #F8ED88;"></div>
-    
-        <!-- Army -->
-        <div class="color" style="background-color: #104000;"></div>
-        <div class="color" style="background-color: #389000;"></div>
-        <div class="color" style="background-color: #80D010;"></div>
-        <div class="color" style="background-color: #E0F8A0;"></div>
-    
-        <!-- Green -->
-        <div class="color" style="background-color: #005000;"></div>
-        <div class="color" style="background-color: #00A800;"></div>
-        <div class="color" style="background-color: #48D848;"></div>
-        <div class="color" style="background-color: #A8F0B8;"></div>
-
-        <!-- Sea -->
-        <div class="color" style="background-color: #003810;"></div>
-        <div class="color" style="background-color: #009038;"></div>
-        <div class="color" style="background-color: #58F898;"></div>
-        <div class="color" style="background-color: #B0F8C8;"></div>
-    
-        <!-- Teal -->
-        <div class="color" style="background-color: #183858;"></div>
-        <div class="color" style="background-color: #008088;"></div>
-        <div class="color" style="background-color: #00e8d9;"></div>
-        <div class="color" style="background-color: #98f8f0;"></div>
-        <!-- Black -->
-
-        <div class="color" style="background-color: #000000;"></div>
-        <div class="color" style="background-color: #ffffff;"></div>
-        
+        <div class="color-palette" id="colorPalette">
+        </div>
     </div>
 
     
@@ -241,54 +160,196 @@
   </div>
 
   <script>
-    const targetPalette = [
-      "#525252", "#666666", "#a8a8a8", "#C8C8C8",
-      "#0000A8", "#0070E8", "#38B8F8", "#A8E0F8",
-      "#201888", "#2038E8", "#5890F8", "#C0D0F8",
-      "#400098", "#8000F0", "#A088F8", "#D0C8F8",
-      "#880070", "#B800B8", "#F078F8", "#F8C0F8",
-      "#A80010", "#E00058", "#F870B0", "#F8C0D8",
-      "#A80010", 
-      "#E00058",
-      "#F870B0",
-      "#F8C0D8",
-
-      "#A00000",
-      "#D82842",
-      "#F87060",
-      "#F8B8B0",
-
-      "#780800",
-      "#C5480A",
-      "#F89838",
-      "#FFDA9A",
-
-      "#F8ED88",
-      "#887000",
-      "#C7B21C",
-      "#DCCE70",
-
-      "#104000",
-      "#389000",
-      "#80D010",
-      "#E0F8A0",
-
-      "#005000",
-      "#00A800",
-      "#48D848",
-      "#A8F0B8",
-
-      "#003810",
-      "#009038",
-      "#58F898",
-      "#B0F8C8",
-
-      "#183858",
-      "#008088",
-      "#00E8D9",
-      "#98F8F0",
+   const colors = [
+      [0, 0, 0],       
+      [0, 0, 168],     
+      [0, 168, 0],     
+      [0, 168, 168],   
+      [168, 0, 0],     
+      [168, 0, 168],   
+      [168, 84, 0],    
+      [168, 168, 168], 
+      [84, 84, 84],    
+      [84, 84, 252],   
+      [84, 252, 84],   
+      [84, 252, 252],  
+      [252, 84, 84],   
+      [252, 84, 252],  
+      [252, 252, 84],  
+      [252, 252, 252],     
+      [20, 20, 20],    
+      [32, 32, 32],    
+      [44, 44, 44],    
+      [56, 56, 56],    
+      [68, 68, 68],    
+      [80, 80, 80],    
+      [96, 96, 96],    
+      [112, 112, 112], 
+      [128, 128, 128], 
+      [144, 144, 144], 
+      [160, 160, 160], 
+      [180, 180, 180], 
+      [200, 200, 200], 
+      [224, 224, 224], 
+      [252, 252, 252], 
+      [0, 0, 252],     
+      [68, 0, 252],    
+      [128, 0, 252],   
+      [180, 0, 252],   
+      [252, 0, 252],   
+      [252, 0, 180],   
+      [252, 0, 128],   
+      [252, 0, 68],    
+      [252, 0, 0],     
+      [252, 68, 0],    
+      [252, 128, 0],   
+      [252, 180, 0],   
+      [252, 252, 0],   
+      [180, 252, 0],   
+      [128, 252, 0],   
+      [68, 252, 0],    
+      [0, 252, 0],     
+      [0, 252, 68],    
+      [0, 252, 128],   
+      [0, 252, 180],   
+      [0, 252, 252],   
+      [0, 180, 252],   
+      [0, 128, 252],   
+      [0, 68, 252],    
+      [128, 128, 252], 
+      [160, 128, 252], 
+      [180, 128, 252], 
+      [224, 128, 252], 
+      [252, 128, 252], 
+      [252, 128, 224], 
+      [252, 128, 180], 
+      [252, 128, 160], 
+      [252, 128, 128], 
+      [252, 160, 128], 
+      [252, 180, 128], 
+      [252, 224, 128], 
+      [252, 252, 128], 
+      [224, 252, 128], 
+      [180, 252, 128], 
+      [160, 252, 128], 
+      [128, 252, 128], 
+      [128, 252, 160], 
+      [128, 252, 180], 
+      [128, 252, 224], 
+      [128, 252, 252], 
+      [128, 224, 252], 
+      [128, 180, 252], 
+      [128, 160, 252], 
+      [180, 180, 252],
+      [200, 180, 252], 
+      [224, 180, 252],
+      [252, 180, 252],
+      [252, 180, 224],
+      [252, 180, 200], 
+      [252, 180, 180],
+      [252, 200, 180],
+      [252, 224, 180],
+      [252, 252, 180], 
+      [224, 252, 180],
+      [200, 252, 180], 
+      [180, 252, 180],
+      [180, 252, 200], 
+      [180, 252, 224], 
+      [180, 252, 252],
+      [180, 224, 252], 
+      [180, 200, 252], 
+      [0, 0, 68],     
+      [20, 0, 68],    
+      [32, 0, 68],    
+      [44, 0, 68],    
+      [68, 0, 68],   
+      [68, 0, 44],    
+      [68, 0, 32],   
+      [68, 0, 20],   
+      [68, 0, 0],      
+      [68, 20, 0],     
+      [68, 32, 0],  
+      [68, 44, 0],    
+      [68, 68, 0],     
+      [44, 68, 0],  
+      [32, 68, 0],  
+      [20, 68, 0], 
+      [0, 68, 0],    
+      [0, 68, 20],   
+      [0, 68, 32],   
+      [0, 68, 44],   
+      [0, 68, 68],    
+      [0, 44, 68],   
+      [0, 32, 68],   
+      [0, 20, 68],    
+      [32, 44, 68], 
+      [44, 44, 68],     
+      [56, 44, 68],  
+      [68, 44, 68],   
+      [68, 44, 56],  
+      [68, 44, 44],  
+      [68, 56, 44],   
+      [68, 68, 44],   
+      [56, 68, 44],     
+      [44, 68, 44],     
+      [44, 68, 56],   
+      [44, 68, 68],    
+      [44, 56, 68],   
+      [44, 44, 68],  
+      [0, 0, 0],      
     ];
 
+    const rgbLookup = {
+      a: 20,
+      b: 32,
+      c: 44,
+      d: 56,
+      e: 68,
+      f: 80,
+      g: 84,
+      h: 96,
+      i: 112,
+      j: 128,
+      k: 144,
+      l: 160,
+      m: 168,
+      n: 180,
+      o: 200,
+      p: 224,
+      q: 252,
+      z: 0,
+    }
+
+    const rgbLookupReverse = {
+      "20": "a",
+      "32": "b",
+      "44": "c",
+      "56": "d",
+      "68": "e",
+      "80": "f",
+      "84": "g",
+      "96": "h",
+      "112": "i",
+      "128": "j",
+      "144": "k",
+      "160": "l",
+      "168": "m",
+      "180": "n",
+      "200": "o",
+      "224": "p",
+      "252": "q",
+      "0": "z",
+    }
+
+    const colorPalette = document.getElementById("colorPalette");
+
+    colors.forEach(color => {
+      const rgb = `rgb(${color.join(", ")})`;
+      const colorDiv = document.createElement("div");
+      colorDiv.classList.add("color");
+      colorDiv.style.backgroundColor = rgb;
+      colorPalette.appendChild(colorDiv);
+    });
 
    const texelLookupTable = {
     "#000000": ['.', 'm'], // Black
@@ -452,23 +513,21 @@
       let outputString = '';
 
       for (let i = 0; i < imageData.length; i += 4) {
-        const red = imageData[i].toString(16).padStart(2, '0');
-        const green = imageData[i + 1].toString(16).padStart(2, '0');
-        const blue = imageData[i + 2].toString(16).padStart(2, '0');
+        const red = imageData[i];
+        const green = imageData[i + 1];
+        const blue = imageData[i + 2];
 
-        let hexValue = `#${red}${green}${blue}`;
-        hexValue = hexValue.toUpperCase();
+        const redLookup = rgbLookupReverse[red];
+        const greenLookup = rgbLookupReverse[green];
+        const blueLookup = rgbLookupReverse[blue];
 
-        // convert the hexValue to the corresponding Texel Value
-        const currentTexel = texelLookupTable[hexValue];
+        const pixelString = redLookup+greenLookup+blueLookup;
+        // pixelArray.push(outputString);
 
-        console.log(hexValue);
-
-        pixelArray.push(currentTexel);
-
-        outputString += currentTexel[0];
-        outputString += currentTexel[1];
+        outputString += pixelString;
       }
+      
+      console.log(pixelArray)
 
       const arrayString = JSON.stringify(pixelArray, null, 2)
         .replace(/\n/g, '')
