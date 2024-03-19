@@ -268,6 +268,52 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
 
 
+var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+
+  if(typeof texture !== "undefined"){
+    var texWidth = texture.width;
+    var texHeight = texture.height;
+    var texpixels = texture.mask;
+  }else{
+    var texWidth = 1
+    var texHeight = 1
+    var texpixels = [[0,0,0]];
+  }
+
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
+
+  x = (scaleFactorX * x + offsetX) % 1;
+  y = (scaleFactorY * y + offsetY) % 1;
+
+  var sampleX = ~~(texWidth * x);
+  var sampleY = ~~(texHeight * y);
+
+  var samplePosition = (texWidth * sampleY + sampleX);
+
+  var currentColor;
+  var currentPixel;
+  var currentColorPixel;
+
+  currentPixel = texpixels[samplePosition];
+  currentColor = texpixels[samplePosition+1];
+  currentColorPixel = currentPixel || [0, 0, 0]; 
+
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR = currentColorPixel[0] * shadingFactor;
+  colorG = currentColorPixel[1] * shadingFactor;
+  colorB = currentColorPixel[2] * shadingFactor;
+
+  // return currentColorPixel;
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
+  return finalColor;
+};
+
+
+
 /**
  * 
  * Switch to determine which sampler to use based on setting.
