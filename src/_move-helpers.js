@@ -22,8 +22,7 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
-    // console.log(sectorName)
-    var allCurrentWalls = oMap[sectorName].walls;
+    var allCurrentWalls = oMap[nSafeSector].walls;
     var nWallsHit = 0;
 
     // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
@@ -39,7 +38,6 @@ var _moveHelpers = {
         { x: currentWall[0], y: currentWall[1] },
         { x: currentWall[2], y: currentWall[3] }
       );
-
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
         nWallsHit++
       }
