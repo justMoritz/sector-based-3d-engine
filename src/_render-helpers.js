@@ -139,10 +139,16 @@ var _rh = {
  * 
  */
 var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
-
-  var texWidth = texture.width || defaultTexWidth;
-  var texHeight = texture.height || defaultTexHeight;
-  var texpixels = texture.texture;
+  
+  if(typeof texture !== "undefined"){
+    var texWidth = texture.width;
+    var texHeight = texture.height;
+    var texpixels = texture.texture;
+  }else{
+    var texWidth = 1
+    var texHeight = 1
+    var texpixels = "7p";
+  }
 
   var scaleFactorX = fSampleXScale || 2;
   var scaleFactorY = fSampleYScale || 2;
@@ -213,11 +219,16 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * 
  */
 var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
-
-  // defaults
-  var texWidth = texture.width || defaultTexWidth;
-  var texHeight = texture.height || defaultTexHeight;
-  var texpixels = texture.texture;
+  
+  if(typeof texture !== "undefined"){
+    var texWidth = texture.width;
+    var texHeight = texture.height;
+    var texpixels = texture.texture;
+  }else{
+    var texWidth = 1
+    var texHeight = 1
+    var texpixels = "7p";
+  }
 
   var scaleFactorX = fSampleXScale || 2;
   var scaleFactorY = fSampleYScale || 2;

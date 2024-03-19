@@ -22,8 +22,8 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
-    // console.log(sectorName)
-    var allCurrentWalls = oMap[sectorName].walls;
+    var nSafeSector = parseInt(sectorName);
+    var allCurrentWalls = oMap[nSafeSector].walls;
     var nWallsHit = 0;
 
     // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
