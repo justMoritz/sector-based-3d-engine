@@ -134,7 +134,6 @@ function _drawSpritesNew (i) {
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
 
-
     var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
     var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
     var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
