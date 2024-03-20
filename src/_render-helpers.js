@@ -294,12 +294,10 @@ var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale,
 
   var samplePosition = (texWidth * sampleY + sampleX);
 
-  var currentColor;
   var currentPixel;
   var currentColorPixel;
 
   currentPixel = texpixels[samplePosition];
-  currentColor = texpixels[samplePosition+1];
   currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
