@@ -1,11 +1,17 @@
 var _testmap = {"fDepth":43,"fPlayerX":4.9,"fPlayerY":4.4,"fPlayerA":0.3,"fPlayerH":0.2,"startingSector":2,
 "sprites": {
     "1": {
-      "x": 7.5,
-      "y": 5.5,
+      "x": 6,
+      "y": 8,
       "h": 0,
-      "r": 2.0,
-      "s": "sector1",
+      "r": 0,
+      "name": "P"
+    },
+    "2": {
+      "x": 16,
+      "y": 8,
+      "r": -0.2,
+      "h": 0,
       "name": "P"
     },
 },
