@@ -164,6 +164,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Scales coordinates to texture size
   x *= texWidth;
   y *= texHeight;
+  
 
   // Integer and fractionals
   var x0 = ~~(x);

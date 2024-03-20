@@ -67,3 +67,8 @@ OLD!!!!!
   5. Sprite mode. In this mode,
      -  click anywhere to place a sprite
      -  left-clicking a sprite brings up context menu where to set sprite texture, velocity, and just about anything else we can image
+-  
+
+
+
+Could be handy https://notisrac.github.io/FileToCArray/
