@@ -31,7 +31,6 @@ var nScreenHeight = 160;
 var fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
 var fFOV_div2 = fFOV / 2;
 // var fFOV = PI___ / 2.14; // (PI___ / 4.0 originally)
-// var fDepth = 16.0; // viewport depth
 var nLookLimit = 10;
 
 var bUseSkew = true;
@@ -83,6 +82,7 @@ var fDepthBufferR = [];
 // var fPlayerY = 1.0;
 // var fPlayerA = 1.5;
 // var fPlayerH = 0;
+// var fDepth = 16.0; // viewport depth
 
 var sLastKnownSector = 0;
 var sPlayerSector = 0;

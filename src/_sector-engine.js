@@ -407,12 +407,35 @@ var gameEngineJS = (function () {
   }
 
 
+
+  var _gameSettingsInit = function () {
+    if (bUseSkew){
+      nScreenWidth = 540;
+      nScreenHeight = 140;
+      nLookLimit = 8;
+      fFOV = PI___ / 2.25;
+      fFOV_div2 = fFOV / 2;
+      nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
+      nDrawWidth = nScreenWidth - nRemovePixels;
+    }else{
+      nScreenWidth = 480;
+      nScreenHeight = 160;
+      nLookLimit = 10;
+      fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
+      fFOV_div2 = fFOV / 2;
+      nDrawWidth = nScreenWidth;
+      nRemovePixels = 0;
+    }
+  };
+
   /**
    * The basic game loop
    */
   var main = function ( isEditor ) {
+    _gameSettingsInit();
     var gameTimer = 0;
     gameRun = setInterval(gameLoop, 33);
+
     function gameLoop() {
       gameTimer++
 
@@ -489,14 +512,11 @@ var gameEngineJS = (function () {
       } // end column loop
 
       
-      if (!bDrawRGB && bUseSkew) {
+      if (  bUseSkew ) {
         _fDrawFrameWithSkew(screen);
-      }else if(!bDrawRGB){
+      }else{
         _fDrawFrame(screen); 
       }  
-      else if (bDrawRGB) {
-        _fDrawFrameRGB(screen);
-      }
 
     }
   };
@@ -557,6 +577,11 @@ var gameEngineJS = (function () {
     console.log( fPlayerX, fPlayerY, fPlayerA, fPlayerH );
     console.log( sPlayerSector );
     console.log(oMap);
+
+
+    // Additional editor-only settings:
+    bUseSkew = false;
+    bTexFiltering = false;
 
     main(true);
 
