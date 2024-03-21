@@ -65,8 +65,8 @@ var bMoveForward;
 var bMoveBackward;
 var bJumping;
 var bFalling;
-var bRunning;
 var bPaused;
+var bRunning = true;
 var bPlayerMayMoveForward = true;
 
 var nJumptimer = 0;

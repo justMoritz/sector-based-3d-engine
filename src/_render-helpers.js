@@ -157,6 +157,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var offsetY = fSampleYOffset || 0;
   var depthValue = fDistance || 1;
 
+
   // Actual sample point
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
@@ -165,7 +166,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   x *= texWidth;
   y *= texHeight;
   
-
   // Integer and fractionals
   var x0 = ~~(x);
   var y0 = ~~(y);
@@ -183,9 +183,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var color01 = texpixels[samplePosition01];
   var color10 = texpixels[samplePosition10];
   var color11 = texpixels[samplePosition11];
-
-  // console.log(color00[0])
-
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
@@ -249,12 +246,10 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   var samplePosition = (texWidth * sampleY + sampleX);
 
-  var currentColor;
   var currentPixel;
   var currentColorPixel;
 
   currentPixel = texpixels[samplePosition];
-  currentColor = texpixels[samplePosition+1];
   currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
