@@ -169,10 +169,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Integer and fractionals
   var x0 = ~~(x);
   var y0 = ~~(y);
-  var dx = x - x0;
-  var dy = y - y0;
   var x1 = (x0 + 1) % texWidth;  
   var y1 = (y0 + 1) % texHeight;
+  var dx = x - x0;
+  var dy = y - y0;
 
   // Sampling the four surrounding pixels
   var samplePosition00 = (y0 * texWidth + x0);

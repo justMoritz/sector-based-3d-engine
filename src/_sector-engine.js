@@ -17,6 +17,40 @@ var gameEngineJS = (function () {
   /**
    * Loads
    */
+  function _loadLevelFromServer (level) {  
+    clearInterval(gameRun);
+    fetch("http://127.0.0.1:5500/assets/_testmap.json")
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        // updates the level map, dimensions and textures
+        oLevel = json;
+        oMap = oLevel.map;
+        fDepth = oLevel.fDepth || fDepth;
+        sPlayerSector = oLevel.startingSector || startingSector;
+        sLastKnownSector = sPlayerSector;
+        
+        // load sprites
+        oLevelSprites = oLevel.sprites;
+        
+        // places the player at the map starting point
+        fPlayerX = oLevel.fPlayerX;
+        fPlayerY = oLevel.fPlayerY;
+        fPlayerA = oLevel.fPlayerA;
+        fPlayerH = oLevel.fPlayerH;
+
+        _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+        main();
+      });
+
+  }
+
+
+
+  /**
+   * Loads
+   */
   function _loadLevel (level) {
     clearInterval(gameRun);
 
@@ -74,6 +108,8 @@ var gameEngineJS = (function () {
     //   _testScreenSizeAndStartTheGame();
     // });
   };
+
+
   
 
   // TODO:
