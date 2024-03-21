@@ -723,14 +723,24 @@ var ledit = (function(){
     defaultCeilInput.addEventListener('input', (e) => { sectorDefaults.ceil = e.target.value });
     defaultFloorTexInput.addEventListener('input', (e) => { sectorDefaults.floorTex = e.target.value });
     defaultCeilTexInput.addEventListener('input', (e) => { sectorDefaults.ceilTex = e.target.value });
-
+    
+    
+  
+    document.querySelector("#previewToggle").addEventListener('change', (e) => {
+      if (e.target.checked) {
+        // start preview
+        gameEngineJS.initEditor();
+      }
+      else {
+        // stop preview
+        gameEngineJS.stop();
+      }
+    });
 
 
 
     // Initial draw
     _lhelpers.drawGrid();
-
-
 
 
     window.addEventListener('beforeunload', function(event) {

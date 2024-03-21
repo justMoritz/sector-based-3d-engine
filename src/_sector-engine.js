@@ -43,8 +43,37 @@ var gameEngineJS = (function () {
 
         main();
       });
-
   }
+
+
+    /**
+   * Loads
+   */
+    function _loadLevelFromEditor () {
+      clearInterval(gameRun);
+  
+      // updates the level map, dimensions and textures
+      oLevel = window[sLevelstring];
+      oMap = leveldata;
+      fDepth = oLevel.fDepth || fDepth;
+      sPlayerSector = oLevel.startingSector || startingSector;
+      sLastKnownSector = sPlayerSector;
+      
+      // load sprites
+      oLevelSprites = oLevel.sprites;
+      
+      // places the player at the map starting point
+      fPlayerX = oLevel.fPlayerX;
+      fPlayerY = oLevel.fPlayerY;
+      fPlayerA = oLevel.fPlayerA;
+      fPlayerH = oLevel.fPlayerH;
+  
+      _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+  
+      main();
+  
+    };
+  
 
 
 
@@ -373,15 +402,31 @@ var gameEngineJS = (function () {
 
 
 
+  var stopGame = function () {
+    clearInterval(gameRun);
+  }
+
 
   /**
    * The basic game loop
    */
-  var main = function () {
+  var main = function ( isEditor ) {
     var gameTimer = 0;
     gameRun = setInterval(gameLoop, 33);
     function gameLoop() {
       gameTimer++
+
+      if( isEditor ){
+        // updates the level map constantly
+        oLevel = leveldata;
+        oMap = leveldata.map;
+        fDepth = oLevel.fDepth || fDepth;
+        // load sprites
+        oLevelSprites = oLevel.sprites;
+        
+        bDrawSrpites = false; // for now
+      }
+
 
       _moveHelpers.move();
       _moveHelpers.playerHeight();
@@ -462,10 +507,6 @@ var gameEngineJS = (function () {
     // prep document
     eScreen = document.getElementById("display");
 
-    eScreenG = document.getElementById("displayg");
-    eScreenB = document.getElementById("displayb");
-    eScreenR = document.getElementById("displayr");
-
     eCanvas = document.getElementById("seconddisplay");
     cCtx    = eCanvas.getContext("2d");
     eDebugOut = document.getElementById("debug");
@@ -484,7 +525,47 @@ var gameEngineJS = (function () {
     _loadLevel("_testmap.map");
   };
 
+
+  var initEditor = function () {
+    // prep document
+    eScreen = document.getElementById("display");
+    eCanvas = document.getElementById("seconddisplay");
+    cCtx    = eCanvas.getContext("2d");
+    eDebugOut = document.getElementById("debug");
+    eTouchLook = document.getElementById("touchinputlook");
+    eTouchMove = document.getElementById("touchinputmove");
+
+    eDebugOut.addEventListener('click', () => {
+      toggleFullscreen(eCanvas);
+    });
+
+    _moveHelpers.keylisten();
+    _moveHelpers.mouseinit();
+    _moveHelpers.touchinit();
+
+    // load level
+    oLevel = leveldata;
+    oMap = leveldata.map;
+    fDepth = oLevel.fDepth || fDepth;
+    // load sprites
+    oLevelSprites = oLevel.sprites;
+    sPlayerSector = oLevel.startingSector || startingSector;
+    sLastKnownSector = sPlayerSector;
+    
+    clearInterval(gameRun);
+
+    console.log( fPlayerX, fPlayerY, fPlayerA, fPlayerH );
+    console.log( sPlayerSector );
+    console.log(oMap);
+
+    main(true);
+
+  };
+
   return {
     init: init,
+    initEditor: initEditor,
+    main: main,
+    stop: stopGame,
   };
 })();
