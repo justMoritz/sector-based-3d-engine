@@ -213,7 +213,7 @@ var _moveHelpers = {
       }
       if (e.which == 16) {
         // shift
-        bRunning = true;
+        bRunning = false;
       }
       if (e.which == 32) {
         // space
@@ -248,7 +248,7 @@ var _moveHelpers = {
     window.onkeyup = function (e) {
       if (e.which == 16) {
         // shift
-        bRunning = false;
+        bRunning = true;
       }
       if (e.which == 32) {
         // space
