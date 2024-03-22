@@ -148,7 +148,7 @@ var gameEngineJS = (function () {
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
     var nNewScreenEnd   = 0;
-    var sPixelToRender;
+    var sPixelToRender = [0,0,0];
 
     for (var j = start; j < end; j++) {
 

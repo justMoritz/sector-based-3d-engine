@@ -6,8 +6,8 @@ var _testmap ={    "fDepth": 43,
     "startingSector": 1,
     "sprites":{
   "1": {
-    "x": 6,
-    "y": 8,
+    "x": 4.6,
+    "y": 5,
     "h": 0,
     "r": 0,
     "name": "P"
