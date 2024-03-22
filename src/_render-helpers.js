@@ -24,7 +24,7 @@ var _rh = {
     // "#ABABAB": ['7', 'm'],
     // "#C8C8C8": ['#', 'm'],
     // Grays
-    'om': [66, 66, 66],
+    'om': [72, 72, 72],
     '*m': [102, 102, 102],
     '7m': [168, 168, 168],
     '#m': [224, 224, 224], // 200
@@ -222,7 +222,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * 
  */
 var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
-
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
     var texHeight = texture.height;
