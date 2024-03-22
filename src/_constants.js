@@ -1,6 +1,6 @@
 /**
  * 
- * Constants and Global Variables
+ * Constants and Global Variables (BUGGY swimming floor)
  * 
  */
 
