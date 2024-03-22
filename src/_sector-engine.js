@@ -417,6 +417,7 @@ var gameEngineJS = (function () {
       fFOV_div2 = fFOV / 2;
       nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
       nDrawWidth = nScreenWidth - nRemovePixels;
+      fscreenHeightFactorFloor = nScreenHeight / 2;
     }else{
       nScreenWidth = 480;
       nScreenHeight = 160;
@@ -425,6 +426,7 @@ var gameEngineJS = (function () {
       fFOV_div2 = fFOV / 2;
       nDrawWidth = nScreenWidth;
       nRemovePixels = 0;
+      fscreenHeightFactorFloor = nScreenHeight / 2;
     }
   };
 

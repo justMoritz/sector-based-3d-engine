@@ -184,23 +184,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var color10 = texpixels[samplePosition10];
   var color11 = texpixels[samplePosition11];
 
-  if( 
-    typeof color00 == "undefined" ||
-    typeof color01 == "undefined" ||
-    typeof color10 == "undefined" ||
-    typeof color11 == "undefined"
-    ){
-      var colorR = 255;
-      var colorG = 0;
-      var colorB = 0;
-  }
-  else{
-    // Bilinear interpolation for each color component
-    var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
-    var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
-    var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
-    
-  }
+  // Bilinear interpolation for each color component
+  var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
+  var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
+  var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
 
   // Adding shading based on depth Value

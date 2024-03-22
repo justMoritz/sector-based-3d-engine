@@ -1,6 +1,6 @@
 /**
  * 
- * Constants and Global Variables (BUGGY swimming floor)
+ * Constants and Global Variables 
  * 
  */
 
@@ -89,13 +89,3 @@ var gameRun;
 
 // holds the frames we're going to send to the renderer
 var screen = [];
-
-
-
-var skewValues = [];
-skewValues[0] = 24;
-skewValues[1] = 12;
-skewValues[2] = 6;
-skewValues[3] = 3;
-skewValues[4] = 2;
-skewValues[5] = 1;
