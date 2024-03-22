@@ -402,7 +402,7 @@ var _fPrepareFrame = function (oInput, eTarget) {
     fLookModifier = neverMoreThan;
   }
 
-  _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
+  // _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
   
   // iterate each row at a time
   for (var row = 0; row < nScreenHeight; row++) {

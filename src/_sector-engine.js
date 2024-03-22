@@ -118,6 +118,7 @@ var gameEngineJS = (function () {
       oLevelSprites = oLevel.sprites;
       
       // places the player at the map starting point
+      console.log(oLevel.fPlayerA)
       fPlayerX = oLevel.fPlayerX;
       fPlayerY = oLevel.fPlayerY;
       fPlayerA = oLevel.fPlayerA;
@@ -147,6 +148,7 @@ var gameEngineJS = (function () {
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
     var nNewScreenEnd   = 0;
+    var sPixelToRender;
 
     for (var j = start; j < end; j++) {
 
@@ -575,11 +577,6 @@ var gameEngineJS = (function () {
     sLastKnownSector = sPlayerSector;
     
     clearInterval(gameRun);
-
-    console.log( fPlayerX, fPlayerY, fPlayerA, fPlayerH );
-    console.log( sPlayerSector );
-    console.log(oMap);
-
 
     // Additional editor-only settings:
     bUseSkew = false;
