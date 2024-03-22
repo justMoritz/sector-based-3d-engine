@@ -37,18 +37,27 @@ And so much more! The limits are endless!
 - Fisheye correction is still a bit wonky
 - Wall-collision detection... it's bad
 - ✅ Build in Texture X and Y offset
-- 👩🏼‍💻 Build in sector texture scale
 
 #### 👩🏼‍💻 Level Editor (TODO:)
+**OH MY GOD THIS WAS SO MUCH WORK**
 - ✅ Refactor level file: No more sectorMeta, no more nested arrays for walls, single source of truth for all level data 
 
-**OH MY GOD THIS WAS SO MUCH WORK**
+##### More Level Editor Things
+- 👩🏼‍💻 live-preview... this should be possible, just load the engine code in the editor. 
+  - After some testing it looks like setting up a server and write to file. Actually this might be cleaner...
+- ❓ Build in sector texture scale
+
+
+----
+
+
+
 All of the below is outdated, I'll write up some docs sometime.
 
 Here is the current TODO:
 - ✅ Level Editor panning (maybe zooming, probably not though (Edit: no zooming))
 - ✅ Build in Texture X and Y offset
-- 👩🏼‍💻 Build in sector texture scale
+
 
 
 
@@ -67,3 +76,8 @@ OLD!!!!!
   5. Sprite mode. In this mode,
      -  click anywhere to place a sprite
      -  left-clicking a sprite brings up context menu where to set sprite texture, velocity, and just about anything else we can image
+-  
+
+
+
+Could be handy https://notisrac.github.io/FileToCArray/

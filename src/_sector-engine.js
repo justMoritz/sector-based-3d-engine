@@ -17,6 +17,69 @@ var gameEngineJS = (function () {
   /**
    * Loads
    */
+  function _loadLevelFromServer (level) {  
+    clearInterval(gameRun);
+    fetch("http://127.0.0.1:5500/assets/_testmap.json")
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        // updates the level map, dimensions and textures
+        oLevel = json;
+        oMap = oLevel.map;
+        fDepth = oLevel.fDepth || fDepth;
+        sPlayerSector = oLevel.startingSector || startingSector;
+        sLastKnownSector = sPlayerSector;
+        
+        // load sprites
+        oLevelSprites = oLevel.sprites;
+        
+        // places the player at the map starting point
+        fPlayerX = oLevel.fPlayerX;
+        fPlayerY = oLevel.fPlayerY;
+        fPlayerA = oLevel.fPlayerA;
+        fPlayerH = oLevel.fPlayerH;
+
+        _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+        main();
+      });
+  }
+
+
+    /**
+   * Loads
+   */
+    function _loadLevelFromEditor () {
+      clearInterval(gameRun);
+  
+      // updates the level map, dimensions and textures
+      oLevel = window[sLevelstring];
+      oMap = leveldata;
+      fDepth = oLevel.fDepth || fDepth;
+      sPlayerSector = oLevel.startingSector || startingSector;
+      sLastKnownSector = sPlayerSector;
+      
+      // load sprites
+      oLevelSprites = oLevel.sprites;
+      
+      // places the player at the map starting point
+      fPlayerX = oLevel.fPlayerX;
+      fPlayerY = oLevel.fPlayerY;
+      fPlayerA = oLevel.fPlayerA;
+      fPlayerH = oLevel.fPlayerH;
+  
+      _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+  
+      main();
+  
+    };
+  
+
+
+
+  /**
+   * Loads
+   */
   function _loadLevel (level) {
     clearInterval(gameRun);
 
@@ -74,6 +137,8 @@ var gameEngineJS = (function () {
     //   _testScreenSizeAndStartTheGame();
     // });
   };
+
+
   
 
   // TODO:
@@ -337,15 +402,56 @@ var gameEngineJS = (function () {
 
 
 
+  var stopGame = function () {
+    clearInterval(gameRun);
+  }
+
+
+
+  var _gameSettingsInit = function () {
+    if (bUseSkew){
+      nScreenWidth = 540;
+      nScreenHeight = 140;
+      nLookLimit = 8;
+      fFOV = PI___ / 2.25;
+      fFOV_div2 = fFOV / 2;
+      nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
+      nDrawWidth = nScreenWidth - nRemovePixels;
+      fscreenHeightFactorFloor = nScreenHeight / 2;
+    }else{
+      nScreenWidth = 480;
+      nScreenHeight = 160;
+      nLookLimit = 10;
+      fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
+      fFOV_div2 = fFOV / 2;
+      nDrawWidth = nScreenWidth;
+      nRemovePixels = 0;
+      fscreenHeightFactorFloor = nScreenHeight / 2;
+    }
+  };
 
   /**
    * The basic game loop
    */
-  var main = function () {
+  var main = function ( isEditor ) {
+    _gameSettingsInit();
     var gameTimer = 0;
     gameRun = setInterval(gameLoop, 33);
+
     function gameLoop() {
       gameTimer++
+
+      if( isEditor ){
+        // updates the level map constantly
+        oLevel = leveldata;
+        oMap = leveldata.map;
+        fDepth = oLevel.fDepth || fDepth;
+        // load sprites
+        oLevelSprites = oLevel.sprites;
+        
+        bDrawSrpites = false; // for now
+      }
+
 
       _moveHelpers.move();
       _moveHelpers.playerHeight();
@@ -408,14 +514,11 @@ var gameEngineJS = (function () {
       } // end column loop
 
       
-      if (!bDrawRGB && bUseSkew) {
+      if (  bUseSkew ) {
         _fDrawFrameWithSkew(screen);
-      }else if(!bDrawRGB){
+      }else{
         _fDrawFrame(screen); 
       }  
-      else if (bDrawRGB) {
-        _fDrawFrameRGB(screen);
-      }
 
     }
   };
@@ -425,10 +528,6 @@ var gameEngineJS = (function () {
 
     // prep document
     eScreen = document.getElementById("display");
-
-    eScreenG = document.getElementById("displayg");
-    eScreenB = document.getElementById("displayb");
-    eScreenR = document.getElementById("displayr");
 
     eCanvas = document.getElementById("seconddisplay");
     cCtx    = eCanvas.getContext("2d");
@@ -448,7 +547,52 @@ var gameEngineJS = (function () {
     _loadLevel("_testmap.map");
   };
 
+
+  var initEditor = function () {
+    // prep document
+    eScreen = document.getElementById("display");
+    eCanvas = document.getElementById("seconddisplay");
+    cCtx    = eCanvas.getContext("2d");
+    eDebugOut = document.getElementById("debug");
+    eTouchLook = document.getElementById("touchinputlook");
+    eTouchMove = document.getElementById("touchinputmove");
+
+    eDebugOut.addEventListener('click', () => {
+      toggleFullscreen(eCanvas);
+    });
+
+    _moveHelpers.keylisten();
+    _moveHelpers.mouseinit();
+    _moveHelpers.touchinit();
+
+    // load level
+    oLevel = leveldata;
+    oMap = leveldata.map;
+    fDepth = oLevel.fDepth || fDepth;
+    // load sprites
+    oLevelSprites = oLevel.sprites;
+    sPlayerSector = oLevel.startingSector || startingSector;
+    sLastKnownSector = sPlayerSector;
+    
+    clearInterval(gameRun);
+
+    console.log( fPlayerX, fPlayerY, fPlayerA, fPlayerH );
+    console.log( sPlayerSector );
+    console.log(oMap);
+
+
+    // Additional editor-only settings:
+    bUseSkew = false;
+    bTexFiltering = false;
+
+    main(true);
+
+  };
+
   return {
     init: init,
+    initEditor: initEditor,
+    main: main,
+    stop: stopGame,
   };
 })();

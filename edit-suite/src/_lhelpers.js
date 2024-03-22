@@ -232,6 +232,9 @@ _lhelpers = {
 
     // Restore transformations
     ctx.restore();
+
+    // also draws the level data
+    _lhelpers.generateLevelData()
 },
 
 

@@ -278,9 +278,99 @@
 
     </style>
 
+    <style>
+        /* body {
+            background: black;
+            color: white;
+            font-family: 'Consolas', Courier, monospace;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 1.15em;
+            overflow: hidden;
+            text-align: center;
+            touch-action: none;
+        } */
+        #game {
+            position: absolute;
+            top: 0;
+            right: 200px;
+            z-index: 9999;
+        }
+        #display {
+            display: inline-block;
+            pointer-events: none;
+            /* display: none; */
+        }
+        #seconddisplay {
+            position: absolute;
+            /* top: 20%; */
+            transform: scale(1, 2);
+            top: 5%;
+            /* transform: scale(2, 2); */
+            /* width: 80%; */
+            /* height: auto; */
+            transform-origin: top left;
+            right: 0;
+            color: lightgreen;
+            image-rendering: pixelated;
+            /* image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -o-crisp-edges;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor; */
+        }
+        #touchinputmove,
+        #touchinputlook {
+            height: 100%;
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100vh;
+            touch-action: pan-left, pan-right, pan-up, pan-down;
+        }
+        #touchinputmove {
+            left: 0;
+        }
+        #touchinputlook {
+            right: 0;
+        }
+        .nomouse {
+            cursor: none;
+        }
+        #debug {
+        clear: both;
+        }
+        @media(max-width: 768px) {
+            body {
+                font-size: 3px;
+            }
+        }
+        .color-mix{
+            display: inline-block;
+            pointer-events: none;
+            border: 1px solid red;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: scale(0.7);
+            transform-origin: top left;
+        }
+    </style>
+
     <script id="lconst" type="text/javascript" src="src/_lconstants.js"></script>
     <script id="lhelpers" type="text/javascript" src="src/_lhelpers.js"></script>
     <script id="ledit" type="text/javascript" src="src/_ledit.js"></script>
+
+
+    <script id="constants" type="text/javascript" src="../src/_edit-constants.js"></script>
+    <script id="functions" type="text/javascript" src="../src/_functions.js"></script>
+    <script id="spritesfunctions" type="text/javascript" src="../src/_sprites.js"></script>
+    <script id="movehelpers" type="text/javascript" src="../src/_move-helpers.js"></script>
+    <script id="renderhelpers" type="text/javascript" src="../src/_render-helpers.js"></script>
+    <script id="textures" type="text/javascript" src="../assets/textures.tex"></script>
+    <script id="sprites" type="text/javascript" src="../assets/sprites.tex"></script>
+    <script id="gameEngine" type="text/javascript" src="../src/_sector-engine.js?v=2"></script>
+
 </head>
 
 <body>
@@ -311,8 +401,8 @@
                 <label>
                     <span>Texture scale:</span>
                     <div class="sort-labels">
-                        <input id="texScaleX" type="number" placeholder="X scale" step="0.5">
-                        <input id="texScaleY" type="number" placeholder="Y scale" step="0.5">
+                        <input id="texScaleX" type="number" placeholder="X scale" step="0.1">
+                        <input id="texScaleY" type="number" placeholder="Y scale" step="0.1">
                     </div>
                 </label>
                 <label>
@@ -433,6 +523,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="top-nav__item">
+                <span style="display: flex;">
+                    Live&nbsp;Preview
+                    <input type="checkbox" id="previewToggle">
+                </span>
+            </li>
 
         </ul>
     </div>
@@ -440,6 +536,18 @@
     <script>
         ledit.init();
     </script>
+
+
+<div id="debug" style="font-size: 2em; line-height: 2em;"></div>
+<div id="game">
+    <div id="display"></div>
+    <canvas id="seconddisplay"></canvas>
+    <div id="touchinputlook"></div>
+    <div id="touchinputmove"></div>
+  </div>
+  <script>
+    // gameEngineJS.initEditor();
+  </script>
 
 </body>
 

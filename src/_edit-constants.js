@@ -1,6 +1,6 @@
 /**
  * 
- * Constants and Global Variables 
+ * Constants and Global Variables
  * 
  */
 
@@ -34,12 +34,26 @@ var fFOV_div2 = fFOV / 2;
 var nLookLimit = 10;
 
 var bUseSkew = true;
+var bDrawRGB = false;
 var bDrawSrpites = true;
 var bTexFiltering = true;
 
 var nDrawWidth = nScreenWidth;
 var nRemovePixels = 0;
 
+if (bDrawRGB){
+    nScreenWidth = 320;
+    nScreenHeight = 110;
+}
+if (bUseSkew){
+    nScreenWidth = 540;
+    nScreenHeight = 140;
+    nLookLimit = 8;
+    fFOV = PI___ / 2.25;
+    fFOV_div2 = fFOV / 2;
+    nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
+    nDrawWidth = nScreenWidth - nRemovePixels;
+}
 
 
 var bTurnLeft;
@@ -64,11 +78,11 @@ var debugWrite;
 var fDepthBufferR = [];
 
 // defaults
-var fPlayerX;
-var fPlayerY;
-var fPlayerA;
-var fPlayerH;
-var fDepth = 16.0; // viewport depth
+// var fPlayerX = 14.0;
+// var fPlayerY = 1.0;
+// var fPlayerA = 1.5;
+// var fPlayerH = 0;
+// var fDepth = 16.0; // viewport depth
 
 var sLastKnownSector = 0;
 var sPlayerSector = 0;
@@ -89,3 +103,13 @@ var gameRun;
 
 // holds the frames we're going to send to the renderer
 var screen = [];
+
+
+
+var skewValues = [];
+skewValues[0] = 24;
+skewValues[1] = 12;
+skewValues[2] = 6;
+skewValues[3] = 3;
+skewValues[4] = 2;
+skewValues[5] = 1;

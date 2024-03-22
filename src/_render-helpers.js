@@ -11,6 +11,7 @@
  * Lookup Tables for anything render related
  */
 var _rh = {
+
   colorPixelLookupTable: {
     // Black
     '.m': [0, 0, 0],
@@ -147,7 +148,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   }else{
     var texWidth = 1
     var texHeight = 1
-    var texpixels = "7p";
+    var texpixels = [[255,0,255]];
   }
 
   var scaleFactorX = fSampleXScale || 2;
@@ -156,6 +157,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var offsetY = fSampleYOffset || 0;
   var depthValue = fDistance || 1;
 
+
   // Actual sample point
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
@@ -163,29 +165,30 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Scales coordinates to texture size
   x *= texWidth;
   y *= texHeight;
-
+  
   // Integer and fractionals
   var x0 = ~~(x);
   var y0 = ~~(y);
-  var dx = x - x0;
-  var dy = y - y0;
   var x1 = (x0 + 1) % texWidth;  
   var y1 = (y0 + 1) % texHeight;
+  var dx = x - x0;
+  var dy = y - y0;
 
   // Sampling the four surrounding pixels
-  var samplePosition00 = (y0 * texWidth + x0) * 2;
-  var samplePosition01 = (y0 * texWidth + x1) * 2;
-  var samplePosition10 = (y1 * texWidth + x0) * 2;
-  var samplePosition11 = (y1 * texWidth + x1) * 2;
-  var color00 = _getColorPixel(texpixels[samplePosition00 + 1], texpixels[samplePosition00]);
-  var color01 = _getColorPixel(texpixels[samplePosition01 + 1], texpixels[samplePosition01]);
-  var color10 = _getColorPixel(texpixels[samplePosition10 + 1], texpixels[samplePosition10]);
-  var color11 = _getColorPixel(texpixels[samplePosition11 + 1], texpixels[samplePosition11]);
+  var samplePosition00 = (y0 * texWidth + x0);
+  var samplePosition01 = (y0 * texWidth + x1);
+  var samplePosition10 = (y1 * texWidth + x0);
+  var samplePosition11 = (y1 * texWidth + x1);
+  var color00 = texpixels[samplePosition00];
+  var color01 = texpixels[samplePosition01];
+  var color10 = texpixels[samplePosition10];
+  var color11 = texpixels[samplePosition11];
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
   var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
+
 
   // Adding shading based on depth Value
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
@@ -219,7 +222,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * 
  */
 var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
-  
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
     var texHeight = texture.height;
@@ -227,7 +229,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   }else{
     var texWidth = 1
     var texHeight = 1
-    var texpixels = "7p";
+    var texpixels = [[255,0,255]];
   }
 
   var scaleFactorX = fSampleXScale || 2;
@@ -242,15 +244,57 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   var sampleX = ~~(texWidth * x);
   var sampleY = ~~(texHeight * y);
 
-  var samplePosition = (texWidth * sampleY + sampleX) * 2;
+  var samplePosition = (texWidth * sampleY + sampleX);
 
-  var currentColor;
   var currentPixel;
   var currentColorPixel;
 
   currentPixel = texpixels[samplePosition];
-  currentColor = texpixels[samplePosition+1];
-  currentColorPixel = _getColorPixel(currentColor, currentPixel) || [0, 0, 0]; 
+  currentColorPixel = currentPixel || [0, 0, 0]; 
+
+  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  colorR = currentColorPixel[0] * shadingFactor;
+  colorG = currentColorPixel[1] * shadingFactor;
+  colorB = currentColorPixel[2] * shadingFactor;
+
+  // return currentColorPixel;
+  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
+  return finalColor;
+};
+
+
+
+var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+
+  if(typeof texture !== "undefined"){
+    var texWidth = texture.width;
+    var texHeight = texture.height;
+    var texpixels = texture.mask;
+  }else{
+    var texWidth = 1
+    var texHeight = 1
+    var texpixels = [[0,0,0]];
+  }
+
+  var scaleFactorX = fSampleXScale || 2;
+  var scaleFactorY = fSampleYScale || 2;
+  var offsetX = fSampleXOffset || 0;
+  var offsetY = fSampleYOffset || 0;
+  var depthValue = fDistance || 1;
+
+  x = (scaleFactorX * x + offsetX) % 1;
+  y = (scaleFactorY * y + offsetY) % 1;
+
+  var sampleX = ~~(texWidth * x);
+  var sampleY = ~~(texHeight * y);
+
+  var samplePosition = (texWidth * sampleY + sampleX);
+
+  var currentPixel;
+  var currentColorPixel;
+
+  currentPixel = texpixels[samplePosition];
+  currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   colorR = currentColorPixel[0] * shadingFactor;

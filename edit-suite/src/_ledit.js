@@ -35,37 +35,16 @@ var ledit = (function(){
     let wallPoints = _lhelpers.isClickedOnWall( clickX, clickY, mapdataObj[currentSector] );
     _lhelpers.drawGrid(wallPoints.a, wallPoints.b);
     
-    if (!wallPoints ){
-      document.querySelector(".right-sidebar__walls").classList.add("disabled");
-      
-      if (sectorSelectorIsFocussed) {
-        // test and see if a sector was clicked
-        clickedSectorForWallEditing = _lhelpers.findClickedSector(clickX, clickY, mapdataObj);
-
-        if(clickedSectorForWallEditing == currentSector){
-          alert(`Cannot connect wall to itself`);
-        }
-        else{
-          sectorconnectorinput.value = clickedSectorForWallEditing;
-          lastSelectedWallForEditing.sC = clickedSectorForWallEditing;
-          lastSelectedWallForEditing = false;
-          _lhelpers.drawGrid();
-        }
-        
-      }
-    }
-    else {
-      lastSelectedWallForEditing = wallPoints;
-      document.querySelector(".right-sidebar__walls").classList.remove("disabled");
-      editwallid.innerHTML = wallPoints.id;
-      wallTexInput.value = wallPoints.tex;
-      texScaleXinput.value = wallPoints.sX;
-      texScaleYinput.value = wallPoints.sY;
-      texOffsetXinput.value = wallPoints.oX;
-      texOffsetYinput.value = wallPoints.oY;
-      sectorconnectorinput.value = wallPoints.sC;
-      sectorconnectorinput.focus();
-    }
+    lastSelectedWallForEditing = wallPoints;
+    document.querySelector(".right-sidebar__walls").classList.remove("disabled");
+    editwallid.innerHTML = wallPoints.id;
+    wallTexInput.value = wallPoints.tex;
+    texScaleXinput.value = wallPoints.sX;
+    texScaleYinput.value = wallPoints.sY;
+    texOffsetXinput.value = wallPoints.oX;
+    texOffsetYinput.value = wallPoints.oY;
+    sectorconnectorinput.value = wallPoints.sC;
+    sectorconnectorinput.focus();
     // opens the edit window, and pulls in data
   };
 
@@ -496,9 +475,11 @@ var ledit = (function(){
     for (let i = 0; i < mapdataObj[currentSector].length; i++) {
       const currentWall = mapdataObj[currentSector][i];
       if( currentWall.id == currentWallId ){
-        currentWall[type] = event.target.value
+        currentWall[type] = event.target.value;
       }
     }
+
+    _lhelpers.drawGrid();
   }
 
 
@@ -510,6 +491,7 @@ var ledit = (function(){
         thisSector[type] = event.target.value
       }
     }
+
     _lhelpers.drawGrid();
   }
 
@@ -552,8 +534,15 @@ var ledit = (function(){
       });
     });
 
+
+    gridCanvas.mouseIsOver = false;
+    gridCanvas.onmouseover = function() { this.mouseIsOver = true; };
+    gridCanvas.onmouseout = function() { this.mouseIsOver = false; };
+
     document.addEventListener('keydown', function(event) {
-      console.log(event);
+      if (!gridCanvas.mouseIsOver) {
+        return;
+      }
       if (event.shiftKey && event.key === 'S') {
         document.querySelector('#sectorAdd').click();
       }
@@ -723,14 +712,24 @@ var ledit = (function(){
     defaultCeilInput.addEventListener('input', (e) => { sectorDefaults.ceil = e.target.value });
     defaultFloorTexInput.addEventListener('input', (e) => { sectorDefaults.floorTex = e.target.value });
     defaultCeilTexInput.addEventListener('input', (e) => { sectorDefaults.ceilTex = e.target.value });
-
+    
+    
+  
+    document.querySelector("#previewToggle").addEventListener('change', (e) => {
+      if (e.target.checked) {
+        // start preview
+        gameEngineJS.initEditor();
+      }
+      else {
+        // stop preview
+        gameEngineJS.stop();
+      }
+    });
 
 
 
     // Initial draw
     _lhelpers.drawGrid();
-
-
 
 
     window.addEventListener('beforeunload', function(event) {

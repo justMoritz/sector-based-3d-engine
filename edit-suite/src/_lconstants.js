@@ -20,6 +20,7 @@ let lastY = 0;
 let gDraggedPoint0;
 let gDraggedPoint1;
 
+let usePreview = false;
 
 
 

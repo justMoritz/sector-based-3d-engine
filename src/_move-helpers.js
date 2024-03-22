@@ -22,7 +22,7 @@ var _moveHelpers = {
    *           we are NOT in the sector, odd number means we ARE
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
-    var nSafeSector = parseInt(sectorName);
+    var nSafeSector = parseInt(Math.ceil(sectorName));
     var allCurrentWalls = oMap[nSafeSector].walls;
     var nWallsHit = 0;
 
@@ -39,7 +39,6 @@ var _moveHelpers = {
         { x: currentWall[0], y: currentWall[1] },
         { x: currentWall[2], y: currentWall[3] }
       );
-
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
         nWallsHit++
       }
@@ -214,7 +213,7 @@ var _moveHelpers = {
       }
       if (e.which == 16) {
         // shift
-        bRunning = true;
+        bRunning = false;
       }
       if (e.which == 32) {
         // space
@@ -249,7 +248,7 @@ var _moveHelpers = {
     window.onkeyup = function (e) {
       if (e.which == 16) {
         // shift
-        bRunning = false;
+        bRunning = true;
       }
       if (e.which == 32) {
         // space
@@ -558,6 +557,7 @@ var _moveHelpers = {
       else{
         nJumptimer--;
         fPlayerH -= 0.1;
+        bJumping = false;
       }
     }
     else{
