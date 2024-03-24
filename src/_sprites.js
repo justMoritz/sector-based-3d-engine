@@ -175,13 +175,13 @@ function _drawSpritesNew (i) {
           )
         {
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
-          var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite);
-          var fSamplePixelMask = _getSamplePixelMask( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite);
+          var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, true);
+          // var fSamplePixelMask = _getSamplePixelMask( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite);
           
 
           // transparency
 
-          const bIsTransparentPix = fSamplePixelMask.every(element => element === 0);
+          var bIsTransparentPix = fSamplePixel.every(element => element === 0);
           // if( fSamplePixel[0] !== "." ){
           if( !bIsTransparentPix ){
             fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;

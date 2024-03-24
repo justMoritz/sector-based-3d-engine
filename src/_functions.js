@@ -52,8 +52,31 @@ function approximatelyEqual(a, b, epsilon) {
   return Math.abs(a - b) < epsilon;
 }
 
+/**
+ * 
+ * @param  {...any} bools 
+ * @returns true if between 1 and 3 trues are found
+ */
+function containsBlackColor(...vars) {
+  var blackCount = 0;
+  for (let i = 0; i < vars.length; i++) {
+    if (vars[i] === true) {
+      blackCount++;
+    }
+  }
+  return blackCount >= 1 && blackCount <= 3;
+}
 
 
+function brighestColor(var1, var2, var3) {
+  if (var1 >= var2 && var1 >= var3) {
+    return var1;
+  } else if (var2 >= var1 && var2 >= var3) {
+    return var2;
+  } else {
+    return var3;
+  }
+}
 
 // leaving the console for errors, logging seems to kill performance
 var _debugOutput = function ( input ) {
@@ -68,6 +91,7 @@ function toggleFullscreen( canvasElement ) {
   } else {
     // Set new screen height
     nScreenHeight = nScreenHeight*2
+    fscreenHeightFactorFloor = nScreenHeight / 2;
     // Request fullscreen
     canvasElement.requestFullscreen()
       .catch(err => {

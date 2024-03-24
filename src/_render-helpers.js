@@ -11,96 +11,6 @@
  * Lookup Tables for anything render related
  */
 var _rh = {
-
-  colorPixelLookupTable: {
-    // Black
-    '.m': [0, 0, 0],
-    '.q': [0, 0, 0],
-    '*q': [0, 0, 0],
-    '7q': [255, 255, 255],
-    '#q': [255, 255, 255],
-    // "#525252": ['o', 'm'], // Grays
-    // "#666666": ['*', 'm'],
-    // "#ABABAB": ['7', 'm'],
-    // "#C8C8C8": ['#', 'm'],
-    // Grays
-    'om': [72, 72, 72],
-    '*m': [102, 102, 102],
-    '7m': [168, 168, 168],
-    '#m': [224, 224, 224], // 200
-
-    // Blues
-    'ob': [0, 0, 168],
-    '*b': [0, 112, 232],
-    '7b': [56, 184, 248],
-    '#b': [168, 224, 248],
-
-    // Indigos
-    'oi': [32, 24, 136],
-    '*i': [32, 56, 232],
-    '7i': [88, 144, 248],
-    '#i': [192, 208, 248],
-
-    // Purples
-    'ou': [64, 0, 152],
-    '*u': [128, 0, 240],
-    '7u': [160, 136, 248],
-    '#u': [208, 200, 248],
-
-    // Pink
-    'op': [136, 0, 112],
-    '*p': [184, 0, 184],
-    '7p': [240, 120, 248],
-    '#p': [248, 192, 248],
-
-    // Roses
-    'os': [168, 0, 16],
-    '*s': [224, 0, 88],
-    '7s': [248, 112, 176],
-    '#s': [248, 184, 216],
-
-    // Reds
-    'or': [160, 0, 0],
-    '*r': [216, 40, 66],
-    '7r': [248, 112, 96],
-    '#r': [248, 184, 176],
-
-    // Oranges
-    'oo': [120, 8, 0],
-    '*o': [197, 72, 8],
-    '7o': [248, 152, 56],
-    '#o': [248, 216, 168],
-
-    // Yellows
-    'oy': [114, 64, 7],
-    '*y': [136, 112, 0],
-    '7y': [199, 178, 28],
-    '#y': [220, 206, 112],
-
-    // Army
-    'oa': [16, 64, 0],
-    '*a': [56, 144, 0],
-    '7a': [128, 208, 16],
-    '#a': [224, 248, 160],
-
-    // Green
-    'og': [0, 80, 0],
-    '*g': [0, 168, 0], 
-    '7g': [72, 216, 72],
-    '#g': [168, 240, 184],
-
-    // Sea 
-    'os': [0, 56, 16],
-    '*s': [0, 144, 56],
-    '7s': [88, 248, 152],
-    '#s': [176, 248, 200],
-
-    // Teal
-    'ot': [24, 56, 88],
-    '*t': [0, 128, 136],
-    '7t': [0, 232, 217],
-    '#t': [152, 248, 240],
-  },
   // lookup-table “for fine-control” or “for performance”
   // …(but really because I couldn"t figure out the logic [apparently] )
   skipEveryXrow: function (input) {
@@ -123,6 +33,7 @@ var _rh = {
   },
 };
 
+
    
 
 /**
@@ -139,7 +50,7 @@ var _rh = {
  * @returns {array}              RBG Value of the pixel, with proper distance shading
  * 
  */
-var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
   
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
@@ -179,6 +90,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var samplePosition01 = (y0 * texWidth + x1);
   var samplePosition10 = (y1 * texWidth + x0);
   var samplePosition11 = (y1 * texWidth + x1);
+
   var color00 = texpixels[samplePosition00];
   var color01 = texpixels[samplePosition01];
   var color10 = texpixels[samplePosition10];
@@ -189,6 +101,27 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
+  if(isSprite){
+
+    // if out of the 4 sample pixels between 1 and 3 are black...
+    var bColor00Black = color00.every(element => element === 0);
+    var bColor01Black = color01.every(element => element === 0);
+    var bColor10Black = color10.every(element => element === 0);
+    var bColor11Black = color11.every(element => element === 0);
+
+    if (containsBlackColor(bColor00Black, bColor01Black, bColor10Black, bColor11Black)) { 
+      if ( brighestColor(colorR, colorG, colorB) < 100) { 
+        colorR = 0;
+        colorG = 0;
+        colorB = 0;
+      }
+    } 
+    
+
+  }
+  else { 
+  }
+  // end if is Sprite
 
   // Adding shading based on depth Value
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
@@ -314,12 +247,12 @@ var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale,
  * Passes all parameters to sampling call.
  * 
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
   if(bTexFiltering){
-    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite);
   }
   else {
-    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance);
+    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite);
   }
 }
 
@@ -487,7 +420,7 @@ var _drawToCanvas = function ( pixels ) {
 var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
 
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
+  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
   // var frame = screen
   // var target = target || eScreen;
 
@@ -515,7 +448,7 @@ var _fDrawFrame = function (screen, target) {
 };
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fLooktimer }`);
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
