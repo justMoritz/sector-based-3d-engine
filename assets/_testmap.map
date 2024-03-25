@@ -1,7 +1,8 @@
-var _testmap ={    "fDepth": 43,
+var _testmap ={    "fDepth": 50,
     "fPlayerX": 4.7,
     "fPlayerY": 6.5,
     "fPlayerA": 4.7415,
+    "fPlayerA": 0.15,
     "fPlayerH": 0,
     "startingSector": 1,
     "sprites":{

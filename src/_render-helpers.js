@@ -102,7 +102,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
 
   if(isSprite){
-
     // if out of the 4 sample pixels between 1 and 3 are black...
     var bColor00Black = color00.every(element => element === 0);
     var bColor01Black = color01.every(element => element === 0);
@@ -116,16 +115,12 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
         colorB = 0;
       }
     } 
-    
-
-  }
-  else { 
   }
   // end if is Sprite
 
   // Adding shading based on depth Value
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
+  var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
 
   // console.log(shadingFactor);
   colorR *= shadingFactor;
