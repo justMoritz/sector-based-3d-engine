@@ -183,3 +183,23 @@ function hslToRgb(h, s, l) {
 
   return [ r * 255, g * 255, b * 255 ];
 }
+
+
+
+/**
+ * 
+ * @param {array} pixels, i.e. [ 16711684, 65280, 255, 16777215];
+ * @returns array of pixels like [[255,0,0], […], …]
+ */
+function hexToRbg (pixels){
+  var rgbPixels = [];
+  for (var i = 0; i < pixels.length; i++) {
+      var hex = pixels[i];
+      var red = (hex >> 16) & 255;
+      var green = (hex >> 8) & 255;
+      var blue = hex & 255;
+      rgbPixels.push([red, green, blue]);
+  }
+  return rgbPixels;
+}
+

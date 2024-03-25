@@ -412,6 +412,31 @@ var _drawToCanvas = function ( pixels ) {
 }
 
 
+// Function to find the closest color in the palette
+function findClosestColor(color, palette) {
+  var minDistanceSquared = Number.MAX_VALUE;
+  var closestColor = null;
+
+  for (var i = 0; i < palette.length; i++) {
+    var distanceSquared = colorDistanceSquared(color, palette[i]);
+    if (distanceSquared < minDistanceSquared) {
+      minDistanceSquared = distanceSquared;
+      closestColor = palette[i];
+    }
+  }
+
+  return closestColor;
+}
+
+// Function to calculate the squared Euclidean distance between two colors
+function colorDistanceSquared(color1, color2) {
+  var dR = color1[0] - color2[0];
+  var dG = color1[1] - color2[1];
+  var dB = color1[2] - color2[2];
+  return dR * dR + dG * dG + dB * dB;
+}
+
+
 
 var _fDrawFrame = function (screen, target) {
   var changeLookTimer = ~~(fLooktimer*10)
