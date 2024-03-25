@@ -133,6 +133,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   colorB *= shadingFactor;
 
   // Rounding and return color components
+  // var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
   var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
   return finalColor;
 };
