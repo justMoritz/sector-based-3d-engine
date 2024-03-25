@@ -110,7 +110,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var bColor11Black = color11.every(element => element === 0);
 
     if (containsBlackColor(bColor00Black, bColor01Black, bColor10Black, bColor11Black)) { 
-      if ( brighestColor(colorR, colorG, colorB) < 100) { 
+      if ( brighestColor(colorR, colorG, colorB) < 80) { 
         colorR = 0;
         colorG = 0;
         colorB = 0;
