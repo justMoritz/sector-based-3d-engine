@@ -105,7 +105,6 @@ var gameEngineJS = (function () {
     var levelLoaded = loadScriptAsync(level, sLevelstring);
 
     levelLoaded.then(function () {
-      console.log( window[sLevelstring] )
 
       // updates the level map, dimensions and textures
       oLevel = window[sLevelstring];
@@ -118,7 +117,6 @@ var gameEngineJS = (function () {
       oLevelSprites = oLevel.sprites;
       
       // places the player at the map starting point
-      console.log(oLevel.fPlayerA)
       fPlayerX = oLevel.fPlayerX;
       fPlayerY = oLevel.fPlayerY;
       fPlayerA = oLevel.fPlayerA;
@@ -412,17 +410,18 @@ var gameEngineJS = (function () {
 
   var _gameSettingsInit = function () {
     if (bUseSkew){
-      nScreenWidth = 540;
-      nScreenHeight = 140;
+      nScreenWidth = 458;
+      nScreenHeight = 220;
       nLookLimit = 8;
       fFOV = PI___ / 2.25;
       fFOV_div2 = fFOV / 2;
       nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
-      nDrawWidth = nScreenWidth - nRemovePixels;
+      nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
+      console.log(nDrawWidth)
     }else{
-      nScreenWidth = 480;
-      nScreenHeight = 160;
+      nScreenWidth = 320;
+      nScreenHeight = 220;
       nLookLimit = 10;
       fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
       fFOV_div2 = fFOV / 2;

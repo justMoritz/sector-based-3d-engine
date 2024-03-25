@@ -391,11 +391,11 @@ var _fPrepareFrame = function (oInput, eTarget) {
 
 var _drawToCanvas = function ( pixels ) {
 
-  eCanvas.width = nScreenWidth;
+  eCanvas.width = nDrawWidth;
   eCanvas.height = nScreenHeight;
   
   // Create an ImageData object with the pixel data
-  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
+  var imageData = cCtx.createImageData(nDrawWidth, nScreenHeight);
       
   // Convert values to shades of colors
   for (var i = 0; i < pixels.length; i++) {
@@ -439,32 +439,7 @@ function colorDistanceSquared(color1, color2) {
 
 
 var _fDrawFrame = function (screen, target) {
-  var changeLookTimer = ~~(fLooktimer*10)
-
-  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
-  // var frame = screen
-  // var target = target || eScreen;
-
-  // var sOutput = "";  
-  // var sCanvasOutput = "";
-
-  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  // nPrintIndex = 0;
-
-  // for (var row = 0 ; row < nScreenHeight ; row++) {
-  // // for (var row = 0 ; row < nScreenHeight ; row++) {
-  //   for (var pix = 0; pix < nScreenWidth; pix++) {
-  //     // H-blank based on screen-width
-  //     if (nPrintIndex % nScreenWidth == 0) {
-  //       sOutput += "<br>";
-  //     }
-  //     // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
-  //     sOutput += frame[nPrintIndex];
-  //     sCanvasOutput += frame[nPrintIndex];
-  //     nPrintIndex++;
-  //   }
-  // }
-  // eScreen.innerHTML = sOutput;
+  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
   _drawToCanvas( screen );
 };
 
@@ -473,38 +448,23 @@ var _fDrawFrameWithSkew = function (screen, target) {
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
-  // var sOutput = "";
   var sCanvasOutput = [];
 
-  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
+  var currentIndex = 0;
   var printIndex = 0;
-  
 
-  
+  // removes those pixels we don't need to draw
   for (var row = 0; row < nScreenHeight; row++) {
     for (var pix = 0; pix < nScreenWidth; pix++) {
-      // H-blank based on screen-width
-      // if (printIndex % nScreenWidth == 0) {
-      //   // sOutput += "<br>";
-      // }
-
-      if (pix < nRemovePixels) {
-        // sOutput += "";
-        sCanvasOutput[printIndex] = [55, 0, 0];
-      } else if (pix > nScreenWidth - nRemovePixels) {
-        // sOutput += "";
-        sCanvasOutput[printIndex] = [55, 0, 0];
-      } else {
-        // sOutput += frame[printIndex];)
-        sCanvasOutput[printIndex] = frame[printIndex];
+      if (pix >= nRemovePixels && pix < nScreenWidth - nRemovePixels) {
+        sCanvasOutput[printIndex] = frame[currentIndex];
+        printIndex++;
       }
-
-      printIndex++;
+      currentIndex++;
     }
   }
-  // target.innerHTML = sCanvasOutput;
   _drawToCanvas( sCanvasOutput );
-  // _drawToCanvas( frame );
 };
 
 

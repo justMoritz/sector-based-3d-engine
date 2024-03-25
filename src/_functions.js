@@ -194,12 +194,36 @@ function hslToRgb(h, s, l) {
 function hexToRbg (pixels){
   var rgbPixels = [];
   for (var i = 0; i < pixels.length; i++) {
-      var hex = pixels[i];
-      var red = (hex >> 16) & 255;
-      var green = (hex >> 8) & 255;
-      var blue = hex & 255;
-      rgbPixels.push([red, green, blue]);
+    var hex = pixels[i];
+    var red = (hex >> 16) & 255;
+    var green = (hex >> 8) & 255;
+    var blue = hex & 255;
+    rgbPixels.push([red, green, blue]);
   }
   return rgbPixels;
 }
 
+
+/**
+ * 
+ * @param {array} pixels, i.e.  [16711684, 65280, 255, 16777215]
+ * @returns array of pixels like [[255,0,0], […], …]
+ */
+function hexToRbg16bit(pixels) {
+  var rgbPixels = [];
+  for (var i = 0; i < pixels.length; i++) {
+    var pixel = pixels[i];
+    var red = (pixel >> 11) & 0x1F;    // Extract 5 bits for red
+    var green = (pixel >> 5) & 0x3F;   // Extract 6 bits for green
+    var blue = pixel & 0x1F;           // Extract 5 bits for blue
+
+    // Scale up the R, G, and B 
+    red = (red * 255) / 31;
+    green = (green * 255) / 63;
+    blue = (blue * 255) / 31;
+
+    // Store the RGB components in the output array
+    rgbPixels.push([red, green, blue]);
+  }
+  return rgbPixels;
+}
