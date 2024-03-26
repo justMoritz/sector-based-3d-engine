@@ -227,3 +227,89 @@ function hexToRbg16bit(pixels) {
   }
   return rgbPixels;
 }
+
+
+
+var downsampleTexture = function( texels, width, height, factor ){
+  var newTexture = [];
+  var stepCounter = 0;
+  var newCounter = 0;
+  for(var i = 0; i < width; i++){
+    for(var j = 0; j < height; j++){
+      console.log(i%2)
+      if( (i)%factor === 0 && (j)%factor === 0 ){
+        newTexture[newCounter] = texels[stepCounter];
+        newCounter++;
+      }
+      stepCounter++;
+    }
+  }
+  return newTexture;
+}
+
+
+
+var downSampleBilinear = function( texels, width, height, factor ){
+  var newTexture = [];
+  var stepCounter = 0;
+  var newCounter = 0;
+  for(var i = 0; i < width; i++){
+    for(var j = 0; j < height; j++){
+  
+      if( (i)%factor == 0 && (j)%factor == 0 ){
+        
+        var x0 = j;
+        var y0 = i;
+        var x1 = (x0 + 1) % width;  
+        var y1 = (y0 + 1) % height;
+        var dx = j - x0;
+        var dy = i - y0;
+
+        // Sampling the four surrounding pixels
+        var samplePosition00 = (y0 * width + x0);
+        var samplePosition01 = (y0 * width + x1);
+        var samplePosition10 = (y1 * width + x0);
+        var samplePosition11 = (y1 * width + x1);      
+        
+        var color00 = texels[samplePosition00];
+        var color01 = texels[samplePosition01];
+        var color10 = texels[samplePosition10];
+        var color11 = texels[samplePosition11];
+
+        // Bilinear interpolation for each color component
+        var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
+        var colorG = color00[1] * (1 - dx) * (1 - dy) + color01[1] * dx * (1 - dy) + color10[1] * (1 - dx) * dy + color11[1] * dx * dy;
+        var colorB = color00[2] * (1 - dx) * (1 - dy) + color01[2] * dx * (1 - dy) + color10[2] * (1 - dx) * dy + color11[2] * dx * dy;
+
+        newTexture[newCounter] = [colorR, colorG, colorB];
+        
+        // newTexture[newCounter] = texels[stepCounter];
+        newCounter++;
+      }
+      stepCounter++;
+    }
+  }
+  return newTexture;
+}
+
+
+
+function prepareTextures( textures ){
+
+  // create mipmaps for all textures
+  for (var key in textures) {
+    // TODO: seems to only work for square textures ATM, 
+    if(key === 'bg'){
+      continue;
+    }
+    var currentTexture = textures[key];
+    var mipMap1 = downSampleBilinear(currentTexture.texture, currentTexture.width, currentTexture.height, 2);
+    var mipMap2 = downSampleBilinear(mipMap1, currentTexture.width/2, currentTexture.height/2, 2);
+    var mipMap3 = downSampleBilinear(mipMap2, currentTexture.width/4, currentTexture.height/4, 2);
+    textures[key].mm1 = mipMap1;
+    textures[key].mm2 = mipMap2;
+    textures[key].mm3 = mipMap3;
+  }
+
+  return textures;
+}

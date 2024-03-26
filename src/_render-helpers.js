@@ -56,6 +56,27 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var texWidth = texture.width;
     var texHeight = texture.height;
     var texpixels = texture.texture;
+
+     // mip mapping
+    if(fDistance > 40 && !isSprite){
+      texpixels = texture.mm3;
+      texHeight = texture.height / 8;
+      texWidth = texture.width / 8;
+    }
+    else if(fDistance > 30 && !isSprite){
+      texpixels = texture.mm2;
+      texHeight = texture.height / 4;
+      texWidth = texture.width / 4;
+    }
+    else if(fDistance > 20 && !isSprite){
+      texpixels = texture.mm1;
+      texHeight = texture.height / 2;
+      texWidth = texture.width / 2;
+    }
+
+
+
+
   }else{
     var texWidth = 1
     var texHeight = 1
@@ -67,6 +88,8 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var offsetX = fSampleXOffset || 0;
   var offsetY = fSampleYOffset || 0;
   var depthValue = fDistance || 1;
+
+ 
 
 
   // Actual sample point
@@ -114,6 +137,9 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
         colorG = 0;
         colorB = 0;
       }
+      // colorR = samplePosition00[0];
+      // colorG = samplePosition00[1];
+      // colorB = samplePosition00[2];
     } 
   }
   // end if is Sprite
@@ -492,7 +518,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  sFloorPixelToRender = _getSamplePixel( textures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance);
+  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance);
   return sFloorPixelToRender;
 }
 
@@ -521,7 +547,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  var sCeilPixelToRender = _getSamplePixel( textures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance);
+  var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance);
   return sCeilPixelToRender;
 }
 
@@ -542,7 +568,7 @@ function drawBackground (i, j) {
     fBgY -= fLooktimer / 20; // up
   }
   
-  sPixelToDraw = _getSamplePixel(textures['bg'], fBgX, fBgY, 1, 1);
+  sPixelToDraw = _getSamplePixel(oLevelTextures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
 }

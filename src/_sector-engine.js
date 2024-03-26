@@ -115,6 +115,9 @@ var gameEngineJS = (function () {
       
       // load sprites
       oLevelSprites = oLevel.sprites;
+
+      // loads textures and creates mipMaps
+      oLevelTextures = prepareTextures(textures);
       
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
@@ -178,7 +181,7 @@ var gameEngineJS = (function () {
       // Draw Walls
       else if (j > nCeiling && j <= nFloor) {
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        sPixelToRender = _getSamplePixel( textures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
+        sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
       }
 
       // Draw Floor
