@@ -57,7 +57,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var texHeight = texture.height;
     var texpixels = texture.texture;
 
-     // mip mapping
+    // mip mapping
     if(fDistance > 40 && !isSprite){
       texpixels = texture.mm3;
       texHeight = texture.height / 8;
@@ -73,9 +73,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
       texHeight = texture.height / 2;
       texWidth = texture.width / 2;
     }
-
-
-
 
   }else{
     var texWidth = 1
@@ -176,11 +173,32 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * @returns {array}              RBG Value of the pixel, with proper distance shading
  * 
  */
-var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
+var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
     var texHeight = texture.height;
     var texpixels = texture.texture;
+
+
+    // mip mapping
+    // if(fDistance > 40 && !isSprite){
+    //   texpixels = texture.mm3;
+    //   texHeight = texture.height / 8;
+    //   texWidth = texture.width / 8;
+    // }
+    // else 
+    if(fDistance > 30 && !isSprite){
+      texpixels = texture.mm2;
+      texHeight = texture.height / 4;
+      texWidth = texture.width / 4;
+    }
+    else if(fDistance > 20 && !isSprite){
+      texpixels = texture.mm1;
+      texHeight = texture.height / 2;
+      texWidth = texture.width / 2;
+    }
+
+
   }else{
     var texWidth = 1
     var texHeight = 1
