@@ -23,6 +23,7 @@ var _moveHelpers = {
    */
   testEntityInSector: function ( sectorName, fEntityX, fEntityY ){
     var nSafeSector = parseInt(Math.ceil(sectorName));
+    if( nSafeSector === 0 ) nSafeSector = 1;
     var allCurrentWalls = oMap[nSafeSector].walls;
     var nWallsHit = 0;
 
@@ -217,7 +218,9 @@ var _moveHelpers = {
       }
       if (e.which == 32) {
         // space
-        bJumping = true;
+        if (!bFalling) {
+          bJumping = true;
+        }
       }
       if (e.which == 65) {
         // a
@@ -539,6 +542,7 @@ var _moveHelpers = {
     if (bJumping && !bFalling) {
       nJumptimer++;
       fPlayerH += 0.1;
+      bFallcomplete = false;
     }
     // jumping only until max-jump height, OR the player hits the ceiling height (2, minus the player height of about 1.4)
     if ( nJumptimer > 10 || fPlayerH > nSectorCeilingHeight - 0.6 ) { 
@@ -552,7 +556,6 @@ var _moveHelpers = {
       if( fPlayerH < nSectorFloorHeight && Math.abs( fPlayerH - nSectorFloorHeight) > 0.1 ) {
         fPlayerH = nSectorFloorHeight;
         nJumptimer = 0;
-        bFalling = false;
       }
       else{
         nJumptimer--;
@@ -576,6 +579,7 @@ var _moveHelpers = {
       }
       else if( fPlayerH > nSectorFloorHeight ){
         fPlayerH -= 0.15; // falling
+        bFalling = true;
       }else if( fPlayerH < nSectorFloorHeight  ){
         fPlayerH += 0.1;
         nJumptimer = 0;
