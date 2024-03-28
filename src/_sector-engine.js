@@ -577,6 +577,7 @@ var gameEngineJS = (function () {
     oLevelSprites = oLevel.sprites;
     sPlayerSector = oLevel.startingSector || startingSector;
     sLastKnownSector = sPlayerSector;
+    oLevelTextures = prepareTextures(textures);
     
     clearInterval(gameRun);
 

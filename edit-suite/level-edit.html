@@ -303,21 +303,16 @@
         }
         #seconddisplay {
             position: absolute;
-            /* top: 20%; */
-            transform: scale(1, 2);
+            transform: scale(1);
             top: 5%;
-            /* transform: scale(2, 2); */
-            /* width: 80%; */
-            /* height: auto; */
-            transform-origin: top left;
+            transform-origin: top right;
             right: 0;
             color: lightgreen;
             image-rendering: pixelated;
-            /* image-rendering: -moz-crisp-edges;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: -o-crisp-edges;
-            image-rendering: crisp-edges;
-            -ms-interpolation-mode: nearest-neighbor; */
+            transition: all 0.25s;
+        }
+        #seconddisplay:hover{
+            transform: scale(3);
         }
         #touchinputmove,
         #touchinputlook {

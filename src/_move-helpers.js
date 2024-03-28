@@ -202,16 +202,17 @@ var _moveHelpers = {
   keylisten: function () {
     window.onkeydown = function (e) {
 
-      if (e.which == 80) {
-        // p
-        if (bPaused) {
-          _testScreenSizeAndStartTheGame();
-          bPaused = false;
-        } else {
-          clearInterval(gameRun);
-          bPaused = true;
-        }
-      }
+      // TODO: reimplement
+      // if (e.which == 80) {
+      //   // p
+      //   if (bPaused) {
+      //     _testScreenSizeAndStartTheGame();
+      //     bPaused = false;
+      //   } else {
+      //     clearInterval(gameRun);
+      //     bPaused = true;
+      //   }
+      // }
       if (e.which == 16) {
         // shift
         bRunning = false;
