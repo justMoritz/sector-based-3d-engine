@@ -57,7 +57,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var texHeight = texture.height;
     var texpixels = texture.texture;
 
-    // mip mapping
+    // mip mapping (try 5, 8, 20 for floors?)
     if(fDistance > 40 && !isSprite){
       texpixels = texture.mm3;
       texHeight = texture.height / 8;

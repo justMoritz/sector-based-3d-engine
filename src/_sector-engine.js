@@ -410,7 +410,7 @@ var gameEngineJS = (function () {
   }
 
 
-
+  // Setup at Game start
   var _gameSettingsInit = function () {
     if (bUseSkew){
       nScreenWidth = 458;

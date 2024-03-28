@@ -596,6 +596,7 @@ _lhelpers = {
     }
 
     // sets global map variables
+    fDepth = importedJSON.fDepth;
     fPlayerX = importedJSON.fPlayerX;
     fPlayerY = importedJSON.fPlayerY;
     fPlayerA = importedJSON.fPlayerA;
@@ -603,6 +604,14 @@ _lhelpers = {
     startingSector = importedJSON.startingSector;
     // TODO: Sprites
 
+
+    // sets global settings
+    fDepthInput.value = fDepth;
+    fPlayerXInput.value = fPlayerX;
+    fPlayerYInput.value = fPlayerY;
+    fPlayerAInput.value = fPlayerA;
+    fPlayerHInput.value = fPlayerH;
+    startingSectorInput.value = startingSector; 
 
     // imports all the walls into the mapdata object
     let tempSectors = importedJSON.map;
@@ -626,7 +635,7 @@ _lhelpers = {
 
 
       // assembles the walls for each sector
-      console.log(curSecFromMap);
+      // console.log(curSecFromMap);
       const curWallsFromSector = curSecFromMap.walls;
       let curTempMapSecData = [];
 
