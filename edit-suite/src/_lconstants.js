@@ -64,6 +64,7 @@ let fPlayerY = 2;
 let fPlayerA = 2.8;
 let fPlayerH = 0;
 let startingSector = 1;
+let sprites = {}
 
 
 let fDepthInput;

@@ -111,10 +111,20 @@ _lhelpers = {
       centroidX /= element.length;
       centroidY /= element.length;
 
+      var fillColorBasedOnHeight = `rgba(255, ${144 - (mapSecMeta[i].floor * 10)}, ${50+(mapSecMeta[i].floor * 20)}, ${(mapSecMeta[i].floor/10 + 0.1)})`;
+      if ( mapSecMeta[i].floor > 6 && mapSecMeta[i].floor <= 12 ){
+        fillColorBasedOnHeight = `rgba(${144 - ((mapSecMeta[i].floor-5) * 10)}, ${50+((mapSecMeta[i].floor-5) * 20)}, 255, ${((mapSecMeta[i].floor-5)/10 + 0.1)})`;
+      }
+      if ( mapSecMeta[i].floor > 12 ){
+        fillColorBasedOnHeight = `rgba(${144 - ((mapSecMeta[i].floor-11) * 10)}, 255, ${50+((mapSecMeta[i].floor-11) * 20)}, ${((mapSecMeta[i].floor-11)/10 + 0.1)})`;
+      }
+      console.log(fillColorBasedOnHeight);
+      console.log(element);
+      console.log();
 
 
-      for (const wall of element) {
-
+      if ( Object.keys(element).length > 0 ) {
+        for (const wall of element) {
           // Retrieve start and end points of the wall segment
           const startX = wall.a.x * scale + 0;
           const startY = wall.a.y * scale + 0;
@@ -151,7 +161,7 @@ _lhelpers = {
 
 
           // Draws the fill based on the floor height
-          ctx.fillStyle = `rgba(255, 155, 55, ${(mapSecMeta[i].floor/10 + 0.02)})`;
+          ctx.fillStyle = fillColorBasedOnHeight;
           // console.log(ctx.fillStyle);
           ctx.beginPath();
           ctx.moveTo(element[0].a.x * scale + 0, element[0].a.y * scale + 0);
@@ -161,7 +171,8 @@ _lhelpers = {
               ctx.lineTo(startX, startY);
           }
           ctx.closePath();
-          ctx.fill();
+        }
+        ctx.fill();
       }
 
       // Draw sector name
@@ -447,8 +458,7 @@ _lhelpers = {
       "fPlayerA": parseFloat(fPlayerA),
       "fPlayerH": parseFloat(fPlayerH),
       "startingSector": parseInt(startingSector),
-      "sprites": {
-      },
+      "sprites": sprites,
       "map": tempMapData
     }
 
