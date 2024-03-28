@@ -118,9 +118,6 @@ _lhelpers = {
       if ( mapSecMeta[i].floor > 12 ){
         fillColorBasedOnHeight = `rgba(${144 - ((mapSecMeta[i].floor-11) * 10)}, 255, ${50+((mapSecMeta[i].floor-11) * 20)}, ${((mapSecMeta[i].floor-11)/10 + 0.1)})`;
       }
-      console.log(fillColorBasedOnHeight);
-      console.log(element);
-      console.log();
 
 
       if ( Object.keys(element).length > 0 ) {
