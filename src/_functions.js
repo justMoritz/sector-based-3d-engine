@@ -90,8 +90,8 @@ function toggleFullscreen( canvasElement ) {
     document.exitFullscreen();
   } else {
     // Set new screen height
-    nScreenHeight = nScreenHeight*2
-    fscreenHeightFactorFloor = nScreenHeight / 2;
+    // nScreenHeight = nScreenHeight*2
+    // fscreenHeightFactorFloor = nScreenHeight / 2;
     // Request fullscreen
     canvasElement.requestFullscreen()
       .catch(err => {

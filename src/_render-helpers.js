@@ -571,7 +571,6 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
 
 
 function drawBackground (i, j) {
-  
   // make the background double the size of the screen
   var fBgX = i / nScreenWidth;
   var fBgY = (j + fscreenHeightFactorFloor) / nScreenHeight;
@@ -589,4 +588,60 @@ function drawBackground (i, j) {
   sPixelToDraw = _getSamplePixel(oLevelTextures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
+}
+
+
+function bakeLighting () {
+  var nRayAmount = 8;
+  var fSliceSize = PI___ * 2 / nRayAmount
+  
+  var oAllLights = oLevel.lights;
+
+  for (const key in oAllLights) {
+    var oCurrentLight = oAllLights[key];
+    console.log(oCurrentLight)
+
+    for (var ai = 1; ai < (nRayAmount+1); ai++) {
+      var fCurrentAngle = fSliceSize * ai;
+      console.log(fCurrentAngle);
+
+      var fVectorX = Math.cos(fCurrentAngle);
+      var fVectorY = Math.sin(fCurrentAngle);
+      fTestX = oCurrentLight.x + fVectorX * fDepth;
+      fTestY = oCurrentLight.y + fVectorY * fDepth;
+
+      // Check if they are colliding with any wall in any sector 
+      for (var s = 0; s < oMap.length; s++) {
+        if( s === 0 ) continue;
+        
+        var oCurSect = oMap[s];
+        
+        for (var w = 0; w < oCurSect.walls.length; w++) {
+          var oCurrentWall = oCurSect.walls[w];
+
+          // check the current angle vector against the current wall vector
+          var intersection = intersectionPoint(
+            { x: oCurrentLight.x, y: oCurrentLight.x },
+            { x: fTestX, y: fTestY },
+            { x: oCurrentWall[0], y: oCurrentWall[1] },
+            { x: oCurrentWall[2], y: oCurrentWall[3] }
+          );
+          if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+            fTestDistanceToWall = Math.sqrt(
+              Math.pow(oCurrentLight.x - intersection.x, 2) +
+              Math.pow(oCurrentLight.y - intersection.y, 2)
+            );
+            console.log(fTestDistanceToWall)
+
+            // if an intersection is found, make a new entry into the gloabl lighting array
+            var oLightSectionEntry = [intersection.x, intersection.y, fTestDistanceToWall];
+            fLightMap.push(oLightSectionEntry)
+          } // end hit wall
+        } // end walls
+      } // end sectorse
+    } // end rays
+  } // end lights
+
+  console.log(fLightMap);
+
 }

@@ -51,6 +51,17 @@ And so much more! The limits are endless!
 ----
 
 
+## Lighting Idea
+
+First iteration will be baked lighting
+- Cast n (8?) rays radially from the light source. 
+- Check if they are colliding with any wall in any sector 
+  - (later: only the sectors the light source is in plus the ones connected to it)
+- New array:  oLightMap Store position where it collided, and how far from the wall it is
+- When rendering each column, check the world position where the wall was hit, then look up the nearest light info in the oLightMap array, and shade that pixel accordingly
+  - Probably by passing it to the get Sample Pixel function 
+
+
 
 All of the below is outdated, I'll write up some docs sometime.
 

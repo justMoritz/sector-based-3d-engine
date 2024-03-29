@@ -455,7 +455,7 @@ _lhelpers = {
       "fPlayerA": parseFloat(fPlayerA),
       "fPlayerH": parseFloat(fPlayerH),
       "startingSector": parseInt(startingSector),
-      "sprites": sprites,
+      "sprites": spritesObject,
       "map": tempMapData
     }
 
@@ -610,6 +610,8 @@ _lhelpers = {
     fPlayerH = importedJSON.fPlayerH;
     startingSector = importedJSON.startingSector;
     // TODO: Sprites
+
+    spritesObject = importedJSON.sprites;
 
 
     // sets global settings

@@ -62,6 +62,7 @@ var nNewHeight = 0;
 var debugWrite;
 
 var fDepthBufferR = [];
+var fLightMap = [];
 
 // defaults
 var fPlayerX;

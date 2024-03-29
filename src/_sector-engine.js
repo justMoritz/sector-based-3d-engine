@@ -118,6 +118,8 @@ var gameEngineJS = (function () {
 
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
+
+      bakeLighting();
       
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
@@ -445,30 +447,18 @@ var gameEngineJS = (function () {
     function gameLoop() {
       gameTimer++
 
+      // If in editor, update the level map constantly
       if( isEditor ){
-        // updates the level map constantly
         oLevel = leveldata;
         oMap = leveldata.map;
         fDepth = oLevel.fDepth || fDepth;
-        // load sprites
         oLevelSprites = oLevel.sprites;
-        
-        bDrawSrpites = false; // for now
       }
-
 
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
       if(bDrawSrpites) _updateSpriteBuffer();
-
-      // every 2 frames or so, check that the player is still in the correct sector.
-      // Sectors are updated as the player walks through them in _moveHelpers.testWallCollision(), 
-      // but it could have missed the player in especially small sectors
-      // if( gameTimer % 2 === 0 ){
-      //   _moveHelpers.playerSectorCheck();
-      //   gameTimer= 0;
-      // }
 
       _moveHelpers.playerSectorCheck();
 
@@ -479,7 +469,6 @@ var gameEngineJS = (function () {
       if (fPlayerA > PIx2) {
         fPlayerA -= PIx2;
       }
-
 
       // Some constants for each loop
       var fPerspectiveCalculation = (2 - fLooktimer * 0.15);
@@ -546,6 +535,7 @@ var gameEngineJS = (function () {
     _moveHelpers.keylisten();
     _moveHelpers.mouseinit();
     _moveHelpers.touchinit();
+    
 
     // initial gameload
     _loadLevel("_testmap.map");
