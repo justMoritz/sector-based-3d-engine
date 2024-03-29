@@ -146,7 +146,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
+  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -164,7 +164,7 @@ var gameEngineJS = (function () {
           fDepthBufferR[j * nScreenWidth + i] = fDepth;
         }
         else{
-          sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture);
+          sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture, fLightValue);
         }
       }
 
@@ -183,12 +183,12 @@ var gameEngineJS = (function () {
       // Draw Walls
       else if (j > nCeiling && j <= nFloor) {
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall, false, fLightValue);
+        sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall, fLightValue, false);
       }
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture);
+        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, fLightValue);
       }
 
       // draw

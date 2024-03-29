@@ -50,7 +50,7 @@ var _rh = {
  * @returns {array}              RBG Value of the pixel, with proper distance shading
  * 
  */
-var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, fLightValue, isSprite) {
   
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
@@ -184,7 +184,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
  * @returns {array}              RBG Value of the pixel, with proper distance shading
  * 
  */
-var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
+var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, fLightValue, isSprite) {
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
     var texHeight = texture.height;
@@ -246,64 +246,18 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   return finalColor;
 };
 
-
-
-var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance) {
-
-  if(typeof texture !== "undefined"){
-    var texWidth = texture.width;
-    var texHeight = texture.height;
-    var texpixels = texture.mask;
-  }else{
-    var texWidth = 1
-    var texHeight = 1
-    var texpixels = [[0,0,0]];
-  }
-
-  var scaleFactorX = fSampleXScale || 2;
-  var scaleFactorY = fSampleYScale || 2;
-  var offsetX = fSampleXOffset || 0;
-  var offsetY = fSampleYOffset || 0;
-  var depthValue = fDistance || 1;
-
-  x = (scaleFactorX * x + offsetX) % 1;
-  y = (scaleFactorY * y + offsetY) % 1;
-
-  var sampleX = ~~(texWidth * x);
-  var sampleY = ~~(texHeight * y);
-
-  var samplePosition = (texWidth * sampleY + sampleX);
-
-  var currentPixel;
-  var currentColorPixel;
-
-  currentPixel = texpixels[samplePosition];
-  currentColorPixel = currentPixel || [0, 0, 0]; 
-
-  var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-  colorR = currentColorPixel[0] * shadingFactor;
-  colorG = currentColorPixel[1] * shadingFactor;
-  colorB = currentColorPixel[2] * shadingFactor;
-
-  // return currentColorPixel;
-  var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
-  return finalColor;
-};
-
-
-
 /**
  * 
  * Switch to determine which sampler to use based on setting.
  * Passes all parameters to sampling call.
  * 
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue) {
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, fLightValue, isSprite) {
   if(bTexFiltering){
-    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue);
+    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, fLightValue, isSprite);
   }
   else {
-    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue);
+    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, fLightValue, isSprite);
   }
 }
 
@@ -547,9 +501,9 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  flightvalue = getLightingValue(floorPointX, floorPointY);
+  fLightValue = getLightingValue(floorPointX, floorPointY);
 
-  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, false, flightvalue);
+  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, fLightValue);
   return sFloorPixelToRender;
 }
 
@@ -578,9 +532,9 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  flightvalue = getLightingValue(ceilPointX, ceilPointY);
+  fLightValue = getLightingValue(ceilPointX, ceilPointY);
 
-  var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance, false, flightvalue);
+  var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance, fLightValue);
   return sCeilPixelToRender;
 }
 
