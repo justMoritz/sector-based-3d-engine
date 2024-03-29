@@ -149,7 +149,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   if(typeof fLightValue !== "undefined"){
     // shadingFactor = 1;
 
-    lightShade = Math.max(0.2, 1 - fLightValue / Math.min(2, fDepth));
+    lightShade = 1 - fLightValue / 4
     
     
     if(DEBUGMODE){
@@ -547,7 +547,9 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance);
+  flightvalue = getLightingValue(floorPointX, floorPointY);
+
+  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, false, flightvalue);
   return sFloorPixelToRender;
 }
 
@@ -576,7 +578,9 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance);
+  flightvalue = getLightingValue(ceilPointX, ceilPointY);
+
+  var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance, false, flightvalue);
   return sCeilPixelToRender;
 }
 
@@ -673,8 +677,10 @@ function getLightingValue (wallX, wallY) {
       Math.pow(oCurrentLight.x - wallX, 2) +
       Math.pow(oCurrentLight.y - wallY, 2)
     );
-    finalLightValue += fTestDistanceToLight * oCurrentLight.b;
+    var currentLightValue = fTestDistanceToLight / oCurrentLight.b;
+    finalLightValue += currentLightValue;
   }
-  // finalLightValue = Math.min(30, finalLightValue);
+  // finalLightValue = Math.max(0, finalLightValue);
+
   return finalLightValue;
 }

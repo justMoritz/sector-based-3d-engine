@@ -93,4 +93,4 @@ var screen = [];
 
 
 
-DEBUGMODE = true;
+DEBUGMODE = false;
