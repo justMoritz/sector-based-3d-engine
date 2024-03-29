@@ -90,3 +90,7 @@ var gameRun;
 
 // holds the frames we're going to send to the renderer
 var screen = [];
+
+
+
+DEBUGMODE = true;

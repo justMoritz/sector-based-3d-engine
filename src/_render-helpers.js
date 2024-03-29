@@ -50,7 +50,7 @@ var _rh = {
  * @returns {array}              RBG Value of the pixel, with proper distance shading
  * 
  */
-var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
+var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue) {
   
   if(typeof texture !== "undefined"){
     var texWidth = texture.width;
@@ -145,10 +145,21 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
 
-  // console.log(shadingFactor);
-  colorR *= shadingFactor;
-  colorG *= shadingFactor;
-  colorB *= shadingFactor;
+  var lightShade = 1;
+  if(typeof fLightValue !== "undefined"){
+    // shadingFactor = 1;
+
+    lightShade = Math.max(0.2, 1 - fLightValue / Math.min(2, fDepth));
+    
+    
+    if(DEBUGMODE){
+      console.log(fLightValue);
+      console.log(lightShade);
+    }
+  }
+  colorR *= shadingFactor * lightShade;
+  colorG *= shadingFactor * lightShade;
+  colorB *= shadingFactor * lightShade;
 
   // Rounding and return color components
   // var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
@@ -287,12 +298,12 @@ var _getSamplePixelMask = function (texture, x, y, fSampleXScale, fSampleYScale,
  * Passes all parameters to sampling call.
  * 
  */
-var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite) {
+var _getSamplePixel = function (texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue) {
   if(bTexFiltering){
-    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite);
+    return _getSamplePixelBilinear(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue);
   }
   else {
-    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite);
+    return _getSamplePixelDirect(texture, x, y, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistance, isSprite, fLightValue);
   }
 }
 
@@ -644,4 +655,26 @@ function bakeLighting () {
 
   console.log(fLightMap);
 
+}
+
+
+
+
+
+function getLightingValue (wallX, wallY) {
+  var oAllLights = oLevel.lights;
+
+  var finalLightValue = 0;
+
+  for (const key in oAllLights) {
+    var oCurrentLight = oAllLights[key];
+
+    fTestDistanceToLight = Math.sqrt(
+      Math.pow(oCurrentLight.x - wallX, 2) +
+      Math.pow(oCurrentLight.y - wallY, 2)
+    );
+    finalLightValue += fTestDistanceToLight * oCurrentLight.b;
+  }
+  // finalLightValue = Math.min(30, finalLightValue);
+  return finalLightValue;
 }

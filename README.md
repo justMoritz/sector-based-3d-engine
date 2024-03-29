@@ -62,6 +62,11 @@ First iteration will be baked lighting
   - Probably by passing it to the get Sample Pixel function 
 
 
+Alternatively, we could go it in real time by:
+- casting a ray from where the wall was hit to the light source
+- and figure out the length, that's how dark that pixel is
+
+
 
 All of the below is outdated, I'll write up some docs sometime.
 

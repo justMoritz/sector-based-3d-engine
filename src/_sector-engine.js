@@ -146,7 +146,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation(i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector){
+  function drawSectorInformation(i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -183,7 +183,7 @@ var gameEngineJS = (function () {
       // Draw Walls
       else if (j > nCeiling && j <= nFloor) {
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
-        sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall);
+        sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall, false, fLightValue);
       }
 
       // Draw Floor
@@ -286,6 +286,9 @@ var gameEngineJS = (function () {
 
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
+
+          // get approximate lighting value
+          fLightValue = getLightingValue(intersection.x, intersection.y);
           
           // Wall Type (texture)
           sWallType = currentWall[4];
@@ -360,7 +363,7 @@ var gameEngineJS = (function () {
                 nNextSectorCeiling,
                 nNextSectorFloor,
                 currentSector,
-                
+                fLightValue,
               );
               // for the next iteration of non-portal walls seen through this window.
               nDrawStart = newStartAndEnd[0];
@@ -392,7 +395,8 @@ var gameEngineJS = (function () {
               nDrawEnd,
               false,
               false,
-              currentSector
+              currentSector,
+              fLightValue
             );
 
           } // end non-portal/portal found
@@ -442,7 +446,12 @@ var gameEngineJS = (function () {
   var main = function ( isEditor ) {
     _gameSettingsInit();
     var gameTimer = 0;
-    gameRun = setInterval(gameLoop, 33);
+    
+    if( DEBUGMODE ){
+      gameLoop()
+    }else{
+      gameRun = setInterval(gameLoop, 33);
+    }
 
     function gameLoop() {
       gameTimer++
