@@ -157,9 +157,9 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
       console.log(lightShade);
     }
   }
-  colorR *= shadingFactor * lightShade;
-  colorG *= shadingFactor * lightShade;
-  colorB *= shadingFactor * lightShade;
+  colorR *= shadingFactor + lightShade;
+  colorG *= shadingFactor + lightShade;
+  colorB *= shadingFactor + lightShade;
 
   // Rounding and return color components
   // var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
