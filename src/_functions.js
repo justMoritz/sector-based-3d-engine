@@ -318,33 +318,9 @@ function normalizeValue(value, min, max) {
 }
 
 
-
-// function getLightingValue (wallX, wallY) {
-//   var oAllLights = oLevel.lights;
-
-//   var finalLightValue = 0;
-
-//   for (const key in oAllLights) {
-//     var oCurrentLight = oAllLights[key];
-
-//     fTestDistanceToLight = Math.sqrt(
-//       Math.pow(oCurrentLight.x - wallX, 2) +
-//       Math.pow(oCurrentLight.y - wallY, 2)
-//     );
-//     // var currentLightValue = fTestDistanceToLight / oCurrentLight.b;
-//     var currentLightValue = normalizeValue(fTestDistanceToLight, 0, 7);
-
-    
-//   }
-//   // finalLightValue = Math.max(0, finalLightValue);
-
-//   return finalLightValue;
-// }
-
-
 function getLightingValue(wallX, wallY) {
   var oAllLights = oLevel.lights;
-  var maxLightValue = 1; 
+  var maxLightValue = 2; // maybe 1
   var lightRadius;
 
   var finalLightValue = 0;
@@ -362,7 +338,7 @@ function getLightingValue(wallX, wallY) {
       // Ignore if distance is greater than the light radius
       if (fTestDistanceToLight <= lightRadius) {
           var normalizedDistance = normalizeValue(fTestDistanceToLight, 0, lightRadius);
-          var currentLightValue = maxLightValue * (1 - normalizedDistance) * oCurrentLight.b; // Scale by brightness
+          var currentLightValue = maxLightValue * (1 - normalizedDistance) * oCurrentLight.b;
 
           finalLightValue += currentLightValue;
       }
