@@ -308,3 +308,66 @@ function prepareTextures( textures ){
 
   return textures;
 }
+
+
+function normalizeValue(value, min, max) {
+  if (min === max) {
+      throw new Error("min and max cannot be the same value");
+  }
+  return (value - min) / (max - min);
+}
+
+
+
+// function getLightingValue (wallX, wallY) {
+//   var oAllLights = oLevel.lights;
+
+//   var finalLightValue = 0;
+
+//   for (const key in oAllLights) {
+//     var oCurrentLight = oAllLights[key];
+
+//     fTestDistanceToLight = Math.sqrt(
+//       Math.pow(oCurrentLight.x - wallX, 2) +
+//       Math.pow(oCurrentLight.y - wallY, 2)
+//     );
+//     // var currentLightValue = fTestDistanceToLight / oCurrentLight.b;
+//     var currentLightValue = normalizeValue(fTestDistanceToLight, 0, 7);
+
+    
+//   }
+//   // finalLightValue = Math.max(0, finalLightValue);
+
+//   return finalLightValue;
+// }
+
+
+function getLightingValue(wallX, wallY) {
+  var oAllLights = oLevel.lights;
+  var maxLightValue = 255; 
+  var lightRadius = 7; 
+
+  var finalLightValue = 0;
+
+  for (const key in oAllLights) {
+      var oCurrentLight = oAllLights[key];
+
+      var fTestDistanceToLight = Math.sqrt(
+          Math.pow(oCurrentLight.x - wallX, 2) +
+          Math.pow(oCurrentLight.y - wallY, 2)
+      );
+
+      // If the distance is greater than the light radius, it doesn't contribute
+      if (fTestDistanceToLight <= lightRadius) {
+          var normalizedDistance = normalizeValue(fTestDistanceToLight, 0, lightRadius);
+          var currentLightValue = maxLightValue * (1 - normalizedDistance) * oCurrentLight.b; // Scale by brightness
+
+          finalLightValue += currentLightValue;
+      }
+  }
+
+  // Clamp final light value to maxLightValue
+  finalLightValue = Math.min(finalLightValue, maxLightValue);
+
+  return finalLightValue;
+}

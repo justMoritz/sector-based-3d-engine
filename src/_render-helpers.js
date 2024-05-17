@@ -86,9 +86,6 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var offsetY = fSampleYOffset || 0;
   var depthValue = fDistance || 1;
 
- 
-
-
   // Actual sample point
   x = (scaleFactorX * x + offsetX) % 1;
   y = (scaleFactorY * y + offsetY) % 1;
@@ -144,12 +141,14 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Adding shading based on depth Value
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
+  var shadingFactor = 1;
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined"){
     // shadingFactor = 1;
 
-    lightShade = 1 - fLightValue / 4
+    // lightShade = 1 - fLightValue;
+    lightShade = fLightValue / 1;
     
     
     if(DEBUGMODE){
@@ -157,9 +156,9 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
       console.log(lightShade);
     }
   }
-  colorR *= shadingFactor + lightShade;
-  colorG *= shadingFactor + lightShade;
-  colorB *= shadingFactor + lightShade;
+  colorR = lightShade;
+  colorG = lightShade;
+  colorB = lightShade;
 
   // Rounding and return color components
   // var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
@@ -611,30 +610,10 @@ function bakeLighting () {
     } // end rays
   } // end lights
 
-  console.log(fLightMap);
+  // console.log(fLightMap);
 
 }
 
 
 
 
-
-function getLightingValue (wallX, wallY) {
-  var oAllLights = oLevel.lights;
-
-  var finalLightValue = 0;
-
-  for (const key in oAllLights) {
-    var oCurrentLight = oAllLights[key];
-
-    fTestDistanceToLight = Math.sqrt(
-      Math.pow(oCurrentLight.x - wallX, 2) +
-      Math.pow(oCurrentLight.y - wallY, 2)
-    );
-    var currentLightValue = fTestDistanceToLight / oCurrentLight.b;
-    finalLightValue += currentLightValue;
-  }
-  // finalLightValue = Math.max(0, finalLightValue);
-
-  return finalLightValue;
-}
