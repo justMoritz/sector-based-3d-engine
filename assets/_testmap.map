@@ -9,7 +9,7 @@ var _testmap =
     "fPlayerA": 0.15,
     "fPlayerH": 0,
     "startingSector": 1,
-    "baseLight": 0.25,
+    "baseLight": 0.0,
     "lights":{
       "0a": {
         "x": 3,
