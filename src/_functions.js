@@ -344,20 +344,22 @@ function normalizeValue(value, min, max) {
 
 function getLightingValue(wallX, wallY) {
   var oAllLights = oLevel.lights;
-  var maxLightValue = 255; 
-  var lightRadius = 7; 
+  var maxLightValue = 1; 
+  var lightRadius;
 
   var finalLightValue = 0;
 
+  // Loops through all lights to test how much of the each light contributes to the final wall pixel's lightness value
   for (const key in oAllLights) {
       var oCurrentLight = oAllLights[key];
+      lightRadius = oCurrentLight.r;
 
       var fTestDistanceToLight = Math.sqrt(
           Math.pow(oCurrentLight.x - wallX, 2) +
           Math.pow(oCurrentLight.y - wallY, 2)
       );
 
-      // If the distance is greater than the light radius, it doesn't contribute
+      // Ignore if distance is greater than the light radius
       if (fTestDistanceToLight <= lightRadius) {
           var normalizedDistance = normalizeValue(fTestDistanceToLight, 0, lightRadius);
           var currentLightValue = maxLightValue * (1 - normalizedDistance) * oCurrentLight.b; // Scale by brightness
