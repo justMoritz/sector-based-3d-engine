@@ -144,8 +144,9 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined"){
-    lightShade = fLightValue;
+    lightShade = fLightValue + oLevel.baseLight;
   }
+
   colorR *= lightShade * shadingFactor;
   colorG *= lightShade * shadingFactor;
   colorB *= lightShade * shadingFactor;
@@ -227,7 +228,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined"){
-    lightShade = fLightValue;
+    lightShade = fLightValue + oLevel.baseLight;
   }
 
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);

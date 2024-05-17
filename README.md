@@ -17,6 +17,13 @@ And so much more! The limits are endless!
 
 ## Current TODO: list:
 
+
+- Lighting is working
+  - Colored lighting? I know, getting cocky
+  - Add lighting too editor
+  - Add provision to have baseline lighting
+
+
 - ✅ Floor texture:
   - ✅ Fix Looking up and down
   - ✅ Fix sector height change
