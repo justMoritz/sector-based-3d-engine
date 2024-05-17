@@ -141,24 +141,14 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Adding shading based on depth Value
   // var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
-  var shadingFactor = 1;
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined"){
-    // shadingFactor = 1;
-
-    // lightShade = 1 - fLightValue;
     lightShade = fLightValue;
-    
-    
-    if(DEBUGMODE){
-      console.log(fLightValue);
-      console.log(lightShade);
-    }
   }
-  colorR *= lightShade;
-  colorG *= lightShade;
-  colorB *= lightShade;
+  colorR *= lightShade * shadingFactor;
+  colorG *= lightShade * shadingFactor;
+  colorB *= lightShade * shadingFactor;
 
   // Rounding and return color components
   // var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
@@ -235,10 +225,15 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   currentPixel = texpixels[samplePosition];
   currentColorPixel = currentPixel || [0, 0, 0]; 
 
+  var lightShade = 1;
+  if(typeof fLightValue !== "undefined"){
+    lightShade = fLightValue;
+  }
+
   var shadingFactor = Math.max(0.5, 1 - depthValue / fDepth);
-  colorR = currentColorPixel[0] * shadingFactor;
-  colorG = currentColorPixel[1] * shadingFactor;
-  colorB = currentColorPixel[2] * shadingFactor;
+  colorR = currentColorPixel[0] * shadingFactor * lightShade;
+  colorG = currentColorPixel[1] * shadingFactor * lightShade;
+  colorB = currentColorPixel[2] * shadingFactor * lightShade;
 
   // return currentColorPixel;
   var finalColor = [~~(colorR), ~~(colorG), ~~(colorB)];
