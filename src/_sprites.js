@@ -95,6 +95,7 @@ function _sortSpriteList(b, a) {
  * Sorts the Sprite list based on distance from the player
  */
 var _updateSpriteBuffer = function () {
+  if( EDITMODE ){ return; }
   // calculates the distance to the player
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
@@ -127,6 +128,8 @@ var _updateSpriteBuffer = function () {
 
 
 function _drawSpritesNew (i) {
+  if( EDITMODE ){ return; }
+
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];

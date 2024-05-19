@@ -1,5 +1,5 @@
-var lightRadius = 3;
-var lightbrightness = 0.5;
+var lightRadius = 13;
+var lightbrightness = 0.25;
 
 var _testmap = 
 {
@@ -9,7 +9,7 @@ var _testmap =
     "fPlayerA": 0.15,
     "fPlayerH": 0,
     "startingSector": 1,
-    "baseLight": 0.5,
+    "baseLight": 0.1,
     "lights":{
       "0a": {
         "x": 3,

@@ -447,6 +447,7 @@ var gameEngineJS = (function () {
     _gameSettingsInit();
     var gameTimer = 0;
     
+    // TODO: Why?
     if( DEBUGMODE ){
       gameLoop()
     }else{
@@ -467,7 +468,7 @@ var gameEngineJS = (function () {
       _moveHelpers.move();
       _moveHelpers.playerHeight();
 
-      if(bDrawSrpites) _updateSpriteBuffer();
+      _updateSpriteBuffer();
 
       _moveHelpers.playerSectorCheck();
 
@@ -511,7 +512,7 @@ var gameEngineJS = (function () {
         // checks the current sector, and potentially updates the sector the player might be in
         checkSectors(sPlayerSector, i);
 
-        if(bDrawSrpites) _drawSpritesNew(i);
+        _drawSpritesNew(i);
 
       } // end column loop
 

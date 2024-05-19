@@ -35,7 +35,6 @@ var nLookLimit = 10;
 
 var bUseSkew = true;
 var bDrawRGB = false;
-var bDrawSrpites = true;
 var bTexFiltering = true;
 
 var nDrawWidth = nScreenWidth;
@@ -113,3 +112,7 @@ skewValues[2] = 6;
 skewValues[3] = 3;
 skewValues[4] = 2;
 skewValues[5] = 1;
+
+
+DEBUGMODE = false;
+EDITMODE  = true;

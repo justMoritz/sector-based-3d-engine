@@ -34,7 +34,6 @@ var fFOV_div2 = fFOV / 2;
 var nLookLimit = 10;
 
 var bUseSkew = true;
-var bDrawSrpites = true;
 var bTexFiltering = true;
 
 var nDrawWidth = nScreenWidth;
@@ -94,3 +93,4 @@ var screen = [];
 
 
 DEBUGMODE = false;
+EDITMODE  = false;

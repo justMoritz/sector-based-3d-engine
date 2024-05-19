@@ -137,9 +137,6 @@ var _moveHelpers = {
       fPlayerH = 0;
     }
     nSectorCeilingHeight = input.ceil;
-    // console.log(`nSectorCeilingHeight: ${nSectorCeilingHeight}`)
-    // console.log(`nSectorFloorHeight = ${nSectorFloorHeight} `);
-    // console.log(`----`)
   },
 
 
@@ -202,7 +199,7 @@ var _moveHelpers = {
   keylisten: function () {
     window.onkeydown = function (e) {
 
-      // TODO: reimplement
+      // TODO: reimplement pause
       // if (e.which == 80) {
       //   // p
       //   if (bPaused) {
@@ -223,29 +220,41 @@ var _moveHelpers = {
           bJumping = true;
         }
       }
-      if (e.which == 65) {
-        // a
+      if ((e.which == 65 && !EDITMODE) || e.which == 188) {
+        // a or ,
         bStrafeLeft = true;
       }
-      if (e.which == 68) {
-        // d
+      if ((e.which == 68 && !EDITMODE) || e.which == 190) {
+        // d or .
         bStrafeRight = true;
       }
-      if (e.which == 81 || e.which == 37) {
+      if ((e.which == 81 && !EDITMODE) || e.which == 37) {
         // q or left
         bTurnLeft = true;
       }
-      if (e.which == 69 || e.which == 39) {
+      if ((e.which == 69 && !EDITMODE) || e.which == 39) {
         // e or right
         bTurnRight = true;
       }
-      if (e.which == 87 || e.which == 38) {
+      if ((e.which == 87 && !EDITMODE) || e.which == 38) {
         // w or up
         bMoveForward = true;
       }
-      if (e.which == 83 || e.which == 40) {
+      if ((e.which == 83 && !EDITMODE) || e.which == 40) {
         // s or down
         bMoveBackward = true;
+      }
+      if (e.which == 222 && EDITMODE) {
+        // '
+        fLooktimer++;
+      }
+      if (e.which == 191 && EDITMODE) {
+        // /
+        fLooktimer--;
+      }
+      if (e.which == 70 && e.altKey) {
+        // f + alt
+        bTexFiltering = !bTexFiltering;
       }
     };
 
@@ -259,27 +268,27 @@ var _moveHelpers = {
         bJumping = false;
         bFalling = true;
       }
-      if (e.which == 65) {
-        // a
+      if ((e.which == 65 && !EDITMODE) || e.which == 188) {
+        // a or ,
         bStrafeLeft = false;
       }
-      if (e.which == 68) {
-        // d
+      if ((e.which == 68 && !EDITMODE) || e.which == 190) {
+        // d or .
         bStrafeRight = false;
       }
-      if (e.which == 81 || e.which == 37) {
+      if ((e.which == 81 && !EDITMODE) || e.which == 37) {
         // q or left
         bTurnLeft = false;
       }
-      if (e.which == 69 || e.which == 39) {
+      if ((e.which == 69 && !EDITMODE) || e.which == 39) {
         // e or right
         bTurnRight = false;
       }
-      if (e.which == 87 || e.which == 38) {
+      if ((e.which == 87 && !EDITMODE) || e.which == 38) {
         // w or up
         bMoveForward = false;
       }
-      if (e.which == 83 || e.which == 40) {
+      if ((e.which == 83 && !EDITMODE) || e.which == 40) {
         // s or down
         bMoveBackward = false;
       }
