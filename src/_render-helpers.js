@@ -35,7 +35,6 @@ var _rh = {
 
 
    
-
 /**
  * 
  * Function gets the pixel to be sampled from the sprite WITH bilinear filtering
@@ -126,7 +125,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var bColor11Black = color11.every(element => element === 0);
 
     if (containsBlackColor(bColor00Black, bColor01Black, bColor10Black, bColor11Black)) { 
-      if ( brighestColor(colorR, colorG, colorB) < 80) { 
+      if ( brighestColor(colorR, colorG, colorB) < 75) { 
         colorR = 0;
         colorG = 0;
         colorB = 0;
@@ -143,7 +142,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
 
   var lightShade = 1;
-  if(typeof fLightValue !== "undefined"){
+  if(typeof fLightValue !== "undefined" && !isSprite){
     lightShade = fLightValue + oLevel.baseLight;
   }
 
