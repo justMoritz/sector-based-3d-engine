@@ -3,6 +3,24 @@ var lightbrightness = 0.25;
 
 var _testmap = 
 {
+    "functions": {
+        "1": {
+            "property": "lights.ib2.r",
+            "from": "0",
+            "to": "1",
+            "frequency": "10",
+            "startTrigger": false,
+            "endTrigger": false
+        },
+        "2": {
+            "property": "oLevel.map[1].ceilTex",
+            "from": "bg",
+            "to": "Y",
+            "frequency": "20",
+            "startTrigger": false,
+            "endTrigger": false
+        }
+    },
     "fDepth": 50,
     "fPlayerX": 4.7,
     "fPlayerY": 6.5,
