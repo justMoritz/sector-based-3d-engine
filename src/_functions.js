@@ -375,18 +375,18 @@ function _setNestedProperty(path, value) {
 
   // All global vars are part of the `window` object
   var tempTarget = window;
+  var finalPart;
 
-  // loops through each step along the path, minus the last one, the one we are interested in.
-  // We are also saving the final part of the path (the one we want to set)
+  // Iterate over each step of the path, minus the last one (the one we want to set)
   for(var ti = 0; ti < parts.length - 1; ti++ ){
-
     var currentPart = parts[ti];
     tempTarget = tempTarget[currentPart]
-    var test = parts[ti+1];
+    finalPart = parts[ti+1];
   }
 
-  // Address the final part, and set the global variable to the passed value.
-  tempTarget[test] = value
+  // Once we have stepped through the entire object (sans the last part)
+  // we're addressing the final part, and set it to the passed value.
+  tempTarget[finalPart] = value
 }
 
 
