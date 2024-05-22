@@ -355,7 +355,7 @@ function getLightingValue(wallX, wallY) {
 /**
  * Catches something like oLevel.map[1].ceilTex,
  * and turns it into oLevel.map.1.ceilTex
- **/ 
+ */ 
 function _convertToDotNotation(path) {
   return path.replace(/\[(\d+)\]/g, '.$1');
 }
@@ -390,7 +390,9 @@ function _setNestedProperty(path, value) {
 }
 
 
-// Runs world function every frame, and executes them every nth frame
+/**
+ * Runs world function every frame, and executes them every nth frame
+ */ 
 function _worldFunctions(gameTimer){
 
   for (var wf in oLevel.functions) {
