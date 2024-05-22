@@ -472,6 +472,8 @@ var gameEngineJS = (function () {
 
       _moveHelpers.playerSectorCheck();
 
+      _worldFunctions(gameTimer);
+      
       // normalize player angle
       if (fPlayerA < 0) {
         fPlayerA += PIx2;

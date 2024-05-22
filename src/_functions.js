@@ -349,3 +349,63 @@ function getLightingValue(wallX, wallY) {
 
   return finalLightValue;
 }
+
+
+
+/**
+ * Catches something like oLevel.map[1].ceilTex,
+ * and turns it into oLevel.map.1.ceilTex
+ **/ 
+function _convertToDotNotation(path) {
+  return path.replace(/\[(\d+)\]/g, '.$1');
+}
+
+
+/**
+ * Function to set Global variables by path name. Usage:
+ * 
+ * @param {string} Something like `oLevel.lights.ib2.b`. Expects entire path in DOT NOTATION!
+ * @param {string} Finale value
+ */
+function _setNestedProperty(path, value) {
+
+  // Attempt to catch any issues with the path, and split into its componenets
+  path = _convertToDotNotation(path);
+  var parts = path.split('.');
+
+  // All global vars are part of the `window` object
+  var tempTarget = window;
+
+  // loops through each step along the path, minus the last one, the one we are interested in.
+  // We are also saving the final part of the path (the one we want to set)
+  for(var ti = 0; ti < parts.length - 1; ti++ ){
+
+    var currentPart = parts[ti];
+    tempTarget = tempTarget[currentPart]
+    var test = parts[ti+1];
+  }
+
+  // Address the final part, and set the global variable to the passed value.
+  tempTarget[test] = value
+}
+
+
+// Runs world function every frame, and executes them every nth frame
+function _worldFunctions(gameTimer){
+
+  for (var wf in oLevel.functions) {
+    var currentWorldFunction = oLevel.functions[wf]
+
+    if( gameTimer % Number(currentWorldFunction.frequency) === 0 ){
+      currentWorldFunction.counter++;
+
+      // This counter is in case there is a to-and from we need to alternate between
+      if(currentWorldFunction.counter % 2 === 0){
+        _setNestedProperty(currentWorldFunction.property, currentWorldFunction.to);
+      }else{
+        _setNestedProperty(currentWorldFunction.property, currentWorldFunction.from);
+      }
+    }
+  }
+
+}

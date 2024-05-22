@@ -5,20 +5,31 @@ var _testmap =
 {
     "functions": {
         "1": {
-            "property": "lights.ib2.r",
-            "from": "0",
-            "to": "1",
-            "frequency": "10",
+            "property": "oLevel.lights.ib1.b",
+            "from": "-0.25",
+            "to": "0.5",
+            "frequency": "4",
             "startTrigger": false,
-            "endTrigger": false
+            "endTrigger": false,
+            "counter": 0
         },
         "2": {
-            "property": "oLevel.map[1].ceilTex",
+            "property": "oLevel.map.1.ceilTex",
             "from": "bg",
             "to": "Y",
             "frequency": "20",
             "startTrigger": false,
-            "endTrigger": false
+            "endTrigger": false,
+            "counter": 0
+        },
+        "3": {
+            "property": "oLevel.map.6.walls.1.4",
+            "from": "Y",
+            "to": ",",
+            "frequency": "10",
+            "startTrigger": false,
+            "endTrigger": false,
+            "counter": 0
         }
     },
     "fDepth": 50,
