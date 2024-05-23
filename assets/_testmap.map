@@ -13,20 +13,29 @@ var _testmap =
             "endTrigger": false,
             "counter": 0
         },
-        "2": {
-            "property": "oLevel.map.1.ceilTex",
-            "from": "bg",
-            "to": "Y",
-            "frequency": "20",
+        // "2": {
+        //     "property": "oLevel.map.1.ceilTex",
+        //     "from": "bg",
+        //     "to": "Y",
+        //     "frequency": "20",
+        //     "startTrigger": false,
+        //     "endTrigger": false,
+        //     "counter": 0
+        // },
+        "3a": {
+            "property": "oLevel.map.6.walls.1.4",
+            "from": "Y",
+            "to": ",",
+            "frequency": "5",
             "startTrigger": false,
             "endTrigger": false,
             "counter": 0
         },
-        "3": {
+        "3b": {
             "property": "oLevel.map.6.walls.1.4",
-            "from": "Y",
-            "to": ",",
-            "frequency": "10",
+            "from": "U",
+            "to": "#",
+            "frequency": "15",
             "startTrigger": false,
             "endTrigger": false,
             "counter": 0
@@ -134,11 +143,11 @@ var _testmap =
             "name": "P"
         },
         "2": {
-            "x": 16,
-            "y": 8,
+            "x": 8,
+            "y": 7,
             "r": -0.2,
             "h": 0,
-            "name": "P"
+            "name": "O"
         }
     },
     "map": [{
