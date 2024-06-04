@@ -396,16 +396,41 @@ function _setNestedProperty(path, value) {
 function _worldFunctions(gameTimer){
 
   for (var wf in oLevel.functions) {
-    var currentWorldFunction = oLevel.functions[wf]
+    var currentWorldFunction = oLevel.functions[wf];
 
-    if( gameTimer % Number(currentWorldFunction.frequency) === 0 ){
+    // TODO: Does not work yet
+    if( currentWorldFunction.speed ){
+
       currentWorldFunction.counter++;
+      var tempSetToValue = currentWorldFunction.from;
 
-      // This counter is in case there is a to-and from we need to alternate between
-      if(currentWorldFunction.counter % 2 === 0){
-        _setNestedProperty(currentWorldFunction.property, currentWorldFunction.to);
+      if( currentWorldFunction.counter * currentWorldFunction.speed < currentWorldFunction.to ){
+        tempSetToValue = tempSetToValue + currentWorldFunction.counter * currentWorldFunction.speed;
       }else{
-        _setNestedProperty(currentWorldFunction.property, currentWorldFunction.from);
+        tempSetToValue = tempSetToValue - currentWorldFunction.counter * currentWorldFunction.speed;
+        // console.log(tempSetToValue)
+        // console.log(currentWorldFunction.to)
+      }
+      
+
+      // tempSetToValue = currentWorldFunction.counter + currentWorldFunction.from ;
+      _setNestedProperty(currentWorldFunction.property, tempSetToValue);
+
+    }
+
+    else{
+
+      if( gameTimer % Number(currentWorldFunction.frequency) === 0 ){
+        currentWorldFunction.counter++;
+
+        // This counter is in case there is a to-and from we need to alternate between
+        if(currentWorldFunction.counter % 2 === 0){
+
+          _setNestedProperty(currentWorldFunction.property, currentWorldFunction.to);
+
+        }else{
+          _setNestedProperty(currentWorldFunction.property, currentWorldFunction.from);
+        }
       }
     }
   }

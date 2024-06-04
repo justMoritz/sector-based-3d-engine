@@ -14,14 +14,24 @@ var _testmap =
             "counter": 0
         },
         // "2": {
-        //     "property": "oLevel.map.1.ceilTex",
-        //     "from": "bg",
-        //     "to": "Y",
+        //     "property": "oLevel.map.2.ceil",
+        //     "from": 6,
+        //     "to": 1.2,
         //     "frequency": "20",
+        //     "speed": 0.1,
         //     "startTrigger": false,
         //     "endTrigger": false,
         //     "counter": 0
         // },
+        "2b": {
+            "property": "oLevel.map.38.floor",
+            "from": 0.8,
+            "to": 1.2,
+            "frequency": "20",
+            "startTrigger": false,
+            "endTrigger": false,
+            "counter": 0
+        },
         "3a": {
             "property": "oLevel.map.6.walls.1.4",
             "from": "Y",

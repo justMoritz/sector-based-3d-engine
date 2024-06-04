@@ -119,7 +119,8 @@ var gameEngineJS = (function () {
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
 
-      bakeLighting();
+      // Not currently used, but might be useful if not using real time lighting
+      // bakeLighting();
       
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
