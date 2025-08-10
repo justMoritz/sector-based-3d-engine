@@ -392,7 +392,7 @@ var _fPrepareFrame = function (oInput, eTarget) {
 };
 
 
-var _drawToCanvas = function ( pixels ) {
+var _drawToCanvas24bit = function ( pixels ) {
 
   eCanvas.width = nDrawWidth;
   eCanvas.height = nScreenHeight;
@@ -413,6 +413,125 @@ var _drawToCanvas = function ( pixels ) {
   // Use putImageData to draw the pixels onto the canvas
   cCtx.putImageData(imageData, 0, 0);
 }
+
+
+// Precompute color expansion tables
+const expand4bit = new Uint8Array(16);
+const expand3bit = new Uint8Array(8);
+const expand2bit = new Uint8Array(4);
+for (let i = 0; i < 16; i++) { expand4bit[i] = (i << 4) | i; }
+for (let i = 0; i < 8; i++) expand3bit[i] = (i << 5) | (i << 2) | (i >> 1);
+for (let i = 0; i < 4; i++) expand2bit[i] = (i << 6) | (i << 4) | (i << 2) | i;
+
+
+
+var _drawToCanvas = function (pixels) {
+  eCanvas.width = nDrawWidth;
+  eCanvas.height = nScreenHeight;
+
+  var imageData = cCtx.createImageData(nDrawWidth, nScreenHeight);
+  var width = nDrawWidth;
+  var height = nScreenHeight;
+
+  // Deep copy pixels so we can dither in-place
+  var ditheredPixels = pixels.map(color => [...color]);
+
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
+      var idx = y * width + x;
+      var oldColor = ditheredPixels[idx];
+      var newColor = quantizeColor(oldColor);
+
+      // Write quantized color to canvas buffer
+      imageData.data[idx * 4]     = newColor[0];
+      imageData.data[idx * 4 + 1] = newColor[1];
+      imageData.data[idx * 4 + 2] = newColor[2];
+      imageData.data[idx * 4 + 3] = 255;
+
+      // Error between original and quantized
+      var errR = oldColor[0] - newColor[0];
+      var errG = oldColor[1] - newColor[1];
+      var errB = oldColor[2] - newColor[2];
+
+      // Spread the error to neighboring pixels (Floyd–Steinberg)
+      spreadError(x + 1, y    , errR, errG, errB, 7 / 16);
+      spreadError(x - 1, y + 1, errR, errG, errB, 3 / 16);
+      spreadError(x    , y + 1, errR, errG, errB, 5 / 16);
+      spreadError(x + 1, y + 1, errR, errG, errB, 1 / 16);
+    }
+  }
+
+  cCtx.putImageData(imageData, 0, 0);
+
+  // Quantize to 12 bit
+  function quantizeColor_(color) {
+    return [
+      expand4bit[color[0] >> 4],
+      expand4bit[color[1] >> 4],
+      expand4bit[color[2] >> 4]
+    ];
+  }
+
+  // Quantize in the middle
+  function quantizeColor(color) {
+    const r = color[0] >> 5; // 3 bits
+    const g = color[1] >> 4; // 4 bits
+    const b = color[2] >> 5; // 3 bits
+
+    return [
+      expand3bit[r],
+      expand4bit[g],
+      expand3bit[b]
+    ];
+  }
+
+  // Quantize to 8 bit
+  function quantizeColor_(color) {
+    var r = color[0] >> 5; // 3 bits
+    var g = color[1] >> 5; // 3 bits
+    var b = color[2] >> 6; // 2 bits
+
+    return [
+      expand3bit[r],
+      expand3bit[g],
+      expand2bit[b]
+    ];
+  }
+
+  // Quantize to 8 bit
+  function quantizeColor_(color) {
+    var r = color[0] >> 5; // 3 bits
+    var g = color[1] >> 5; // 3 bits
+    var b = color[2] >> 6; // 2 bits
+
+    return [
+      expand3bit[r],
+      expand3bit[g],
+      expand2bit[b]
+    ];
+  }
+
+
+
+
+  function spreadError(x, y, errR, errG, errB, factor) {
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+    var i = y * width + x;
+    ditheredPixels[i][0] = clamp(ditheredPixels[i][0] + errR * factor);
+    ditheredPixels[i][1] = clamp(ditheredPixels[i][1] + errG * factor);
+    ditheredPixels[i][2] = clamp(ditheredPixels[i][2] + errB * factor);
+  }
+
+  function clamp(val) {
+    return val < 0 ? 0 : val > 255 ? 255 : val | 0;
+    return Math.max(0, Math.min(255, val));
+  }
+};
+
+
+
+
+
 
 
 // Function to find the closest color in the palette
