@@ -314,6 +314,12 @@
         #seconddisplay:hover{
             transform: scale(3);
         }
+        #seconddisplay.this--large{
+            transform: scale(3);
+            outline: 2px solid white;
+            border-radius: 2px;
+            box-shadow: 1px 10px rgba(0,0,0,0.25);
+        }
         #touchinputmove,
         #touchinputlook {
             height: 100%;
@@ -542,6 +548,14 @@
   </div>
   <script>
     // gameEngineJS.initEditor();
+
+    // toggle preview larg
+    document.querySelector('#seconddisplay').addEventListener('click', ()=>{
+      console.log('click!!!');
+      document.querySelector('#seconddisplay').classList.toggle('this--large');
+    });
+
+
   </script>
 
 </body>

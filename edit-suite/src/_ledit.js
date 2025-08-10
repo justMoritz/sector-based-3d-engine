@@ -725,8 +725,7 @@ var ledit = (function(){
         gameEngineJS.stop();
       }
     });
-
-
+    
 
     // Initial draw
     _lhelpers.drawGrid();
