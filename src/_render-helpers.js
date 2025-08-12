@@ -453,7 +453,7 @@ var _drawToCanvas = function (pixels) {
       var errG = oldColor[1] - newColor[1];
       var errB = oldColor[2] - newColor[2];
 
-      // Spread the error to neighboring pixels (Floyd–Steinberg)
+      // Floyd–Steinberg dithering
       spreadError(x + 1, y    , errR, errG, errB, 7 / 16);
       spreadError(x - 1, y + 1, errR, errG, errB, 3 / 16);
       spreadError(x    , y + 1, errR, errG, errB, 5 / 16);

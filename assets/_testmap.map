@@ -4,15 +4,15 @@ var lightbrightness = 0.25;
 var _testmap = 
 {
     "functions": {
-        // "1": {
-        //     "property": "oLevel.lights.ib1.b",
-        //     "from": "-0.25",
-        //     "to": "0.5",
-        //     "frequency": "4",
-        //     "startTrigger": false,
-        //     "endTrigger": false,
-        //     "counter": 0
-        // },
+        "1": {
+            "property": "oLevel.lights.ib1.b",
+            "from": "-0.25",
+            "to": "0.5",
+            "frequency": "4",
+            "startTrigger": false,
+            "endTrigger": false,
+            "counter": 0
+        },
         // "2b": {
         //     "property": "oLevel.map.38.ceil",
         //     "from": 2.4,
