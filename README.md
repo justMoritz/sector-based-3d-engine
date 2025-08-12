@@ -21,7 +21,7 @@ And so much more! The limits are endless!
 - Lighting is working
   - Colored lighting? I know, getting cocky
   - Add lighting too editor
-  - Add provision to have baseline lighting
+  - ✅ Add provision to have baseline lighting
 
 
 - ✅ Floor texture:
@@ -45,14 +45,15 @@ And so much more! The limits are endless!
 - Wall-collision detection... it's bad
 - ✅ Build in Texture X and Y offset
 
-#### 👩🏼‍💻 Level Editor (TODO:)
+#### Level Editor (TODO:)
 **OH MY GOD THIS WAS SO MUCH WORK**
 - ✅ Refactor level file: No more sectorMeta, no more nested arrays for walls, single source of truth for all level data 
 
 ##### More Level Editor Things
-- 👩🏼‍💻 live-preview... this should be possible, just load the engine code in the editor. 
+- ✅ live-preview... this should be possible, just load the engine code in the editor. 
   - After some testing it looks like setting up a server and write to file. Actually this might be cleaner...
 - ❓ Build in sector texture scale
+- ❓ Better yet, world-coordinates texture mapping?
 
 
 ----
