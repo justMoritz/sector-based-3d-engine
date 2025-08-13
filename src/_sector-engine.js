@@ -419,7 +419,19 @@ var gameEngineJS = (function () {
 
   // Setup at Game start
   var _gameSettingsInit = function () {
-    if (bUseSkew){
+    if(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      console.log('hey');
+      nScreenWidth = 320;
+      // nScreenWidth = window.innerWidth/1.5;
+      nScreenHeight = 140;
+      nLookLimit = 5;
+      fFOV = PI___ / 2.25;
+      fFOV_div2 = fFOV / 2;
+      nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
+      nDrawWidth = nScreenWidth - nRemovePixels * 2;
+      fscreenHeightFactorFloor = nScreenHeight / 2;
+    }
+    else if (bUseSkew){
       nScreenWidth = 458;
       nScreenHeight = 220;
       nLookLimit = 8;
@@ -428,7 +440,7 @@ var gameEngineJS = (function () {
       nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
-      console.log(nDrawWidth)
+      console.log(nDrawWidth);
     }else{
       nScreenWidth = 320;
       nScreenHeight = 220;
@@ -439,6 +451,7 @@ var gameEngineJS = (function () {
       nRemovePixels = 0;
       fscreenHeightFactorFloor = nScreenHeight / 2;
     }
+
   };
 
   /**

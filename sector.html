@@ -5,15 +5,15 @@
   <title>3D Sector Engine</title>
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
 
-  <script id="constants" type="text/javascript" src="src/_constants.js"></script>
-  <script id="functions" type="text/javascript" src="src/_functions.js"></script>
-  <script id="spritesfunctions" type="text/javascript" src="src/_sprites.js"></script>
-  <script id="movehelpers" type="text/javascript" src="src/_move-helpers.js"></script>
-  <script id="renderhelpers" type="text/javascript" src="src/_render-helpers.js"></script>
-  <script id="textures" type="text/javascript" src="assets/textures.tex"></script>
-  <script id="sprites" type="text/javascript" src="assets/sprites.tex"></script>
-  <script id="gameEngine" type="text/javascript" src="src/_sector-engine.js?v=2"></script>
-  <script id="map" type="text/javascript" src="assets/_testmap.map"></script>
+  <script id="constants" type="text/javascript"          src="src/_constants.js?v=0.1.1"></script>
+  <script id="functions" type="text/javascript"          src="src/_functions.js?v=0.1.1"></script>
+  <script id="spritesfunctions" type="text/javascript"     src="src/_sprites.js?v=0.1.1"></script>
+  <script id="movehelpers" type="text/javascript"     src="src/_move-helpers.js?v=0.1.1"></script>
+  <script id="renderhelpers" type="text/javascript" src="src/_render-helpers.js?v=0.1.1"></script>
+  <script id="textures" type="text/javascript"         src="assets/textures.tex?v=0.1.1"></script>
+  <script id="sprites" type="text/javascript"           src="assets/sprites.tex?v=0.1.1"></script>
+  <script id="gameEngine" type="text/javascript"     src="src/_sector-engine.js?v=0.1.1"></script>
+  <script id="map" type="text/javascript"              src="assets/_testmap.map?v=0.1.1"></script>
 
   <style>
     body {
@@ -41,12 +41,8 @@
 
     #seconddisplay {
       position: absolute;
-      /* top: 20%; */
       transform: scale(3, 3);
       top: 5%;
-      /* transform: scale(2, 2); */
-      /* width: 80%; */
-      /* height: auto; */
       transform-origin: top left;
       left: 0;
       color: lightgreen;
@@ -56,6 +52,20 @@
       image-rendering: -o-crisp-edges;
       image-rendering: crisp-edges;
       -ms-interpolation-mode: nearest-neighbor; */
+    }
+    #seconddisplay.wowIphone {
+      width: 100vw;
+      height: auto;
+      transform: scale(1);
+    }
+    @media (orientation: landscape) {
+      #seconddisplay.wowIphone {
+        background: lightblue;
+        width: auto;
+        height: 100vh;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
 
     #touchinputmove,
@@ -82,6 +92,10 @@
 
     #debug {
       clear: both;
+      font-size: 2em; 
+      line-height: 2em;
+      position: absolute;
+      z-index: 10;
     }
 
     @media(max-width: 768px) {
@@ -114,7 +128,7 @@
 </head>
 
 <body>
-  <div id="debug" style="font-size: 2em; line-height: 2em;"></div>
+  <div id="debug"></div>
   <div id="game">
     <div id="display"></div>
 
@@ -125,6 +139,9 @@
     <canvas id="seconddisplay"></canvas>
     <div id="touchinputlook"></div>
     <div id="touchinputmove"></div>
+    <div id="hady">
+      <!-- helpers here, will draw -->
+    </div>
   </div>
 
   <br>
@@ -145,6 +162,20 @@
   <script>
     gameEngineJS.init();
   </script>
+
+<script>
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    const el = document.querySelector("#seconddisplay");
+    const el3 = document.querySelector("#handy");
+    if (el) {
+      el.classList.add('wowIphone');
+    }
+    if (el3) {
+      el.classList.add('wowIphone');
+    }
+  }
+  </script>
+  
 </body>
 
 </html>

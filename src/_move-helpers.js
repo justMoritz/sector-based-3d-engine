@@ -416,11 +416,26 @@ var _moveHelpers = {
       }
     });
 
+
+    // TODO: move
+    var nDoubleTapThreshold = 300;
+    var nLastTapTime = 0;
+
+
     // reset look
     eTouchLook.addEventListener("touchend", function () {
       _moveHelpers.oTouch.look.x = 0;
       _moveHelpers.oTouch.look.y = 0;
       _moveHelpers.oTouch.look.bFirstTouch = true;
+
+      // double-tap
+      var fNow = performance.now();
+      var nTapLength = fNow - nLastTapTime;
+      if (nTapLength < nDoubleTapThreshold && nTapLength > 0) {
+        bJumping = true;
+        setTimeout(() => { bJumping = false; }, 1000);
+      }
+      nLastTapTime = fNow;
     });
 
     // move (right hand of screen)
@@ -437,37 +452,24 @@ var _moveHelpers = {
 
       // first touch will be a huge difference, that"s why we only move after the first touch
       if (!_moveHelpers.oTouch.move.bFirstTouch) {
+        const fOrigX = fPlayerX;
+        const fOrigY = fPlayerY;
+      
         // walk
-        fPlayerX -=
-          (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-        fPlayerY +=
-          (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX +=
-            (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-          fPlayerY -=
-            (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-        }
-
+        let fNewPlayerX = fOrigX - (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+        let fNewPlayerY = fOrigY + (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+      
         // strafe
-        fPlayerX +=
-          (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-        fPlayerY +=
-          (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-
-        // converts coordinates into integer space and check if it is a wall (!.), if so, reverse
-        if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] != ".") {
-          _moveHelpers.checkExit();
-          fPlayerX -=
-            (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-          fPlayerY -=
-            (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+        fNewPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+        fNewPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+      
+        if (!_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY)) {
+          fPlayerX = fNewPlayerX;
+          fPlayerY = fNewPlayerY;
         }
       }
     });
+
 
     // reset move
     eTouchMove.addEventListener("touchend", function () {
@@ -477,6 +479,7 @@ var _moveHelpers = {
     });
   },
 
+  // TODO: reimplement
   checkExit: function () {
     // if we hit an exit
     if (map[~~fPlayerY * nMapWidth + ~~fPlayerX] == "X") {

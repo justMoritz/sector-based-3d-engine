@@ -559,14 +559,18 @@ function colorDistanceSquared(color1, color2) {
 }
 
 
+var _round2bitwise = function (input) {
+  return ((input * 100 + 0.5) << 0) / 100;
+}
 
 var _fDrawFrame = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
+  _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
+  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
   _drawToCanvas( screen );
 };
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
+  _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
