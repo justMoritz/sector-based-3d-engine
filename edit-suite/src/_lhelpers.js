@@ -238,6 +238,28 @@ _lhelpers = {
         ctx.stroke();
     }
 
+
+    // draw light gizmos
+    for (const id in lightsObj) {
+      const L = lightsObj[id];
+      const lightX = L.x * scale;
+      const lightY = L.y * scale;
+
+      // draw light position
+      ctx.beginPath();
+      ctx.arc(lightX, lightY, 6, 0, Math.PI * 2);
+      ctx.strokeStyle = '#f90';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // radius ring
+      ctx.beginPath();
+      ctx.arc(lightX, lightY, L.r * scale, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,0,0,0.1)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
     // Restore transformations
     ctx.restore();
 

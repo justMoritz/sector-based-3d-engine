@@ -498,10 +498,10 @@ var _drawToCanvas = function (pixels) {
     ];
   }
 
-  // Quantize to 8 bit
+  // Quantize to 8 bit, vaporwave
   function quantizeColor_(color) {
-    var r = color[0] >> 5; // 3 bits
-    var g = color[1] >> 5; // 3 bits
+    var r = color[0] >> 4; // 3 bits
+    var g = color[1] >> 4; // 3 bits
     var b = color[2] >> 6; // 2 bits
 
     return [

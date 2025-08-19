@@ -17,10 +17,14 @@ And so much more! The limits are endless!
 
 ## Current TODO: list:
 
+- Convert Textures to 255 indexed pallette (+transparent)
+- Add lighting too editor
+- Eat Pizza
+- Add Sprites list to editor
+
 
 - Lighting is working
   - Colored lighting? I know, getting cocky
-  - Add lighting too editor
   - ✅ Add provision to have baseline lighting
 
 

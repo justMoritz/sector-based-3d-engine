@@ -415,6 +415,62 @@ var ledit = (function(){
   };
 
 
+
+  /**
+   * Adding a new light 
+   */
+  var handleAddNewLight = function () {
+    const id = lightCounter;
+    currentLight = id;
+  
+    // Create new light object with defaults
+    lightsObj[id] = {
+      "x": 0,
+      "y": 0,
+      "b": 0.25,
+      "r": 12
+    };
+  
+    // Build the DOM element
+    const lightEl = document.createElement('div');
+    lightEl.className = 'sector-selector';
+    lightEl.dataset.id = id;
+
+    lightEl.innerHTML = lightsSelectorTemplate.replace(new RegExp("XXX", 'g'), id);
+  
+    // Add to the DOM
+    lightsList.appendChild(lightEl);
+  
+    // Attach input listeners
+    lightEl.querySelectorAll('input').forEach(input => {
+      const key = input.dataset.k;
+      input.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        if (!isNaN(val)) {
+          lightsObj[id][key] = val;
+          console.log(lightsObj);
+          _lhelpers.drawGrid();
+        }
+      });
+
+      // Also initialize value from current light object (optional redundancy)
+      input.value = lightsObj[id][key];
+    });
+
+  
+    // Delete button
+    lightEl.querySelector('[data-act="delete"]').addEventListener('click', () => {
+      delete lightsObj[id];
+      lightEl.remove();
+      _lhelpers.drawGrid(); // optional
+    });
+  
+    console.log(lightsObj);
+    lightCounter++;
+  };
+  
+
+
   /**
    * Remove Sectors
    */
@@ -515,6 +571,11 @@ var ledit = (function(){
     selectorlist = document.querySelector('#selectorlist');
     sectorAdd = document.querySelector('#sectorAdd');
 
+    
+    // sets up lights handling
+    lightsList = document.querySelector('#lightslist');
+    lightAdd = document.querySelector('#lightAdd');
+
 
     // Attach event listeners
     // window.addEventListener('wheel', _lhelpers.handleScroll, { passive: false });
@@ -567,6 +628,9 @@ var ledit = (function(){
       else if ( event.key === 'p' ){ // letter P
         document.querySelector('[data-mode="pan"]').click();
       }
+      else if ( event.key === 'l' ){ // letter P
+        document.querySelector('[data-mode="lights"]').click();
+      }
     });
 
 
@@ -612,6 +676,30 @@ var ledit = (function(){
         handleSelectSector(event);
       }
     });
+
+
+    // Add new Light
+    lightAdd.addEventListener('click', () => {
+      // Example: just log for now
+      console.log('Add new light at default position');
+      handleAddNewLight();
+    });
+    // Remove a given light
+    selectorlist.addEventListener('click', (event) => {
+      if (event.target.classList.contains('remove-sector')) {
+        console.log('remove light');
+        // handleRemoveLight(event);
+      }
+      else if (event.target.classList.contains('sector-selector')) {
+        console.log('select light');
+        // handleSelectLight(event);
+      }
+    });
+      // TODO:
+      // - Create new light object { id, x, y, b, r }
+      // - Add to a map or array
+      // - Call a `renderLightsList()` function to update the UI
+      // - Call _lhelpers.drawGrid() to re-render canvas
     
 
 

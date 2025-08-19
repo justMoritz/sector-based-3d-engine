@@ -16,17 +16,31 @@
         #gridCanvas {
             display: block;
             background-color: #f0f0f0;
+            /* margin-top: 3.5rem;
+            margin-left: 3rem; */
         }
-
-        .left-sidebar{
+        .left-sidebar1{
             position: absolute;
             left: 0;
             top: 0;
-            padding-top: 1rem;
+            padding-top: 1.5rem;
             background: white;
             width: auto;
             height: 100%;
             box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+x
+        .left-sidebar{
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding-top: 1.5rem;
+            background: white;
+            width: auto;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+            z-index: 10;
         }
 
         button{
@@ -58,6 +72,7 @@
 
 
         .right-sidebar{
+            padding-top: 1rem;
             position: absolute;
             width: 200px;
             height: 100%;
@@ -67,6 +82,7 @@
             box-shadow: -2px 0 5px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
+            z-index: 20;
         }
 
         .right-sidebar__sectional {
@@ -111,8 +127,8 @@
         }
 
         h4{
-            margin-top: 0;
-            margin-bottom: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         label{
@@ -142,7 +158,7 @@
             border-radius: 0.25rem;
             padding: 0.25rem 0;
             /* height: calc(100% - 4.5rem); */
-            height: 310px;
+            height: 20vh;
             font-size: 12px;
             position: relative;
             overflow: scroll;
@@ -228,9 +244,15 @@
             margin: 1rem 0 0.25rem;
         }
 
+        .remove-light{
+            pointer-events: all;
+            height: 1rem;
+        }
+
         .top-nav{
             position: absolute;
             left: 0;
+            top: 1.5rem;
             top: 0;
             width: 100%;
             padding: 0 4rem;
@@ -378,7 +400,7 @@
     <canvas id="gridCanvas"></canvas>
     <div id="coordinates"></div>
 
-    <div class="left-sidebar">
+    <div class="left-sidebar1">
         <div class="super-tiny">Draw walls</div>
         <button data-mode="draw" title="Draw walls mode" class="left-sidebar__button active">D</button>
         <div class="super-tiny">Edit Points</div>
@@ -390,6 +412,8 @@
         <button data-mode="connect" title="Connect mode" class="left-sidebar__button">C</button>
         <div class="super-tiny">Pan</div>
         <button data-mode="pan" title="pan" class="left-sidebar__button">P</button>
+        <div class="super-tiny">Lights</div>
+        <button data-mode="lights" title="Lights edit mode" class="left-sidebar__button">L</button>
     </div>
 
     <div class="right-sidebar">
@@ -464,6 +488,16 @@
             <div id="sectorAdd" class="sector-add">
                 <span> + </span>
             </div>
+            <br>
+            <h4>lights</h4>
+            <div class="sector-list__container">
+                <div id="lightslist" class="sector-list">
+                </div>
+            </div>
+            <div id="lightAdd" class="sector-add">
+                <span> + </span>
+            </div>
+            
         </div>
 
         

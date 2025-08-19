@@ -46,11 +46,26 @@ drawMeta[0] = [null];
 let currentSector = 0;
 let sectorCounter = 1;
 
+var lightsObj = {};         // id → { x, y, b, r }
+var lightCounter = 0;       // used to generate new light IDs
+var currentLight = null;    // optional: track currently selected light
 
 const sectorSelectorTemplate = 
 `<div data-id="XXX" class="sector-selector">
     <span class="sector-name">Sector XXX</span> <div data-remove-id="XXX" class="remove-sector"><span> - </span></div>
 </div>`
+
+const lightsSelectorTemplate = 
+`
+    <span class="sector-name">Light XXX</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; font-size: 12px; margin-top: 0.25rem;">
+    <label>X <input type="number" step="0.1" data-k="x" value="0"></label>
+    <label>Y <input type="number" step="0.1" data-k="y" value="0"></label>
+    <label>B <input type="number" step="0.05" data-k="b" value="0.25"></label>
+    <label>R <input type="number" step="0.1" data-k="r" value="12"></label>
+    <div class="remove-sector remove-light" data-act="delete" title="Delete this light">-</div>
+    </div>
+`;
 
 
 // Random huge object that holds information about each wall. Coordinates, as well as texture info etc. 
