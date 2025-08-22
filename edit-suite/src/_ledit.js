@@ -421,67 +421,86 @@ var ledit = (function(){
   };
 
 
-// keep this somewhere global
-let draggingLightId = null;
+  // keep this somewhere global
+  let draggingLightId = null;
 
-function handleLightMode(event) {
-  const mouseX = (event.clientX - offsetX) / scale;
-  const mouseY = (event.clientY - offsetY) / scale;
+  function handleLightMode(event) {
+    const mouseX = (event.clientX - offsetX) / scale;
+    const mouseY = (event.clientY - offsetY) / scale;
 
-  // not dragging? try to pick (only while mouse is down)
-  if (!isDragging && event.buttons === 1) {
-    const picked = _lhelpers.findClickedPoint2L(mouseX, mouseY, lightsObj);
-    const id = Array.isArray(picked) ? picked[0] : picked; // robust if you return [id]
-    console.log('===')
-    console.log(picked);
+    // not dragging? try to pick (only while mouse is down)
+    if (!isDragging && event.buttons === 1) {
+      const picked = _lhelpers.findClickedPoint2L(mouseX, mouseY, lightsObj);
+      const id = Array.isArray(picked) ? picked[0] : picked; // robust if you return [id]
+      // console.log('===')
+      // console.log(picked);
+      // console.log(id);
+      // console.log('===')
+      if (id != null && id !== -1 && lightsObj[id]) {
+        isDragging = true;
+        draggingLightId = id;
+
+        // highlight the UI row
+        highlightLightUI(id);
+
+
+        return; // wait for mousemove to move it
+      }
+      return; // nothing picked, do nothing
+    }
+
+    // dragging? move the selected light
+    if (isDragging && draggingLightId != null && lightsObj[draggingLightId]) {
+      const L = lightsObj[draggingLightId];
+      L.x = _lhelpers.roundToNearest(mouseX)/100;
+      L.y = _lhelpers.roundToNearest(mouseY)/100;
+      
+      syncLightUI(draggingLightId);   // <— keeps the sidebar in sync
+
+      _lhelpers.drawGrid();
+    }
+  }
+
+  // global registry of UI rows
+  const lightUI = {}; // { [id]: { el, inputs: {x,y,b,r} } }
+
+  function registerLightUI(id, el) {
+    lightUI[id] = {
+      el,
+      inputs: {
+        x: el.querySelector('input[data-k="x"]'),
+        y: el.querySelector('input[data-k="y"]'),
+        b: el.querySelector('input[data-k="b"]'),
+        r: el.querySelector('input[data-k="r"]'),
+      }
+    };
+  }
+
+  function syncLightUI(id) {
+    const ui = lightUI[id];
+    const L  = lightsObj[id];
+    if (!ui || !L) return;
+
+    // write current model into the inputs
+    ui.inputs.x.value = L.x;
+    ui.inputs.y.value = L.y;
+    ui.inputs.b.value = L.b;
+    ui.inputs.r.value = L.r;
+  }
+
+  function highlightLightUI(id) {
+
     console.log(id);
-    console.log('===')
-    if (id != null && id !== -1 && lightsObj[id]) {
-      isDragging = true;
-      draggingLightId = id;
-      return; // wait for mousemove to move it
-    }
-    return; // nothing picked, do nothing
-  }
-
-  // dragging? move the selected light
-  if (isDragging && draggingLightId != null && lightsObj[draggingLightId]) {
-    const L = lightsObj[draggingLightId];
-    L.x = _lhelpers.roundToNearest(mouseX)/100;
-    L.y = _lhelpers.roundToNearest(mouseY)/100;
     
-    syncLightUI(draggingLightId);   // <— keeps the sidebar in sync
-
-    _lhelpers.drawGrid();
-  }
-}
-
-// global registry of UI rows
-const lightUI = {}; // { [id]: { el, inputs: {x,y,b,r} } }
-
-function registerLightUI(id, el) {
-  lightUI[id] = {
-    el,
-    inputs: {
-      x: el.querySelector('input[data-k="x"]'),
-      y: el.querySelector('input[data-k="y"]'),
-      b: el.querySelector('input[data-k="b"]'),
-      r: el.querySelector('input[data-k="r"]'),
+    // clear highlights
+    Object.values(lightUI).forEach(ui => {
+      ui.el.classList.remove("this--active");
+    });
+    // add to the one we’re dragging
+    if (lightUI[id]) {
+      lightUI[id].el.classList.add("this--active");
     }
-  };
-}
-
-function syncLightUI(id) {
-  const ui = lightUI[id];
-  const L  = lightsObj[id];
-  if (!ui || !L) return;
-
-  // write current model into the inputs
-  ui.inputs.x.value = L.x;
-  ui.inputs.y.value = L.y;
-  ui.inputs.b.value = L.b;
-  ui.inputs.r.value = L.r;
-}
+  }
 
 
   /**

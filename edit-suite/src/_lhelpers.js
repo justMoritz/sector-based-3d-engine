@@ -242,29 +242,52 @@ _lhelpers = {
     // draw light gizmos
     for (const id in lightsObj) {
       const L = lightsObj[id];
-      
-      const lightX = L.x * scale*100; // because walls are scaled by 100 also
-      const lightY = L.y * scale*100;
 
-      // draw light position
+      const lightX = L.x * scale * 100; // same math you use now
+      const lightY = L.y * scale * 100;
+
+      // dot
       ctx.beginPath();
       ctx.arc(lightX, lightY, 6, 0, Math.PI * 2);
-      ctx.strokeStyle = '#f90';
+      ctx.strokeStyle = '#09f';
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // radius ring
       ctx.beginPath();
-      ctx.arc(lightX, lightY, L.r * scale * 10, 0, Math.PI * 2);
-
-      const alpha = Math.min(1, L.b / 2); // normalize b into 0–1 range
-      ctx.fillStyle = `rgba(0, 0, 255, ${alpha * 0.1})`;
+      ctx.arc(lightX, lightY, L.r * scale * 30, 0, Math.PI * 2);
+      const alpha = Math.min(1, L.b / 2);
+      ctx.fillStyle = `rgba(0, 0, 255, ${alpha * 0.15})`;
       ctx.fill();
       ctx.strokeStyle = `rgba(0, 0, 255, ${alpha})`;
-
       ctx.lineWidth = 1;
       ctx.stroke();
+
+      // --- ID label ---
+      ctx.save();
+      const label = String(L.id ?? id);
+      const fontSize = 11;               // small label
+      const pad = 3;
+      const offsetX = 10;                // nudge from the dot
+      const offsetY = -16;
+
+      ctx.font = `${fontSize}px Arial, sans-serif`;
+      ctx.textBaseline = 'top';
+
+      const tx = lightX + offsetX;
+      const ty = lightY + offsetY;
+      const tw = ctx.measureText(label).width;
+
+      // background for contrast
+      // ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillRect(tx - pad, ty - pad, tw + pad * 2, fontSize + pad * 2);
+
+      // text
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillText(label, tx, ty);
+      ctx.restore();
     }
+
 
     // Restore transformations
     ctx.restore();
@@ -381,8 +404,8 @@ _lhelpers = {
 
       // for light point
       const distanceA = Math.sqrt((clickX - currentLight.x*100) ** 2 + (clickY - currentLight.y*100) ** 2);
-      console.log(distanceA);
-      console.log(currentLight);
+      // console.log(distanceA);
+      // console.log(currentLight);
 
 
       if (distanceA <= 30) {
@@ -670,14 +693,30 @@ _lhelpers = {
 
   handleImportFromFile: function(){
     console.log('Importing');
-    // console.log( inputareaTA.value );
 
+    let raw = inputareaTA.value.trim();
+  
+    // if it starts with "var something =", strip it
+    if (/^\s*var\s+\w+\s*=/.test(raw)) {
+      // cut off everything before the first { or [
+      const idx = raw.indexOf('{');
+      const idxArr = raw.indexOf('[');
+      const cut = (idx === -1) ? idxArr : (idxArr === -1 ? idx : Math.min(idx, idxArr));
+      if (cut > -1) {
+        raw = raw.slice(cut);
+      }
+    }
+  
+    let importedJSON;
     try {
-      importedJSON = JSON.parse( inputareaTA.value); 
+      importedJSON = JSON.parse(raw);
     } catch (e) {
       alert(`Level file format corrupt`);
-      return console.error(e); 
+      console.error(e);
+      return;
     }
+  
+    console.log('Imported:', importedJSON);
 
     // sets global map variables
     fDepth = importedJSON.fDepth;
