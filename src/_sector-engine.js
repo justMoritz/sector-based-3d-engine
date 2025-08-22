@@ -165,7 +165,7 @@ var gameEngineJS = (function () {
           fDepthBufferR[j * nScreenWidth + i] = fDepth;
         }
         else{
-          sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture, fLightValue);
+          sPixelToRender = drawCeiling(i, j, sectorCeilingFactor, sSectorCeilingTexture, currentSector);
         }
       }
 
@@ -308,8 +308,8 @@ var gameEngineJS = (function () {
           if( EDITMODE ){
             fLightValue = getLightingValue(intersection.x, intersection.y);
           }
+          // baked lighting, in various variations :)
           else{
-
             if( bUseFancyLighting ){
               /*** use baked light values for the given wall. very good, and very close to live ***/
               var oBakedLightingValuesforWall = currentWall.bakedLight;
@@ -321,9 +321,8 @@ var gameEngineJS = (function () {
             }
             else{
               /*** use baked light values per sector. ***/
-              fLightValue = oMap[currentSector].bakedFloorLight;
+              fLightValue = oMap[currentSector].bakedSectorLight;
             }
-
           }
 
 

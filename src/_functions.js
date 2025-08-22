@@ -394,8 +394,7 @@ function bakeSectorFlatLight(sector, lights, samplesPerAxis = 4) {
     }
   }
 
-  sector.bakedFloorLight = total / count;
-  sector.bakedCeilLight  = total / count; // or sample separately if you want
+  sector.bakedSectorLight = total / count;
 }
 
 /**

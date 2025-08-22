@@ -623,7 +623,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
     fLightValue = getLightingValue(floorPointX, floorPointY);
   }
   else{
-    fLightValue = oMap[currentSector].bakedFloorLight;
+    fLightValue = oMap[currentSector].bakedSectorLight;
   }
 
   sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, fLightValue);
@@ -661,7 +661,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture, currentSect
     fLightValue = getLightingValue(ceilPointX, ceilPointY);
   }
   else{
-    fLightValue = oMap[currentSector].bakedFloorLight;
+    fLightValue = oMap[currentSector].bakedSectorLight;
   }
 
   var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance, fLightValue);
