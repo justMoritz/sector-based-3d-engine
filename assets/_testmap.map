@@ -2,8 +2,8 @@ var _testmap =
 {
   "fDepth": 50,
   "fPlayerX": 18.026304471778662,
-  "fPlayerY": 5.837138813762283,
-  "fPlayerA": 0.4168146928203994,
+  "fPlayerY": 4.44,
+  "fPlayerA": 1.8,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,

@@ -481,3 +481,20 @@ function _worldFunctions(gameTimer){
   }
 
 }
+
+
+function teleportPlayer (x, y, a) {
+  fPlayerX = x; 
+  fPlayery = y; 
+  fPlayerA = a;
+};
+
+function getCurrentPlayerPos (log) {
+  var currentPlayerPos = `${fPlayerX}, ${fPlayerY}, ${fPlayerA}`; 
+  if(log){
+    console.log(currentPlayerPos);
+  }
+  else{
+    return currentPlayerPos;
+  }
+}
