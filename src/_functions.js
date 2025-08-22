@@ -352,6 +352,52 @@ function getLightingValue(wallX, wallY) {
 
 
 
+function bakeWallLighting(samplesPerWall = 8) {
+  for (const sector of oMap) {
+    if (!sector.walls) continue;
+    for (const wall of sector.walls) {
+      const [x1, y1, x2, y2] = wall;
+      wall.bakedLight = [];
+
+      for (let i = 0; i <= samplesPerWall; i++) {
+        const t = i / samplesPerWall;
+        const x = x1 + (x2 - x1) * t;
+        const y = y1 + (y2 - y1) * t;
+        const lightVal = getLightingValue(x, y); // expensive, but only once
+        wall.bakedLight.push(lightVal);
+      }
+    }
+
+    bakeSectorFlatLight(sector, oLevel.lights);
+
+  }
+}
+
+
+function bakeSectorFlatLight(sector, lights, samplesPerAxis = 4) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const wall of sector.walls) {
+    minX = Math.min(minX, wall[0], wall[2]);
+    minY = Math.min(minY, wall[1], wall[3]);
+    maxX = Math.max(maxX, wall[0], wall[2]);
+    maxY = Math.max(maxY, wall[1], wall[3]);
+  }
+
+  // sample a small grid, average them
+  let total = 0, count = 0;
+  for (let gy = 0; gy < samplesPerAxis; gy++) {
+    for (let gx = 0; gx < samplesPerAxis; gx++) {
+      const x = minX + (gx / (samplesPerAxis - 1)) * (maxX - minX);
+      const y = minY + (gy / (samplesPerAxis - 1)) * (maxY - minY);
+      total += getLightingValue(x, y, lights);
+      count++;
+    }
+  }
+
+  sector.bakedFloorLight = total / count;
+  sector.bakedCeilLight  = total / count; // or sample separately if you want
+}
+
 /**
  * Catches something like oLevel.map[1].ceilTex,
  * and turns it into oLevel.map.1.ceilTex

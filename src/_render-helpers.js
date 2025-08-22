@@ -142,7 +142,7 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
 
   var lightShade = 1;
-  if(typeof fLightValue !== "undefined" && !isSprite && !EDITMODE){
+  if(typeof fLightValue !== "undefined" && !isSprite){
     lightShade = fLightValue + oLevel.baseLight;
   }
 
@@ -226,7 +226,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var lightShade = 1;
-  if(typeof fLightValue !== "undefined" && !isSprite && !EDITMODE){
+  if(typeof fLightValue !== "undefined" && !isSprite){
     lightShade = fLightValue + oLevel.baseLight;
   }
 
@@ -595,7 +595,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
 
 
 
-function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
+function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector){
 
   var nStandardHeight = 2;
   var fPlayerHinSector;
@@ -618,14 +618,20 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture,){
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  fLightValue = getLightingValue(floorPointX, floorPointY);
+  // live lighting in editor, otherwise sector-based lighting
+  if( EDITMODE ){
+    fLightValue = getLightingValue(floorPointX, floorPointY);
+  }
+  else{
+    fLightValue = oMap[currentSector].bakedFloorLight;
+  }
 
   sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, fLightValue);
   return sFloorPixelToRender;
 }
 
 
-function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
+function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture, currentSector){
 
   var nStandardHeight = 2;
   var fPlayerHinSector;
@@ -649,7 +655,14 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture){
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
 
-  fLightValue = getLightingValue(ceilPointX, ceilPointY);
+
+  // live lighting in editor, otherwise sector-based lighting
+  if( EDITMODE ){
+    fLightValue = getLightingValue(ceilPointX, ceilPointY);
+  }
+  else{
+    fLightValue = oMap[currentSector].bakedFloorLight;
+  }
 
   var sCeilPixelToRender = _getSamplePixel( oLevelTextures[sSectorCeilTexture], ceilPointX,  ceilPointY , 1.5, 1.5, 0, 0,  fRealDistance, fLightValue);
   return sCeilPixelToRender;
@@ -674,62 +687,6 @@ function drawBackground (i, j) {
   sPixelToDraw = _getSamplePixel(oLevelTextures['bg'], fBgX, fBgY, 1, 1);
 
   return sPixelToDraw;
-}
-
-
-function bakeLighting () {
-  var nRayAmount = 8;
-  var fSliceSize = PI___ * 2 / nRayAmount
-  
-  var oAllLights = oLevel.lights;
-
-  for (const key in oAllLights) {
-    var oCurrentLight = oAllLights[key];
-    console.log(oCurrentLight)
-
-    for (var ai = 1; ai < (nRayAmount+1); ai++) {
-      var fCurrentAngle = fSliceSize * ai;
-      console.log(fCurrentAngle);
-
-      var fVectorX = Math.cos(fCurrentAngle);
-      var fVectorY = Math.sin(fCurrentAngle);
-      fTestX = oCurrentLight.x + fVectorX * fDepth;
-      fTestY = oCurrentLight.y + fVectorY * fDepth;
-
-      // Check if they are colliding with any wall in any sector 
-      for (var s = 0; s < oMap.length; s++) {
-        if( s === 0 ) continue;
-        
-        var oCurSect = oMap[s];
-        
-        for (var w = 0; w < oCurSect.walls.length; w++) {
-          var oCurrentWall = oCurSect.walls[w];
-
-          // check the current angle vector against the current wall vector
-          var intersection = intersectionPoint(
-            { x: oCurrentLight.x, y: oCurrentLight.x },
-            { x: fTestX, y: fTestY },
-            { x: oCurrentWall[0], y: oCurrentWall[1] },
-            { x: oCurrentWall[2], y: oCurrentWall[3] }
-          );
-          if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
-            fTestDistanceToWall = Math.sqrt(
-              Math.pow(oCurrentLight.x - intersection.x, 2) +
-              Math.pow(oCurrentLight.y - intersection.y, 2)
-            );
-            console.log(fTestDistanceToWall)
-
-            // if an intersection is found, make a new entry into the gloabl lighting array
-            var oLightSectionEntry = [intersection.x, intersection.y, fTestDistanceToWall];
-            fLightMap.push(oLightSectionEntry)
-          } // end hit wall
-        } // end walls
-      } // end sectorse
-    } // end rays
-  } // end lights
-
-  // console.log(fLightMap);
-
 }
 
 

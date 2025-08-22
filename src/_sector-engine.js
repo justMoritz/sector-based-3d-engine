@@ -119,8 +119,6 @@ var gameEngineJS = (function () {
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
 
-      // Not currently used, but might be useful if not using real time lighting
-      // bakeLighting();
       
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
@@ -129,6 +127,8 @@ var gameEngineJS = (function () {
       fPlayerH = oLevel.fPlayerH;
 
       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+      bakeWallLighting(4);
 
       main();
 
@@ -189,7 +189,7 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, fLightValue);
+        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector);
       }
 
       // draw
@@ -288,8 +288,7 @@ var gameEngineJS = (function () {
           // Fisheye correction
           fDistanceToWall *= Math.cos(fAngleDifferences)
 
-          // get approximate lighting value
-          fLightValue = getLightingValue(intersection.x, intersection.y);
+          
           
           // Wall Type (texture)
           sWallType = currentWall[4];
@@ -301,8 +300,38 @@ var gameEngineJS = (function () {
           fSampleXOffset = currentWall[7];
           fSampleYOffset = currentWall[8];
 
-          // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer
+          // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer. Also used for lighting below
           wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
+
+          
+          // get accurate, dynamic lighting value, only used in editor, since we need to see it live
+          if( EDITMODE ){
+            fLightValue = getLightingValue(intersection.x, intersection.y);
+          }
+          else{
+
+            if( bUseFancyLighting ){
+              /*** use baked light values for the given wall. very good, and very close to live ***/
+              var oBakedLightingValuesforWall = currentWall.bakedLight;
+              var fSampleIndex = wallSamplePosition * (oBakedLightingValuesforWall.length - 1); // corresponding index in the the bakedLight array
+              var fSampleIndexLeft = fSampleIndex | 0; // fast floor
+              var fSampleIndexRight = (fSampleIndexLeft + 1 < oBakedLightingValuesforWall.length) ? fSampleIndexLeft + 1 : fSampleIndexLeft;
+              var fSampleLerpFactor = fSampleIndex - fSampleIndexLeft;
+              fLightValue = oBakedLightingValuesforWall[fSampleIndexLeft] * (1 - fSampleLerpFactor) + oBakedLightingValuesforWall[fSampleIndexRight] * fSampleLerpFactor;
+            }
+            else{
+              /*** use baked light values per sector. ***/
+              fLightValue = oMap[currentSector].bakedFloorLight;
+            }
+
+          }
+
+
+
+
+
+
+          
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
@@ -430,6 +459,7 @@ var gameEngineJS = (function () {
       nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
+      bUseFancyLighting = false;
     }
     else if (bUseSkew){
       nScreenWidth = 458;
@@ -440,7 +470,7 @@ var gameEngineJS = (function () {
       nRemovePixels = nScreenWidth - ~~(nScreenWidth*0.85);
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
-      console.log(nDrawWidth);
+      bUseFancyLighting = true;
     }else{
       nScreenWidth = 320;
       nScreenHeight = 220;
@@ -450,6 +480,7 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth;
       nRemovePixels = 0;
       fscreenHeightFactorFloor = nScreenHeight / 2;
+      bUseFancyLighting = true;
     }
 
   };

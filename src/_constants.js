@@ -35,6 +35,8 @@ var nLookLimit = 10;
 
 var bUseSkew = true;
 var bTexFiltering = true;
+var bUseLighting = true;
+var bUseFancyLighting = false;
 
 var nDrawWidth = nScreenWidth;
 var nRemovePixels = 0;

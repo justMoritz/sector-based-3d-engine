@@ -1,46 +1,5 @@
-var lightRadius = 13;
-var lightbrightness = 0.25;
-
 var _testmap = 
 {
-  "functions": {
-    "1": {
-        "property": "oLevel.lights.ib1.b",
-        "from": "-0.25",
-        "to": "0.5",
-        "frequency": "4",
-        "startTrigger": false,
-        "endTrigger": false,
-        "counter": 0
-    },
-    // "2b": {
-    //     "property": "oLevel.map.38.ceil",
-    //     "from": 2.4,
-    //     "to": 0.8,
-    //     "frequency": "60",
-    //     "startTrigger": false,
-    //     "endTrigger": false,
-    //     "counter": 0
-    // },
-    // "3a": {
-    //     "property": "oLevel.map.6.walls.1.4",
-    //     "from": "Y",
-    //     "to": ",",
-    //     "frequency": "5",
-    //     "startTrigger": false,
-    //     "endTrigger": false,
-    //     "counter": 0
-    // },
-    // "3b": {
-    //     "property": "oLevel.map.6.walls.1.4",
-    //     "from": "U",
-    //     "to": "#",
-    //     "frequency": "15",
-    //     "startTrigger": false,
-    //     "endTrigger": false,
-    //     "counter": 0
-    // }
-  },
   "fDepth": 50,
   "fPlayerX": 18.026304471778662,
   "fPlayerY": 5.837138813762283,
@@ -49,85 +8,85 @@ var _testmap =
   "startingSector": 1,
   "baseLight": 0.1,
   "lights":{
-    "0a": {
+    "0": {
       "x": 3,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 13,
     },
-    "1a": {
+    "1": {
       "x": 10,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 13,
     },
-    "2a": {
+    "2": {
       "x": 20,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 10,
     },
-    "3a": {
+    "3": {
       "x": 30,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 11,
     },
-    "3b": {
+    "4": {
       "x": 15,
       "y": 16,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 12,
     },
-    "3c": {
+    "5": {
       "x": 21,
       "y": 17,
-      "b": lightbrightness,
-      "r": lightRadius*2,
+      "b": 0.25,
+      "r": 26,
     },
-    "4a": {
+    "6": {
       "x": 40,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 13,
     },
-    "5a": {
+    "7": {
       "x": 50,
       "y": 7,
-      "b": lightbrightness,
-      "r": lightRadius,
+      "b": 0.25,
+      "r": 13,
     },
-    "i1": {
+    "8": {
       "x": 35,
       "y": 30,
       "b": 1,
       "r": 3,
     },
-    "i2": {
+    "9": {
       "x": 28,
       "y": 25,
       "b": 1,
       "r": 3,
     },
-    "i3": {
+    "10": {
       "x": 21,
       "y": 28,
       "b": 0.5,
       "r": 3,
     },
-    "ib2": {
+    "11": {
       "x": 8,
       "y": 15,
       "b": -0.45,
       "r": 5,
     },
-    "ib1": {
+    "12": {
       "x": 8,
       "y": 20,
       "b": -0.25,
       "r": 5,
     },
-    "3": {
+    "13": {
       "x": 10,
       "y": 2,
       "b": 2,
