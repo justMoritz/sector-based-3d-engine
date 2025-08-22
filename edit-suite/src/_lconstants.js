@@ -79,6 +79,7 @@ let fPlayerY = 2;
 let fPlayerA = 2.8;
 let fPlayerH = 0;
 let startingSector = 1;
+let baseLight = 0.1;
 let spritesObject = {}
 
 
@@ -103,7 +104,7 @@ const sectorDefaults = {
     "floor": 0,
     "ceil": 2,
     "floorTex": "Y",
-    "ceilTex": "U"
+    "ceilTex": "U",
 }
 
 

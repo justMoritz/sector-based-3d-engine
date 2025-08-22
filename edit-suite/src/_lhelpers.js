@@ -242,8 +242,9 @@ _lhelpers = {
     // draw light gizmos
     for (const id in lightsObj) {
       const L = lightsObj[id];
-      const lightX = L.x * scale;
-      const lightY = L.y * scale;
+      
+      const lightX = L.x * scale*100; // because walls are scaled by 100 also
+      const lightY = L.y * scale*100;
 
       // draw light position
       ctx.beginPath();
@@ -254,8 +255,13 @@ _lhelpers = {
 
       // radius ring
       ctx.beginPath();
-      ctx.arc(lightX, lightY, L.r * scale, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,0,0,0.1)';
+      ctx.arc(lightX, lightY, L.r * scale * 10, 0, Math.PI * 2);
+
+      const alpha = Math.min(1, L.b / 2); // normalize b into 0–1 range
+      ctx.fillStyle = `rgba(0, 0, 255, ${alpha * 0.1})`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(0, 0, 255, ${alpha})`;
+
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -353,6 +359,40 @@ _lhelpers = {
     // returns each point, the id of the wall the point belongs to, as well as which point of the wall it is.
     // This will allow us to modify the exact point of in the mapdataObj Object :)
     return clickedPoints;
+  },
+
+
+  findClickedPoint2L: function( clickX, clickY, lightsObj ){
+    let clickedPoint;
+
+    
+    for (const key in lightsObj) {
+      const currentLight = lightsObj[key];
+      
+      // console.log(currentLight)
+      // console.log('----');
+      // console.log(currentLight.x*100)
+      // console.log(currentLight.y*100)
+      // console.log(clickX)
+      // console.log(clickY)
+      // console.log('----');
+
+
+
+      // for light point
+      const distanceA = Math.sqrt((clickX - currentLight.x*100) ** 2 + (clickY - currentLight.y*100) ** 2);
+      console.log(distanceA);
+      console.log(currentLight);
+
+
+      if (distanceA <= 30) {
+        clickedPoint = currentLight.id;
+      }
+    }
+
+    // returns the ID of the light that was clicked. Easy peasy?
+    console.log(`returning this ID ${clickedPoint}`);
+    return clickedPoint;
   },
 
 
@@ -469,6 +509,19 @@ _lhelpers = {
       }
     }
 
+    // Lights, lights, baby
+    let tempLights = {};
+      for (const id in lightsObj) {
+        const L = lightsObj[id];
+        tempLights[id] = {
+          x: L.x,
+          y: L.y,
+          b: L.b,
+          r: L.r,
+          id: L.id
+        };
+      }
+
     // combines all the data into level data
     leveldata = { 
       "fDepth": parseFloat(fDepth),
@@ -477,11 +530,13 @@ _lhelpers = {
       "fPlayerA": parseFloat(fPlayerA),
       "fPlayerH": parseFloat(fPlayerH),
       "startingSector": parseInt(startingSector),
+      "baseLight": parseFloat(baseLight),
       "sprites": spritesObject,
+      "lights": tempLights,
       "map": tempMapData
     }
 
-    console.log(leveldata);
+    // console.log(leveldata);
     outputareaTA.value = JSON.stringify(leveldata);
 
   },
@@ -631,6 +686,7 @@ _lhelpers = {
     fPlayerA = importedJSON.fPlayerA;
     fPlayerH = importedJSON.fPlayerH;
     startingSector = importedJSON.startingSector;
+    baseLight = importedJSON.baseLight;
     // TODO: Sprites
 
     spritesObject = importedJSON.sprites;
@@ -703,6 +759,55 @@ _lhelpers = {
       selectorlist.insertAdjacentHTML('beforeend', buttonToAppend);
       sectorCounter = s+1;
     }
+
+
+    // optional: baseLight setting if needed
+    if (importedJSON.baseLight !== undefined) {
+      baseLight = importedJSON.baseLight;
+      if (defaultBaseLightInput) defaultBaseLightInput.value = baseLight; // if you have an input
+    }
+
+    // import light objects
+    if (importedJSON.lights) {
+      for (const id in importedJSON.lights) {
+        const L = importedJSON.lights[id];
+
+        lightsObj[id] = {
+          x: L.x,
+          y: L.y,
+          b: L.b,
+          r: L.r,
+          id: L.id ?? id
+        };
+
+        // draw light into UI
+        const lightEl = document.createElement('div');
+        lightEl.className = 'sector-selector';
+        lightEl.dataset.id = id;
+        lightEl.innerHTML = lightsSelectorTemplate.replace(/XXX/g, id);
+
+        // input syncing
+        lightEl.querySelectorAll('input').forEach(input => {
+          const key = input.dataset.k;
+          input.value = L[key];
+          input.addEventListener('input', (e) => {
+            lightsObj[id][key] = parseFloat(e.target.value);
+            _lhelpers.drawGrid();
+          });
+        });
+
+        // delete button
+        lightEl.querySelector('[data-act="delete"]').addEventListener('click', () => {
+          delete lightsObj[id];
+          lightEl.remove();
+          _lhelpers.drawGrid();
+        });
+
+        lightsList.appendChild(lightEl);
+        lightCounter = Math.max(lightCounter, parseInt(id) + 1);
+      }
+    }
+
 
     _lhelpers.drawGrid();
 

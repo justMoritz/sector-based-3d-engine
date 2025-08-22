@@ -3,7 +3,7 @@ var ledit = (function(){
 
   handleMouseInteraction = function (event) {
     if(mapdataObj.length < 2){
-      alert('please add a sector');
+      // alert('please add a sector');
     }
 
     if (appMode === "draw") {
@@ -18,6 +18,8 @@ var ledit = (function(){
       handleWallMode(event);
     } else if (appMode === "connect") {
       handleConnectMode(event);
+    } else if (appMode === "lights") {
+      handleLightMode(event);
     }
 
     _lhelpers.generateLevelData();
@@ -99,6 +101,9 @@ var ledit = (function(){
     }
     // opens the edit window, and pulls in data
   };
+
+
+
 
 
   /**
@@ -398,6 +403,7 @@ var ledit = (function(){
       "ceil": sectorDefaults.ceil,
       "ceilTex": sectorDefaults.ceilTex,
       "floorTex": sectorDefaults.floorTex,
+      "baseLight": sectorDefaults.baseLight,
     };
 
     console.log(mapSecMeta);
@@ -415,6 +421,68 @@ var ledit = (function(){
   };
 
 
+// keep this somewhere global
+let draggingLightId = null;
+
+function handleLightMode(event) {
+  const mouseX = (event.clientX - offsetX) / scale;
+  const mouseY = (event.clientY - offsetY) / scale;
+
+  // not dragging? try to pick (only while mouse is down)
+  if (!isDragging && event.buttons === 1) {
+    const picked = _lhelpers.findClickedPoint2L(mouseX, mouseY, lightsObj);
+    const id = Array.isArray(picked) ? picked[0] : picked; // robust if you return [id]
+    console.log('===')
+    console.log(picked);
+    console.log(id);
+    console.log('===')
+    if (id != null && id !== -1 && lightsObj[id]) {
+      isDragging = true;
+      draggingLightId = id;
+      return; // wait for mousemove to move it
+    }
+    return; // nothing picked, do nothing
+  }
+
+  // dragging? move the selected light
+  if (isDragging && draggingLightId != null && lightsObj[draggingLightId]) {
+    const L = lightsObj[draggingLightId];
+    L.x = _lhelpers.roundToNearest(mouseX)/100;
+    L.y = _lhelpers.roundToNearest(mouseY)/100;
+    
+    syncLightUI(draggingLightId);   // <— keeps the sidebar in sync
+
+    _lhelpers.drawGrid();
+  }
+}
+
+// global registry of UI rows
+const lightUI = {}; // { [id]: { el, inputs: {x,y,b,r} } }
+
+function registerLightUI(id, el) {
+  lightUI[id] = {
+    el,
+    inputs: {
+      x: el.querySelector('input[data-k="x"]'),
+      y: el.querySelector('input[data-k="y"]'),
+      b: el.querySelector('input[data-k="b"]'),
+      r: el.querySelector('input[data-k="r"]'),
+    }
+  };
+}
+
+function syncLightUI(id) {
+  const ui = lightUI[id];
+  const L  = lightsObj[id];
+  if (!ui || !L) return;
+
+  // write current model into the inputs
+  ui.inputs.x.value = L.x;
+  ui.inputs.y.value = L.y;
+  ui.inputs.b.value = L.b;
+  ui.inputs.r.value = L.r;
+}
+
 
   /**
    * Adding a new light 
@@ -425,10 +493,11 @@ var ledit = (function(){
   
     // Create new light object with defaults
     lightsObj[id] = {
-      "x": 0,
-      "y": 0,
+      "x": 2,
+      "y": 2,
       "b": 0.25,
-      "r": 12
+      "r": 12,
+      "id": currentLight
     };
   
     // Build the DOM element
@@ -437,6 +506,9 @@ var ledit = (function(){
     lightEl.dataset.id = id;
 
     lightEl.innerHTML = lightsSelectorTemplate.replace(new RegExp("XXX", 'g'), id);
+
+    registerLightUI(id, lightEl);
+    syncLightUI(id); // set initial values
   
     // Add to the DOM
     lightsList.appendChild(lightEl);
@@ -461,12 +533,15 @@ var ledit = (function(){
     // Delete button
     lightEl.querySelector('[data-act="delete"]').addEventListener('click', () => {
       delete lightsObj[id];
+      delete lightUI[id];
       lightEl.remove();
-      _lhelpers.drawGrid(); // optional
+      _lhelpers.drawGrid(); 
     });
   
     console.log(lightsObj);
     lightCounter++;
+
+    _lhelpers.drawGrid(); 
   };
   
 
@@ -643,6 +718,9 @@ var ledit = (function(){
         isDragging = false;
         _lhelpers.handleMouseDown(event);
       }
+      else if (appMode === "lights") {
+        handleMouseInteraction(event); 
+      }
       else{
         isDragging = false;
         handleMouseInteraction(event);
@@ -651,6 +729,9 @@ var ledit = (function(){
 
     gridCanvas.addEventListener('mousemove', function (event) {
       if (isDragging && appMode === "edit") {
+        handleMouseInteraction(event);
+      }
+      else if (isDragging && appMode === "lights") {
         handleMouseInteraction(event);
       }
       else if ( appMode === "pan"){
@@ -695,12 +776,6 @@ var ledit = (function(){
         // handleSelectLight(event);
       }
     });
-      // TODO:
-      // - Create new light object { id, x, y, b, r }
-      // - Add to a map or array
-      // - Call a `renderLightsList()` function to update the UI
-      // - Call _lhelpers.drawGrid() to re-render canvas
-    
 
 
     // listeners for wallinputs
@@ -768,6 +843,7 @@ var ledit = (function(){
     defaultCeilInput = document.querySelector("#defaultCeil");
     defaultFloorTexInput = document.querySelector("#defaultFloorTex");
     defaultCeilTexInput = document.querySelector("#defaultCeilTex");
+    defaultBaseLightInput = document.querySelector("#defaultBaseLight");
 
     fDepthInput.value = fDepth;
     fPlayerXInput.value = fPlayerX;
@@ -784,6 +860,7 @@ var ledit = (function(){
     defaultCeilInput.value = sectorDefaults.ceil;
     defaultFloorTexInput.value = sectorDefaults.floorTex;
     defaultCeilTexInput.value = sectorDefaults.ceilTex;
+    defaultBaseLightInput.value = baseLight;
 
     fDepthInput.addEventListener('input', (e) => { fDepth = e.target.value });
     fPlayerXInput.addEventListener('input', (e) => { fPlayerX = e.target.value });
@@ -800,6 +877,7 @@ var ledit = (function(){
     defaultCeilInput.addEventListener('input', (e) => { sectorDefaults.ceil = e.target.value });
     defaultFloorTexInput.addEventListener('input', (e) => { sectorDefaults.floorTex = e.target.value });
     defaultCeilTexInput.addEventListener('input', (e) => { sectorDefaults.ceilTex = e.target.value });
+    defaultBaseLightInput.addEventListener('input', (e) => { baseLight = e.target.value });
     
     
   
