@@ -107,10 +107,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var samplePosition10 = (y1 * texWidth + x0);
   var samplePosition11 = (y1 * texWidth + x1);
 
-  var color00 = texpixels[samplePosition00];
-  var color01 = texpixels[samplePosition01];
-  var color10 = texpixels[samplePosition10];
-  var color11 = texpixels[samplePosition11];
+  var color00 = palette95[texpixels[samplePosition00]];
+  var color01 = palette95[texpixels[samplePosition01]];
+  var color10 = palette95[texpixels[samplePosition10]];
+  var color11 = palette95[texpixels[samplePosition11]];
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
