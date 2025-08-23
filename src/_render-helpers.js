@@ -202,7 +202,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   }else{
     var texWidth = 1
     var texHeight = 1
-    var texpixels = [0];
+    var texpixels = [[255,0,255]];
   }
 
   var scaleFactorX = fSampleXScale || 2;
@@ -219,14 +219,11 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   var samplePosition = (texWidth * sampleY + sampleX);
 
-  var pixelIndex = texpixels[samplePosition];
-  var currentColorPixel = palette95[pixelIndex] || [0, 0, 0];
-  
-  // var currentPixel;
-  // var currentColorPixel;
+  var currentPixel;
+  var currentColorPixel;
 
-  // currentPixel = texpixels[samplePosition];
-  // currentColorPixel = currentPixel || [0, 0, 0]; 
+  currentPixel = texpixels[samplePosition];
+  currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined" && !isSprite){

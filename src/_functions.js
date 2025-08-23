@@ -327,9 +327,9 @@ function prepareTextures( textures ){
     }
     var currentTexture = textures[key];
     // TODO: seems to only work for square textures ATM, 
-    var mipMap1 = downSampleIndexed(currentTexture.texture, currentTexture.width, currentTexture.height, 2);
-    var mipMap2 = downSampleIndexed(mipMap1, currentTexture.width/2, currentTexture.height/2, 2);
-    var mipMap3 = downSampleIndexed(mipMap2, currentTexture.width/4, currentTexture.height/4, 2);
+    var mipMap1 = downSampleBilinear(currentTexture.texture, currentTexture.width, currentTexture.height, 2);
+    var mipMap2 = downSampleBilinear(mipMap1, currentTexture.width/2, currentTexture.height/2, 2);
+    var mipMap3 = downSampleBilinear(mipMap2, currentTexture.width/4, currentTexture.height/4, 2);
     textures[key].mm1 = mipMap1;
     textures[key].mm2 = mipMap2;
     textures[key].mm3 = mipMap3;
