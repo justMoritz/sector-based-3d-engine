@@ -202,7 +202,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   }else{
     var texWidth = 1
     var texHeight = 1
-    var texpixels = [[255,0,255]];
+    var texpixels = [0];
   }
 
   var scaleFactorX = fSampleXScale || 2;
@@ -219,11 +219,14 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
 
   var samplePosition = (texWidth * sampleY + sampleX);
 
-  var currentPixel;
-  var currentColorPixel;
+  var pixelIndex = texpixels[samplePosition];
+  var currentColorPixel = palette95[pixelIndex] || [0, 0, 0];
+  
+  // var currentPixel;
+  // var currentColorPixel;
 
-  currentPixel = texpixels[samplePosition];
-  currentColorPixel = currentPixel || [0, 0, 0]; 
+  // currentPixel = texpixels[samplePosition];
+  // currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var lightShade = 1;
   if(typeof fLightValue !== "undefined" && !isSprite){
@@ -392,6 +395,30 @@ var _fPrepareFrame = function (oInput, eTarget) {
 };
 
 
+var _drawToCanvas = function ( pixels ) {
+  if ( sPostProcessing === '8bit' ) {
+    _drawToCanvasDithered(pixels, '8bit');
+  }
+  else if ( sPostProcessing === '12bit' ) {
+    _drawToCanvasDithered(pixels, '12bit');
+  }
+  else if ( sPostProcessing === '10bit' ) {
+    _drawToCanvasDithered(pixels);
+  }
+  else if ( sPostProcessing === 'vaporwave' ) {
+    _drawToCanvasDithered(pixels, 'vaporwave');
+  }
+  else {
+    _drawToCanvas24bit(pixels)
+  }
+}
+
+
+
+/**
+ * Draws to Canvas in full 24 bit color, no post-processing
+ * @param {*} pixels 
+ */
 var _drawToCanvas24bit = function ( pixels ) {
 
   eCanvas.width = nDrawWidth;
@@ -423,9 +450,12 @@ for (let i = 0; i < 16; i++) { expand4bit[i] = (i << 4) | i; }
 for (let i = 0; i < 8; i++) expand3bit[i] = (i << 5) | (i << 2) | (i >> 1);
 for (let i = 0; i < 4; i++) expand2bit[i] = (i << 6) | (i << 4) | (i << 2) | i;
 
-
-
-var _drawToCanvas = function (pixels) {
+/**
+ * Draws to canvas with quantizing and dithering post-processing
+ * @param {*} pixels 
+ * @param {*} method 
+ */
+var _drawToCanvasDithered = function (pixels, method) {
   eCanvas.width = nDrawWidth;
   eCanvas.height = nScreenHeight;
 
@@ -440,7 +470,20 @@ var _drawToCanvas = function (pixels) {
     for (var x = 0; x < width; x++) {
       var idx = y * width + x;
       var oldColor = ditheredPixels[idx];
-      var newColor = quantizeColor(oldColor);
+
+      // Quantisation method
+      if (method === "8bit") {
+        var newColor = quantizeColor8(oldColor);
+      }
+      else if (method === "12bit") {
+        var newColor = quantizeColor12(oldColor);
+      }
+      else if (method === "vaporwave") {
+        var newColor = quantizeColorVaporwave(oldColor);
+      }
+      else{
+        var newColor = quantizeColor10(oldColor);
+      }
 
       // Write quantized color to canvas buffer
       imageData.data[idx * 4]     = newColor[0];
@@ -464,7 +507,7 @@ var _drawToCanvas = function (pixels) {
   cCtx.putImageData(imageData, 0, 0);
 
   // Quantize to 12 bit
-  function quantizeColor_(color) {
+  function quantizeColor12(color) {
     return [
       expand4bit[color[0] >> 4],
       expand4bit[color[1] >> 4],
@@ -473,7 +516,7 @@ var _drawToCanvas = function (pixels) {
   }
 
   // Quantize in the middle
-  function quantizeColor(color) {
+  function quantizeColor10(color) {
     const r = color[0] >> 5; // 3 bits
     const g = color[1] >> 4; // 4 bits
     const b = color[2] >> 5; // 3 bits
@@ -486,7 +529,7 @@ var _drawToCanvas = function (pixels) {
   }
 
   // Quantize to 8 bit
-  function quantizeColor_(color) {
+  function quantizeColor8(color) {
     var r = color[0] >> 5; // 3 bits
     var g = color[1] >> 5; // 3 bits
     var b = color[2] >> 6; // 2 bits
@@ -499,7 +542,7 @@ var _drawToCanvas = function (pixels) {
   }
 
   // Quantize to 8 bit, vaporwave
-  function quantizeColor_(color) {
+  function quantizeColorVaporwave(color) {
     var r = color[0] >> 4; // 3 bits
     var g = color[1] >> 4; // 3 bits
     var b = color[2] >> 6; // 2 bits
@@ -511,18 +554,16 @@ var _drawToCanvas = function (pixels) {
     ];
   }
 
-
-
-
+  // Floyd Steinberg error spreading
   function spreadError(x, y, errR, errG, errB, factor) {
     if (x < 0 || x >= width || y < 0 || y >= height) return;
     var i = y * width + x;
-    ditheredPixels[i][0] = clamp(ditheredPixels[i][0] + errR * factor);
-    ditheredPixels[i][1] = clamp(ditheredPixels[i][1] + errG * factor);
-    ditheredPixels[i][2] = clamp(ditheredPixels[i][2] + errB * factor);
+    ditheredPixels[i][0] = clamp255(ditheredPixels[i][0] + errR * factor);
+    ditheredPixels[i][1] = clamp255(ditheredPixels[i][1] + errG * factor);
+    ditheredPixels[i][2] = clamp255(ditheredPixels[i][2] + errB * factor);
   }
 
-  function clamp(val) {
+  function clamp255(val) {
     return val < 0 ? 0 : val > 255 ? 255 : val | 0;
     return Math.max(0, Math.min(255, val));
   }

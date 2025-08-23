@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNG Quantizer + Dither</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 150px; resize: none; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Quantizer + Dither</h1>
+
+  <h2>1. Upload PNG</h2>
+  <input type="file" id="fileInput" accept=".png">
+  <textarea id="output" readonly placeholder="Quantized indices from PNG will appear here"></textarea>
+
+  <h2>2. Paste RGB Array</h2>
+  <textarea id="arrayInput" placeholder='Paste array like [[255,0,0],[0,255,0],[0,0,255]]'></textarea>
+  <button id="processArray">Process Array</button>
+  <textarea id="arrayOutput" readonly placeholder="Quantized indices from pasted array will appear here"></textarea>
+
+  <script>
+    // --- expand tables for 10-bit quantization ---
+    const expand4bit = new Uint8Array(16);
+    const expand3bit = new Uint8Array(8);
+    for (let i = 0; i < 16; i++) expand4bit[i] = (i << 4) | i;
+    for (let i = 0; i < 8; i++) expand3bit[i] = (i << 5) | (i << 2) | (i >> 1);
+
+    function quantizeColor10([r,g,b]) {
+      return [
+        expand3bit[r >> 5],
+        expand4bit[g >> 4],
+        expand3bit[b >> 5]
+      ];
+    }
+
+    // --- palette 
+    const palette = [
+        null,
+        [0,0,0],
+        [128,0,0],
+        [0,128,0],
+        [128,128,0],
+        [0,0,128],
+        [128,0,128],
+        [0,128,128],
+        [192,192,192],
+        [192,220,192],
+        [166,202,240],
+        [42,63,170],
+        [42,63,255],
+        [42,95,0],
+        [42,95,85],
+        [42,95,170],
+        [42,95,255],
+        [42,127,0],
+        [42,127,85],
+        [42,127,170],
+        [42,127,255],
+        [42,159,0],
+        [42,159,85],
+        [42,159,170],
+        [42,159,255],
+        [42,191,0],
+        [42,191,85],
+        [42,191,170],
+        [42,191,255],
+        [42,223,0],
+        [42,223,85],
+        [42,223,170],
+        [42,223,255],
+        [42,255,0],
+        [42,255,85],
+        [42,255,170],
+        [42,255,255],
+        [85,0,0],
+        [85,0,85],
+        [85,0,170],
+        [85,0,255],
+        [85,31,0],
+        [85,31,85],
+        [85,31,170],
+        [85,31,255],
+        [85,63,0],
+        [85,63,85],
+        [85,63,170],
+        [85,63,255],
+        [85,95,0],
+        [85,95,85],
+        [85,95,170],
+        [85,95,255],
+        [85,127,0],
+        [85,127,85],
+        [85,127,170],
+        [85,127,255],
+        [85,159,0],
+        [85,159,85],
+        [85,159,170],
+        [85,159,255],
+        [85,191,0],
+        [85,191,85],
+        [85,191,170],
+        [85,191,255],
+        [85,223,0],
+        [85,223,85],
+        [85,223,170],
+        [85,223,255],
+        [85,255,0],
+        [85,255,85],
+        [85,255,170],
+        [85,255,255],
+        [127,0,0],
+        [127,0,85],
+        [127,0,170],
+        [127,0,255],
+        [127,31,0],
+        [127,31,85],
+        [127,31,170],
+        [127,31,255],
+        [127,63,0],
+        [127,63,85],
+        [127,63,170],
+        [127,63,255],
+        [127,95,0],
+        [127,95,85],
+        [127,95,170],
+        [127,95,255],
+        [127,127,0],
+        [127,127,85],
+        [127,127,170],
+        [127,127,255],
+        [127,159,0],
+        [127,159,85],
+        [127,159,170],
+        [127,159,255],
+        [127,191,0],
+        [127,191,85],
+        [127,191,170],
+        [127,191,255],
+        [127,223,0],
+        [127,223,85],
+        [127,223,170],
+        [127,223,255],
+        [127,255,0],
+        [127,255,85],
+        [127,255,170],
+        [127,255,255],
+        [170,0,0],
+        [170,0,85],
+        [170,0,170],
+        [170,0,255],
+        [170,31,0],
+        [170,31,85],
+        [170,31,170],
+        [170,31,255],
+        [170,63,0],
+        [170,63,85],
+        [170,63,170],
+        [170,63,255],
+        [170,95,0],
+        [170,95,85],
+        [170,95,170],
+        [170,95,255],
+        [170,127,0],
+        [170,127,85],
+        [170,127,170],
+        [170,127,255],
+        [170,159,0],
+        [170,159,85],
+        [170,159,170],
+        [170,159,255],
+        [170,191,0],
+        [170,191,85],
+        [170,191,170],
+        [170,191,255],
+        [170,223,0],
+        [170,223,85],
+        [170,223,170],
+        [170,223,255],
+        [170,255,0],
+        [170,255,85],
+        [170,255,170],
+        [170,255,255],
+        [212,0,0],
+        [212,0,85],
+        [212,0,170],
+        [212,0,255],
+        [212,31,0],
+        [212,31,85],
+        [212,31,170],
+        [212,31,255],
+        [212,63,0],
+        [212,63,85],
+        [212,63,170],
+        [212,63,255],
+        [212,95,0],
+        [212,95,85],
+        [212,95,170],
+        [212,95,255],
+        [212,127,0],
+        [212,127,85],
+        [212,127,170],
+        [212,127,255],
+        [212,159,0],
+        [212,159,85],
+        [212,159,170],
+        [212,159,255],
+        [212,191,0],
+        [212,191,85],
+        [212,191,170],
+        [212,191,255],
+        [212,223,0],
+        [212,223,85],
+        [212,223,170],
+        [212,223,255],
+        [212,255,0],
+        [212,255,85],
+        [212,255,170],
+        [212,255,255],
+        [255,0,85],
+        [255,0,170],
+        [255,31,0],
+        [255,31,85],
+        [255,31,170],
+        [255,31,255],
+        [255,63,0],
+        [255,63,85],
+        [255,63,170],
+        [255,63,255],
+        [255,95,0],
+        [255,95,85],
+        [255,95,170],
+        [255,95,255],
+        [255,127,0],
+        [255,127,85],
+        [255,127,170],
+        [255,127,255],
+        [255,159,0],
+        [255,159,85],
+        [255,159,170],
+        [255,159,255],
+        [255,191,0],
+        [255,191,85],
+        [255,191,170],
+        [255,191,255],
+        [255,223,0],
+        [255,223,85],
+        [255,223,170],
+        [255,223,255],
+        [255,255,85],
+        [255,255,170],
+        [204,204,255],
+        [255,204,255],
+        [51,255,255],
+        [102,255,255],
+        [153,255,255],
+        [204,255,255],
+        [0,127,0],
+        [0,127,85],
+        [0,127,170],
+        [0,127,255],
+        [0,159,0],
+        [0,159,85],
+        [0,159,170],
+        [0,159,255],
+        [0,191,0],
+        [0,191,85],
+        [0,191,170],
+        [0,191,255],
+        [0,223,0],
+        [0,223,85],
+        [0,223,170],
+        [0,223,255],
+        [0,255,85],
+        [0,255,170],
+        [42,0,0],
+        [42,0,85],
+        [42,0,170],
+        [42,0,255],
+        [42,31,0],
+        [42,31,85],
+        [42,31,170],
+        [42,31,255],
+        [42,63,0],
+        [42,63,85],
+        [255,251,240],
+        [160,160,164],
+        [128,128,128],
+        [255,0,0],
+        [0,255,0],
+        [255,255,0],
+        [0,0,255],
+        [255,0,255],
+        [0,255,255],
+        [255,255,255]
+    ];
+
+
+    function nearestPaletteIndex(color) {
+      let bestDist = Infinity, bestIdx = 1;
+      for (let i = 1; i < palette.length; i++) {
+        if (!palette[i]) continue;
+        const [pr, pg, pb] = palette[i];
+        const dr = color[0] - pr, dg = color[1] - pg, db = color[2] - pb;
+        const dist = dr*dr + dg*dg + db*db;
+        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+      }
+      return bestIdx;
+    }
+
+    function clamp(v) { return v < 0 ? 0 : v > 255 ? 255 : v; }
+
+    function applyFloydSteinberg(rgbArray, width, height) {
+      const data = rgbArray.map(([r,g,b]) => [r,g,b]);
+      const finalIndices = new Array(width * height);
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const idx = y * width + x;
+          const oldPixel = data[idx];
+          const qIdx = nearestPaletteIndex(quantizeColor10(oldPixel));
+          const qColor = palette[qIdx];
+          finalIndices[idx] = qIdx;
+
+          const err = [
+            oldPixel[0] - qColor[0],
+            oldPixel[1] - qColor[1],
+            oldPixel[2] - qColor[2]
+          ];
+
+          function spread(xo, yo, factor) {
+            const nx = x + xo, ny = y + yo;
+            if (nx < 0 || nx >= width || ny < 0 || ny >= height) return;
+            const ni = ny * width + nx;
+            data[ni] = [
+              clamp(data[ni][0] + err[0] * factor),
+              clamp(data[ni][1] + err[1] * factor),
+              clamp(data[ni][2] + err[2] * factor)
+            ];
+          }
+
+          spread(1,0,7/16);
+          spread(-1,1,3/16);
+          spread(0,1,5/16);
+          spread(1,1,1/16);
+        }
+      }
+      return finalIndices;
+    }
+
+    // --- handle PNG input ---
+    function fetchAndParsePNG(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width; canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const rgbArray = [];
+            for (let i = 0; i < data.length; i += 4)
+              rgbArray.push([data[i], data[i+1], data[i+2]]);
+            const indices = applyFloydSteinberg(rgbArray, canvas.width, canvas.height);
+            resolve(indices);
+          };
+          img.onerror = () => reject(new Error("Image load failed"));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error("File read failed"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      fetchAndParsePNG(file).then(indices => {
+        document.getElementById('output').value = JSON.stringify(indices);
+      }).catch(console.error);
+    });
+
+    // --- handle pasted RGB array ---
+    document.getElementById('processArray').addEventListener('click', () => {
+      try {
+        const input = JSON.parse(document.getElementById('arrayInput').value);
+        const width = Math.floor(Math.sqrt(input.length));
+        const height = Math.ceil(input.length / width);
+        const indices = applyFloydSteinberg(input, width, height);
+        document.getElementById('arrayOutput').value = JSON.stringify(indices);
+      } catch (e) {
+        alert("Invalid JSON array");
+      }
+    });
+  </script>
+</body>
+</html>

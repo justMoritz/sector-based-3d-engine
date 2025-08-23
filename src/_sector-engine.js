@@ -459,8 +459,9 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = false;
+      sPostProcessing = '';
     }
-    else if (bUseSkew){
+    else if (bUseSkew) {
       nScreenWidth = 458;
       nScreenHeight = 220;
       nLookLimit = 8;
@@ -470,7 +471,9 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
-    }else{
+      sPostProcessing = '';
+    }
+    else {
       nScreenWidth = 320;
       nScreenHeight = 220;
       nLookLimit = 10;
@@ -480,6 +483,7 @@ var gameEngineJS = (function () {
       nRemovePixels = 0;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
+      sPostProcessing = '10bit';
     }
 
   };
@@ -630,6 +634,7 @@ var gameEngineJS = (function () {
     // Additional editor-only settings:
     bUseSkew = false;
     bTexFiltering = false;
+    sPostProcessing = '';
 
     main(true);
 

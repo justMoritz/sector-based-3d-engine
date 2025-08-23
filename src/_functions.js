@@ -288,6 +288,35 @@ var downSampleBilinear = function( texels, width, height, factor ){
 }
 
 
+function downSampleIndexed(texels, width, height, factor) {
+  const newWidth = Math.floor(width / factor);
+  const newHeight = Math.floor(height / factor);
+  const newTexture = [];
+
+  for (let i = 0; i < newHeight; i++) {
+    for (let j = 0; j < newWidth; j++) {
+      const counts = {};
+      for (let fy = 0; fy < factor; fy++) {
+        for (let fx = 0; fx < factor; fx++) {
+          const srcX = j*factor + fx;
+          const srcY = i*factor + fy;
+          if (srcX >= width || srcY >= height) continue;
+          const idx = texels[srcY*width + srcX];
+          counts[idx] = (counts[idx]||0) + 1;
+        }
+      }
+      // pick the most common index
+      let bestIdx = 0, maxCount = 0;
+      for (const k in counts) {
+        if (counts[k] > maxCount) { maxCount = counts[k]; bestIdx = parseInt(k); }
+      }
+      newTexture.push(bestIdx);
+    }
+  }
+  return {data: newTexture, width:newWidth, height:newHeight};
+}
+
+
 
 function prepareTextures( textures ){
 
@@ -298,9 +327,9 @@ function prepareTextures( textures ){
     }
     var currentTexture = textures[key];
     // TODO: seems to only work for square textures ATM, 
-    var mipMap1 = downSampleBilinear(currentTexture.texture, currentTexture.width, currentTexture.height, 2);
-    var mipMap2 = downSampleBilinear(mipMap1, currentTexture.width/2, currentTexture.height/2, 2);
-    var mipMap3 = downSampleBilinear(mipMap2, currentTexture.width/4, currentTexture.height/4, 2);
+    var mipMap1 = downSampleIndexed(currentTexture.texture, currentTexture.width, currentTexture.height, 2);
+    var mipMap2 = downSampleIndexed(mipMap1, currentTexture.width/2, currentTexture.height/2, 2);
+    var mipMap3 = downSampleIndexed(mipMap2, currentTexture.width/4, currentTexture.height/4, 2);
     textures[key].mm1 = mipMap1;
     textures[key].mm2 = mipMap2;
     textures[key].mm3 = mipMap3;
@@ -485,7 +514,7 @@ function _worldFunctions(gameTimer){
 
 function teleportPlayer (x, y, a) {
   fPlayerX = x; 
-  fPlayery = y; 
+  fPlayerY = y; 
   fPlayerA = a;
 };
 

@@ -15,12 +15,13 @@ This new engine uses sector-based rendering which allows such cool features such
 And so much more! The limits are endless!
 
 
-## Current TODO: list:
+## 👩🏼‍💻 Current TODO: list:
 
 - Convert Textures to 255 indexed pallette (+transparent)
-- Add lighting too editor
-- Eat Pizza
 - Add Sprites list to editor
+- ✅ Add Lighting to editor
+- ✅ Add lighting too editor
+- ✅ Eat Pizza
 
 
 - Lighting is working
