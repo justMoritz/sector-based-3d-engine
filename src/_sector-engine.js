@@ -460,6 +460,7 @@ var gameEngineJS = (function () {
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = false;
       sPostProcessing = '';
+      // bTexFiltering = false;
     }
     else if (bUseSkew) {
       nScreenWidth = 458;
