@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Palette Quantizer Tool</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    canvas { border: 1px solid #ccc; margin-top: 10px; display:block; }
+    textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Palette Quantizer</h1>
+  <input type="file" id="fileInput" accept=".js,.tex">
+  <pre id="log"></pre>
+  <canvas id="canvas" width="128" height="128"></canvas>
+  <h3>Output (palette + indexed arrays)</h3>
+  <textarea id="output" readonly></textarea>
+
+<script>
+// ---------- SAFE helpers ----------
+function nearestIndex(color, palette) {
+  let best = 0, bestDist = Infinity;
+  for (let i = 0; i < palette.length; i++) {
+    const p = palette[i]; if (!p) continue;
+    const dr=color[0]-p[0], dg=color[1]-p[1], db=color[2]-p[2];
+    const d=dr*dr + dg*dg + db*db;
+    if (d < bestDist) { bestDist = d; best = i; }
+  }
+  return best;
+}
+function boundsOf(pix) {
+  let rmin=255, rmax=0, gmin=255, gmax=0, bmin=255, bmax=0;
+  for (let i=0;i<pix.length;i++){
+    const [r,g,b]=pix[i];
+    if (r<rmin) rmin=r; if (r>rmax) rmax=r;
+    if (g<gmin) gmin=g; if (g>gmax) gmax=g;
+    if (b<bmin) bmin=b; if (b>bmax) bmax=b;
+  }
+  return [rmin,rmax,gmin,gmax,bmin,bmax];
+}
+function medianCut(pixels, nColors=255) {
+  const copy=pixels.slice();
+  let boxes=[{pixels:copy,bounds:boundsOf(copy)}];
+  while(boxes.length<nColors){
+    boxes.sort((a,b)=>{
+      const ra=Math.max(a.bounds[1]-a.bounds[0],a.bounds[3]-a.bounds[2],a.bounds[5]-a.bounds[4]);
+      const rb=Math.max(b.bounds[1]-b.bounds[0],b.bounds[3]-b.bounds[2],b.bounds[5]-b.bounds[4]);
+      return rb-ra;
+    });
+    const box=boxes.shift();
+    if(!box||box.pixels.length<=1) break;
+    const [rmin,rmax,gmin,gmax,bmin,bmax]=box.bounds;
+    const rr=rmax-rmin,gg=gmax-gmin,bb=bmax-bmin;
+    let ch=0;if(gg>=rr&&gg>=bb)ch=1;else if(bb>=rr)ch=2;
+    box.pixels.sort((a,b)=>a[ch]-b[ch]);
+    const mid=(box.pixels.length/2)|0;
+    const p1=box.pixels.slice(0,mid),p2=box.pixels.slice(mid);
+    if(!p1.length||!p2.length){boxes.push(box);break;}
+    boxes.push({pixels:p1,bounds:boundsOf(p1)});
+    boxes.push({pixels:p2,bounds:boundsOf(p2)});
+  }
+  return boxes.map(b=>{
+    const n=b.pixels.length||1;
+    let rs=0,gs=0,bs=0;
+    for(let j=0;j<b.pixels.length;j++){rs+=b.pixels[j][0];gs+=b.pixels[j][1];bs+=b.pixels[j][2];}
+    return [Math.round(rs/n),Math.round(gs/n),Math.round(bs/n)];
+  });
+}
+function blitIndexedToCanvas({data,width,height}, pal32, ctx, dx=0,dy=0) {
+  const img=ctx.createImageData(width,height);
+  const u32=new Uint32Array(img.data.buffer);
+  for(let i=0;i<data.length;i++) u32[i]=pal32[data[i]];
+  ctx.putImageData(img,dx,dy);
+}
+
+// ---------- file loader ----------
+document.getElementById('fileInput').addEventListener('change', async (e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const text=await file.text();
+
+  // Parse texture arrays
+  const textures={};
+  const varRegex=/var\s+(\w+)\s*=\s*(\[[^\;]+);/gs;
+  let m;
+  while((m=varRegex.exec(text))!==null){
+    const name=m[1], arrStr=m[2];
+    const rgbs=[]; const trip=/\[(\d+),(\d+),(\d+)\]/g; let t;
+    while((t=trip.exec(arrStr))!==null){rgbs.push([+t[1],+t[2],+t[3]]);}
+    const w=Math.floor(Math.sqrt(rgbs.length))||1;
+    const h=Math.ceil(rgbs.length/w);
+    textures[name]={pixels:rgbs,width:w,height:h};
+  }
+
+  // Pool (sampling optional)
+  const pool=[]; for(const k in textures) pool.push(...textures[k].pixels);
+  const palette=medianCut(pool,255);
+
+  // Convert each
+  const indexed={};
+  for(const k in textures){
+    const {pixels,width,height}=textures[k];
+    const out=new Uint16Array(pixels.length);
+    for(let i=0;i<pixels.length;i++) out[i]=nearestIndex(pixels[i],palette);
+    indexed[k]={data:out,width,height};
+  }
+
+  // Build pal32
+  const pal32=new Uint32Array(palette.length);
+  for(let i=0;i<palette.length;i++){
+    const c=palette[i]||[0,0,0];
+    pal32[i]=(255<<24)|(c[2]<<16)|(c[1]<<8)|(c[0]);
+  }
+
+  // Log
+  document.getElementById('log').textContent=`Palette size: ${palette.length}\nTextures: ${Object.keys(textures).join(', ')}`;
+
+  // Blit first
+  const ctx=document.getElementById('canvas').getContext('2d');
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  const firstKey=Object.keys(indexed)[0];
+  if(firstKey) blitIndexedToCanvas(indexed[firstKey],pal32,ctx,0,0);
+
+  // Dump palette + arrays to textarea
+  let outTxt = "const palette = " + JSON.stringify(palette) + ";\n\n";
+  for (const k in indexed) {
+    outTxt += `${k} = [${Array.from(indexed[k].data)}];\n\n`;
+  }
+  document.getElementById('output').value = outTxt;
+
+});
+</script>
+</body>
+</html>
