@@ -57,21 +57,21 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var texpixels = texture.texture;
 
     // mip mapping (try 5, 8, 20 for floors?)
-    if(fDistance > 40 && !isSprite){
-      texpixels = texture.mm3;
-      texHeight = texture.height / 8;
-      texWidth = texture.width / 8;
-    }
-    else if(fDistance > 30 && !isSprite){
-      texpixels = texture.mm2;
-      texHeight = texture.height / 4;
-      texWidth = texture.width / 4;
-    }
-    else if(fDistance > 20 && !isSprite){
-      texpixels = texture.mm1;
-      texHeight = texture.height / 2;
-      texWidth = texture.width / 2;
-    }
+    // if(fDistance > 40 && !isSprite){
+    //   texpixels = texture.mm3;
+    //   texHeight = texture.height / 8;
+    //   texWidth = texture.width / 8;
+    // }
+    // else if(fDistance > 30 && !isSprite){
+    //   texpixels = texture.mm2;
+    //   texHeight = texture.height / 4;
+    //   texWidth = texture.width / 4;
+    // }
+    // else if(fDistance > 20 && !isSprite){
+    //   texpixels = texture.mm1;
+    //   texHeight = texture.height / 2;
+    //   texWidth = texture.width / 2;
+    // }
 
   }else{
     var texWidth = 1
