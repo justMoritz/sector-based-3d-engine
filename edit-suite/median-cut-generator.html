@@ -115,18 +115,38 @@ document.getElementById('fileInput').addEventListener('change', async (e)=>{
   // Log
   document.getElementById('log').textContent=`Palette size: ${palette.length}\nTextures: ${Object.keys(textures).join(', ')}`;
 
-  // Blit first
-  const ctx=document.getElementById('canvas').getContext('2d');
-  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  const firstKey=Object.keys(indexed)[0];
-  if(firstKey) blitIndexedToCanvas(indexed[firstKey],pal32,ctx,0,0);
+  // // Blit first
+  // const ctx=document.getElementById('canvas').getContext('2d');
+  // ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  // const firstKey=Object.keys(indexed)[0];
+  // if(firstKey) blitIndexedToCanvas(indexed[firstKey],pal32,ctx,0,0);
 
-  // Dump palette + arrays to textarea
-  let outTxt = "const palette = " + JSON.stringify(palette) + ";\n\n";
-  for (const k in indexed) {
-    outTxt += `${k} = [${Array.from(indexed[k].data)}];\n\n`;
-  }
-  document.getElementById('output').value = outTxt;
+  // // Dump palette + arrays to textarea
+  // let outTxt = "const palette = " + JSON.stringify(palette) + ";\n\n";
+  // for (const k in indexed) {
+  //   outTxt += `${k} = [${Array.from(indexed[k].data)}];\n\n`;
+  // }
+  // document.getElementById('output').value = outTxt;
+
+
+  // --- show palette instead of texture ---
+  const ctx = document.getElementById('canvas').getContext('2d');
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  const swatchSize = 16; // size of each palette square
+  const cols = Math.floor(ctx.canvas.width / swatchSize);
+
+  palette.forEach((c, i) => {
+    const x = (i % cols) * swatchSize;
+    const y = Math.floor(i / cols) * swatchSize;
+    ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
+    ctx.fillRect(x, y, swatchSize, swatchSize);
+
+    // optional: draw index number
+    ctx.fillStyle = "#000";
+    ctx.font = "8px monospace";
+    ctx.fillText(i, x+2, y+10);
+  });
 
 });
 </script>
