@@ -5,23 +5,28 @@
   <title>Palette Quantizer Tool</title>
   <style>
     body { font-family: sans-serif; margin: 20px; }
-    canvas { border: 1px solid #ccc; margin-top: 10px; display:block; }
+    canvas { border: 1px solid #ccc; margin-top: 10px; display:block; image-rendering: pixelated; }
     textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; }
   </style>
 </head>
 <body>
   <h1>Palette Quantizer</h1>
+  <p>
+    Expects each texture exactly like:
+    <pre>var name = [[0,0,0],[2,3,4]];</pre>
+  </p>
   <input type="file" id="fileInput" accept=".js,.tex">
-  <pre id="log"></pre>
+  <div id="log"></div>
   <canvas id="canvas" width="128" height="128"></canvas>
   <h3>Output (palette + indexed arrays)</h3>
   <textarea id="output" readonly></textarea>
 
 <script>
-// ---------- SAFE helpers ----------
+// ---------- helpers ----------
 function nearestIndex(color, palette) {
-  let best = 0, bestDist = Infinity;
-  for (let i = 0; i < palette.length; i++) {
+  // palette[0] is null; search from 1..N-1
+  let best = 1, bestDist = Infinity;
+  for (let i = 1; i < palette.length; i++) {
     const p = palette[i]; if (!p) continue;
     const dr=color[0]-p[0], dg=color[1]-p[1], db=color[2]-p[2];
     const d=dr*dr + dg*dg + db*db;
@@ -40,6 +45,7 @@ function boundsOf(pix) {
   return [rmin,rmax,gmin,gmax,bmin,bmax];
 }
 function medianCut(pixels, nColors=255) {
+  // pixels should already exclude [0,0,0]
   const copy=pixels.slice();
   let boxes=[{pixels:copy,bounds:boundsOf(copy)}];
   while(boxes.length<nColors){
@@ -60,12 +66,14 @@ function medianCut(pixels, nColors=255) {
     boxes.push({pixels:p1,bounds:boundsOf(p1)});
     boxes.push({pixels:p2,bounds:boundsOf(p2)});
   }
-  return boxes.map(b=>{
+  const colors = boxes.map(b=>{
     const n=b.pixels.length||1;
     let rs=0,gs=0,bs=0;
     for(let j=0;j<b.pixels.length;j++){rs+=b.pixels[j][0];gs+=b.pixels[j][1];bs+=b.pixels[j][2];}
     return [Math.round(rs/n),Math.round(gs/n),Math.round(bs/n)];
   });
+  // Ensure we return at most 255 colors (plus null becomes 256 total)
+  return colors.slice(0,255);
 }
 function blitIndexedToCanvas({data,width,height}, pal32, ctx, dx=0,dy=0) {
   const img=ctx.createImageData(width,height);
@@ -73,6 +81,7 @@ function blitIndexedToCanvas({data,width,height}, pal32, ctx, dx=0,dy=0) {
   for(let i=0;i<data.length;i++) u32[i]=pal32[data[i]];
   ctx.putImageData(img,dx,dy);
 }
+function isBlack(c){ return c[0]===0 && c[1]===0 && c[2]===0; }
 
 // ---------- file loader ----------
 document.getElementById('fileInput').addEventListener('change', async (e)=>{
@@ -92,61 +101,80 @@ document.getElementById('fileInput').addEventListener('change', async (e)=>{
     textures[name]={pixels:rgbs,width:w,height:h};
   }
 
-  // Pool (sampling optional)
-  const pool=[]; for(const k in textures) pool.push(...textures[k].pixels);
-  const palette=medianCut(pool,255);
+  // Build pool EXCLUDING pure black (reserved for transparency at index 0)
+  const pool=[];
+  for(const k in textures){
+    for(const c of textures[k].pixels){
+      if (!isBlack(c)) pool.push(c);
+    }
+  }
+  // If pool is empty (all black), still create a minimal palette
+  const learned = pool.length ? medianCut(pool,255) : [];
 
-  // Convert each
+  // Final palette with null at index 0
+  const palette = [[0,0,0], ...learned]; // length <= 256
+
+  // Convert each texture to indices (black => 0)
   const indexed={};
   for(const k in textures){
     const {pixels,width,height}=textures[k];
     const out=new Uint16Array(pixels.length);
-    for(let i=0;i<pixels.length;i++) out[i]=nearestIndex(pixels[i],palette);
+    for(let i=0;i<pixels.length;i++){
+      const c = pixels[i];
+      out[i] = isBlack(c) ? 0 : nearestIndex(c, palette);
+    }
     indexed[k]={data:out,width,height};
   }
 
-  // Build pal32
+  // Build pal32 (index 0 transparent)
   const pal32=new Uint32Array(palette.length);
-  for(let i=0;i<palette.length;i++){
-    const c=palette[i]||[0,0,0];
+  pal32[0]=0x00000000; // transparent
+  for(let i=1;i<palette.length;i++){
+    const c=palette[i];
     pal32[i]=(255<<24)|(c[2]<<16)|(c[1]<<8)|(c[0]);
   }
 
   // Log
-  document.getElementById('log').textContent=`Palette size: ${palette.length}\nTextures: ${Object.keys(textures).join(', ')}`;
+  document.getElementById('log').textContent=`Palette size: ${palette.length} (index 0 reserved: null)\nTextures: ${Object.keys(textures).join(', ')}`;
 
-  // // Blit first
-  // const ctx=document.getElementById('canvas').getContext('2d');
-  // ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  // const firstKey=Object.keys(indexed)[0];
-  // if(firstKey) blitIndexedToCanvas(indexed[firstKey],pal32,ctx,0,0);
+  // Dump palette + arrays
+  let outTxt = "var palette = " + JSON.stringify(palette) + ";\n\n";
+  for (const k in indexed) {
+    outTxt += `${k} = [${Array.from(indexed[k].data)}];\n\n`;
+  }
+  document.getElementById('output').value = outTxt;
 
-  // // Dump palette + arrays to textarea
-  // let outTxt = "const palette = " + JSON.stringify(palette) + ";\n\n";
-  // for (const k in indexed) {
-  //   outTxt += `${k} = [${Array.from(indexed[k].data)}];\n\n`;
-  // }
-  // document.getElementById('output').value = outTxt;
-
-
-  // --- show palette instead of texture ---
+  // --- show palette (16 cols), index 0 as checker ---
   const ctx = document.getElementById('canvas').getContext('2d');
+  const swatch = 16, cols = 16;
+  const rows = Math.ceil(palette.length / cols);
+  ctx.canvas.width = cols * swatch;
+  ctx.canvas.height = rows * swatch;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  const swatchSize = 16; // size of each palette square
-  const cols = Math.floor(ctx.canvas.width / swatchSize);
+  function drawChecker(x,y,s){
+    ctx.fillStyle="#bbb"; ctx.fillRect(x,y,s,s);
+    ctx.fillStyle="#eee"; ctx.fillRect(x,y,s/2,s/2);
+    ctx.fillRect(x+s/2,y+s/2,s/2,s/2);
+  }
 
-  palette.forEach((c, i) => {
-    const x = (i % cols) * swatchSize;
-    const y = Math.floor(i / cols) * swatchSize;
-    ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
-    ctx.fillRect(x, y, swatchSize, swatchSize);
+  for (let i=0;i<palette.length;i++){
+    const x = (i % cols) * swatch;
+    const y = Math.floor(i / cols) * swatch;
 
-    // optional: draw index number
-    ctx.fillStyle = "#000";
-    ctx.font = "8px monospace";
+    if (i===0 || !palette[i]) {
+      drawChecker(x,y,swatch);
+    } else {
+      const [r,g,b]=palette[i];
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(x,y,swatch,swatch);
+    }
+
+    // index label
+    ctx.fillStyle="#000";
+    ctx.font="8px monospace";
     ctx.fillText(i, x+2, y+10);
-  });
+  }
 
 });
 </script>

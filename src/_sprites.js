@@ -161,6 +161,7 @@ function _drawSpritesNew (i) {
       fDistanceToSprite *= Math.cos(fAngleDifferences)
 
       // console.log(sprite);
+      
 
       var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
       var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
@@ -177,14 +178,55 @@ function _drawSpritesNew (i) {
           sj > fSpriteCeil && sj <= fSpriteFloor
           )
         {
+
+          // The angle the sprite is facing relative to the player
+          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
+
+          if (fSpriteBeautyAngle < 0) {
+            fSpriteBeautyAngle += PIx2;
+          }
+          if (fSpriteBeautyAngle > PIx2) {
+            fSpriteBeautyAngle -= PIx2;
+          }
+
+          // then checks which sprite angle preset to use
+          if ("angles" in currentSpriteObject) {
+            if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
+              sprite["a"] = "B";
+            } else if (
+              +fSpriteBeautyAngle >= +PIx05 &&
+              +fSpriteBeautyAngle < +PIx1
+            ) {
+              sprite["a"] = "L";
+            } else if (
+              +fSpriteBeautyAngle >= +PIx1 &&
+              +fSpriteBeautyAngle < +PIx1_5
+            ) {
+              sprite["a"] = "F";
+            } else if (
+              +fSpriteBeautyAngle >= +PIx1_5 &&
+              +fSpriteBeautyAngle < +PIx2
+            ) {
+              sprite["a"] = "R";
+            }
+          }
+
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
-          var fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-          // var fSamplePixelMask = _getSamplePixelMask( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite);
+          var fSamplePixel;
+
+          // if angles exist in the sprite, sample the appropriate angle
+          if (sprite["a"]) {
+            fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+          }
+          // regular sampling
+          else{
+            fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+          }
+
           
           // transparency
           var bIsTransparentPix = fSamplePixel.every(element => element === 0);
-          // var bIsTransparentPix = fSamplePixelMask.every(element => element === 0);
-          // if( fSamplePixel[0] !== "." ){
+          
           if( !bIsTransparentPix ){
             fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
             screen[sj * nScreenWidth + i] = fSamplePixel

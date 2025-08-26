@@ -560,8 +560,10 @@ var gameEngineJS = (function () {
         fRayAngleGlob = fRayAngle;
 
         // checks the current sector, and potentially updates the sector the player might be in
+        setPalette(worldPalette);
         checkSectors(sPlayerSector, i);
 
+        setPalette(spritesPalette);
         _drawSpritesNew(i);
 
       } // end column loop

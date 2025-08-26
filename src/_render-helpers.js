@@ -57,21 +57,21 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
     var texpixels = texture.texture;
 
     // mip mapping (try 5, 8, 20 for floors?)
-    // if(fDistance > 40 && !isSprite){
-    //   texpixels = texture.mm3;
-    //   texHeight = texture.height / 8;
-    //   texWidth = texture.width / 8;
-    // }
-    // else if(fDistance > 30 && !isSprite){
-    //   texpixels = texture.mm2;
-    //   texHeight = texture.height / 4;
-    //   texWidth = texture.width / 4;
-    // }
-    // else if(fDistance > 20 && !isSprite){
-    //   texpixels = texture.mm1;
-    //   texHeight = texture.height / 2;
-    //   texWidth = texture.width / 2;
-    // }
+    if(fDistance > 40 && !isSprite){
+      texpixels = texture.mm3;
+      texHeight = texture.height / 8;
+      texWidth = texture.width / 8;
+    }
+    else if(fDistance > 30 && !isSprite){
+      texpixels = texture.mm2;
+      texHeight = texture.height / 4;
+      texWidth = texture.width / 4;
+    }
+    else if(fDistance > 20 && !isSprite){
+      texpixels = texture.mm1;
+      texHeight = texture.height / 2;
+      texWidth = texture.width / 2;
+    }
 
   }else{
     var texWidth = 1
@@ -107,10 +107,10 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var samplePosition10 = (y1 * texWidth + x0);
   var samplePosition11 = (y1 * texWidth + x1);
 
-  var color00 = palette95[texpixels[samplePosition00]];
-  var color01 = palette95[texpixels[samplePosition01]];
-  var color10 = palette95[texpixels[samplePosition10]];
-  var color11 = palette95[texpixels[samplePosition11]];
+  var color00 = oRenderPalette[texpixels[samplePosition00]];
+  var color01 = oRenderPalette[texpixels[samplePosition01]];
+  var color10 = oRenderPalette[texpixels[samplePosition10]];
+  var color11 = oRenderPalette[texpixels[samplePosition11]];
 
   // Bilinear interpolation for each color component
   var colorR = color00[0] * (1 - dx) * (1 - dy) + color01[0] * dx * (1 - dy) + color10[0] * (1 - dx) * dy + color11[0] * dx * dy;
@@ -220,7 +220,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   var samplePosition = (texWidth * sampleY + sampleX);
 
   var pixelIndex = texpixels[samplePosition];
-  var currentColorPixel = palette95[pixelIndex] || [0, 0, 0];
+  var currentColorPixel = oRenderPalette[pixelIndex] || [0, 0, 0];
   
   // var currentPixel;
   // var currentColorPixel;

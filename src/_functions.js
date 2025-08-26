@@ -313,7 +313,7 @@ function downSampleIndexed(texels, width, height, factor) {
       newTexture.push(bestIdx);
     }
   }
-  return {data: newTexture, width:newWidth, height:newHeight};
+  return newTexture; // <-- return array (not object)
 }
 
 
@@ -526,4 +526,9 @@ function getCurrentPlayerPos (log) {
   else{
     return currentPlayerPos;
   }
+}
+
+// Palette switching – picks with 255 color palette to render with
+function setPalette ( input ){
+  oRenderPalette = input;
 }

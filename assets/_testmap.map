@@ -1,9 +1,9 @@
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 18.026304471778662,
-  "fPlayerY": 4.44,
-  "fPlayerA": 1.8,
+  "fPlayerX": 11,
+  "fPlayerY": 5,
+  "fPlayerA": 2.8,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -94,6 +94,13 @@ var _testmap =
     }
   },
   "sprites": {
+      "0": {
+          "x": 12,
+          "y": 15,
+          "h": 0.2,
+          "r": 0,
+          "name": "P"
+      },
       "1": {
           "x": 4.6,
           "y": 5,
@@ -107,6 +114,34 @@ var _testmap =
           "r": -0.2,
           "h": 0,
           "name": "O"
+      },
+      "3": {
+          "x": 5,
+          "y": 7,
+          "r": -0.2,
+          "h": 0,
+          "name": "baby"
+      },
+      "4": {
+          "x": 5,
+          "y": 10,
+          "r": -0.2,
+          "h": 0,
+          "name": "table"
+      },
+      "5": {
+          "x": 7,
+          "y": 10,
+          "r": -0.2,
+          "h": 0,
+          "name": "chair"
+      },
+      "6": {
+          "x": 2,
+          "y": 10,
+          "r": -0.2,
+          "h": 0,
+          "name": "bush"
       }
   },
   "map": [
@@ -229,7 +264,7 @@ var _testmap =
           "de2",
           0.2,
           0.96,
-          0.5,
+          null,
           0,
           0
         ],
