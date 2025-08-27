@@ -116,10 +116,12 @@ var gameEngineJS = (function () {
       // load sprites
       oLevelSprites = oLevel.sprites;
 
+      // breaks each voxel object into sprites
+      prepareVoxelObjects();
+
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
 
-      
       // places the player at the map starting point
       fPlayerX = oLevel.fPlayerX;
       fPlayerY = oLevel.fPlayerY;
