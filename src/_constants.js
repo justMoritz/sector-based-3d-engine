@@ -89,6 +89,7 @@ var fRayAngleGlob;
 
 var oRenderPalette;
 
+
 var oMap;
 
 var gameRun;

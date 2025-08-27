@@ -160,7 +160,36 @@ function _drawSpritesNew (i) {
       // Fisheye correction
       fDistanceToSprite *= Math.cos(fAngleDifferences)
 
-      // console.log(sprite);
+      // The angle the sprite is facing relative to the player
+      var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
+      if (fSpriteBeautyAngle < 0) {
+        fSpriteBeautyAngle += PIx2;
+      }
+      if (fSpriteBeautyAngle > PIx2) {
+        fSpriteBeautyAngle -= PIx2;
+      }
+
+      // checks which sprite angle preset to use
+      if ("angles" in currentSpriteObject) {
+        if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
+          sprite["a"] = "B";
+        } else if (
+          +fSpriteBeautyAngle >= +PIx05 &&
+          +fSpriteBeautyAngle < +PIx1
+        ) {
+          sprite["a"] = "L";
+        } else if (
+          +fSpriteBeautyAngle >= +PIx1 &&
+          +fSpriteBeautyAngle < +PIx1_5
+        ) {
+          sprite["a"] = "F";
+        } else if (
+          +fSpriteBeautyAngle >= +PIx1_5 &&
+          +fSpriteBeautyAngle < +PIx2
+        ) {
+          sprite["a"] = "R";
+        }
+      }
       
 
       var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
@@ -179,37 +208,6 @@ function _drawSpritesNew (i) {
           )
         {
 
-          // The angle the sprite is facing relative to the player
-          var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
-
-          if (fSpriteBeautyAngle < 0) {
-            fSpriteBeautyAngle += PIx2;
-          }
-          if (fSpriteBeautyAngle > PIx2) {
-            fSpriteBeautyAngle -= PIx2;
-          }
-
-          // then checks which sprite angle preset to use
-          if ("angles" in currentSpriteObject) {
-            if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
-              sprite["a"] = "B";
-            } else if (
-              +fSpriteBeautyAngle >= +PIx05 &&
-              +fSpriteBeautyAngle < +PIx1
-            ) {
-              sprite["a"] = "L";
-            } else if (
-              +fSpriteBeautyAngle >= +PIx1 &&
-              +fSpriteBeautyAngle < +PIx1_5
-            ) {
-              sprite["a"] = "F";
-            } else if (
-              +fSpriteBeautyAngle >= +PIx1_5 &&
-              +fSpriteBeautyAngle < +PIx2
-            ) {
-              sprite["a"] = "R";
-            }
-          }
 
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
           var fSamplePixel;
