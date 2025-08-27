@@ -67,6 +67,8 @@ var debugWrite;
 var fDepthBufferR = [];
 var fLightMap = [];
 
+    var animationTimer = 0;
+
 // defaults
 var fPlayerX;
 var fPlayerY;

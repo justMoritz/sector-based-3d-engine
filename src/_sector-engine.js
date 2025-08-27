@@ -494,6 +494,7 @@ var gameEngineJS = (function () {
   var main = function ( isEditor ) {
     _gameSettingsInit();
     var gameTimer = 0;
+
     
     // TODO: Why?
     if( DEBUGMODE ){
@@ -505,6 +506,11 @@ var gameEngineJS = (function () {
     function gameLoop() {
       gameTimer++
 
+      animationTimer++;
+      if (animationTimer > 15) {
+        animationTimer = 0;
+      }
+
       // If in editor, update the level map constantly
       if( isEditor ){
         oLevel = leveldata;
@@ -515,6 +521,8 @@ var gameEngineJS = (function () {
 
       _moveHelpers.move();
       _moveHelpers.playerHeight();
+
+      _moveSprites();
 
       _updateSpriteBuffer();
 

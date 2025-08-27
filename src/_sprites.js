@@ -22,39 +22,40 @@ var _moveSprites = function () {
       var fCollideY2 = +sprite["y"] + 0.425; // 0.25
       var fCollideX2 = +sprite["x"] - 0.65; //0.5
 
-      if (
-        map[~~fCollideY * nMapWidth + ~~fCollideX] != "." ||
-        map[~~fCollideY2 * nMapWidth + ~~fCollideX2] != "."
-      ) {
-        sprite["stuckcounter"]++;
+      // TODO: new collision
+      // if (
+      //   map[~~fCollideY * nMapWidth + ~~fCollideX] != "." ||
+      //   map[~~fCollideY2 * nMapWidth + ~~fCollideX2] != "."
+      // ) {
+      //   sprite["stuckcounter"]++;
 
-        // // reverse last movement
-        sprite["x"] =
-          +sprite["x"] - +Math.cos(sprite["r"]) * fMovementSpeed * 2;
-        sprite["y"] =
-          +sprite["y"] - +Math.sin(sprite["r"]) * fMovementSpeed * 2;
+      //   // // reverse last movement
+      //   sprite["x"] =
+      //     +sprite["x"] - +Math.cos(sprite["r"]) * fMovementSpeed * 2;
+      //   sprite["y"] =
+      //     +sprite["y"] - +Math.sin(sprite["r"]) * fMovementSpeed * 2;
 
-        // // repeat may help unstuck sprites
-        // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-        // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
-        // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-        // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+      //   // // repeat may help unstuck sprites
+      //   // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+      //   // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+      //   // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
+      //   // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
 
-        // change the angle and visible angle
-        sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2; // TODO: sometimes buggie
+      //   // change the angle and visible angle
+      //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2; // TODO: sometimes buggie
 
-        // if sprite keeps getting stuck, shove it outta there
-        if (sprite["stuckcounter"] > 10) {
-          sprite["stuckcounter"] = 0;
-          sprite["r"] = 0.5;
-          sprite["x"] = +sprite["x"] - +Math.cos(sprite["r"]) * 0.5;
-          sprite["y"] = +sprite["y"] - +Math.sin(sprite["r"]) * 0.5;
+      //   // if sprite keeps getting stuck, shove it outta there
+      //   if (sprite["stuckcounter"] > 10) {
+      //     sprite["stuckcounter"] = 0;
+      //     sprite["r"] = 0.5;
+      //     sprite["x"] = +sprite["x"] - +Math.cos(sprite["r"]) * 0.5;
+      //     sprite["y"] = +sprite["y"] - +Math.sin(sprite["r"]) * 0.5;
 
-          // sprite["move"]  = false;
-          // sprite["x"]  = 0;
-          // sprite["7"]  = 0;
-        }
-      }
+      //     // sprite["move"]  = false;
+      //     // sprite["x"]  = 0;
+      //     // sprite["7"]  = 0;
+      //   }
+      // }
 
       // if sprite is close to the player, and facing the player, turn around
       if (sprite["z"] < 1 && sprite["a"] !== "B") {
@@ -211,11 +212,39 @@ function _drawSpritesNew (i) {
 
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
           var fSamplePixel;
+          var sAnimationFrame = '';
+          
 
-          // if angles exist in the sprite, sample the appropriate angle
-          if (sprite["a"]) {
+          // if angles exist in the sprite, sample the appropriate walkframe for the angle
+          if (sprite["move"] && "walkframes" in currentSpriteObject) {
+            if (animationTimer < 5) {
+              sAnimationFrame = "W1";
+            } 
+            else if (animationTimer >= 5 && animationTimer < 10) {
+              sAnimationFrame = "W2";
+            }
+            else {
+              sAnimationFrame = "";
+            }
+            
+            if(sAnimationFrame !== ""){
+              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            }
+            else{
+              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            }
+          }
+
+          // if angles exist in the sprite sample the appropriate angle
+          else if (sprite["a"]) {
             fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
           }
+
+          // for vox-test, only use directSampling (bypass bilinear)
+          else if ( "isVox" in currentSpriteObject ) {
+            fSamplePixel = _getSamplePixelDirect( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+          }
+
           // regular sampling
           else{
             fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);

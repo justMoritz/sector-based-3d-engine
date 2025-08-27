@@ -106,15 +106,57 @@ var _testmap =
           "y": 5.2,
           "h": 0,
           "r": 2,
-          "name": "O"
+          "name": "P",
+          "move": true,
       },
-      "2": {
-          "x": 8,
-          "y": 7,
-          "r": -0.2,
+      "1": {
+          "x": 4.6,
+          "y": 5.2,
           "h": 0,
-          "name": "P"
+          "r": 6.3,
+          "name": "P",
+          "move": true,
       },
+      "1b": {
+          "x": 46,
+          "y": 7,
+          "h": 0,
+          "r": 3.11,
+          "name": "O",
+          "move": true,
+      },
+     //  "2": { "x": 8, "y": 7, "r":0, "h": 0, "name": "chairBackLeg" },
+
+      "2b1": { "x": 8-0.15, "y": 7-0.15, "r":0, "h": 0, "name": "chairBackLeg" },
+      "2b2": { "x": 8-0.075, "y": 7-0.15, "r":0, "h": 0, "name": "chairBackSpan" },
+      "2b3": { "x": 8, "y": 7-0.15, "r":0, "h": 0, "name": "chairBackSpan" },
+      "2b4": { "x": 8+0.075, "y": 7-0.15, "r":0, "h": 0, "name": "chairBackSpan" },
+      "2b5": { "x": 8+0.15, "y": 7-0.15, "r":0, "h": 0, "name": "chairBackLeg" },
+
+      "2s1": { "x": 8-0.15, "y": 7-0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s2": { "x": 8-0.075, "y": 7-0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s3": { "x": 8, "y": 7-0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s4": { "x": 8+0.075, "y": 7-0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s5": { "x": 8+0.15, "y": 7-0.075, "r":0, "h": 0, "name": "chairSeat" },
+
+      "2s1b": { "x": 8-0.15, "y": 7, "r":0, "h": 0, "name": "chairSeat" },
+      "2s2b": { "x": 8-0.075, "y": 7, "r":0, "h": 0, "name": "chairSeat" },
+      "2s3b": { "x": 8, "y": 7, "r":0, "h": 0, "name": "chairSeat" },
+      "2s4b": { "x": 8+0.075, "y": 7, "r":0, "h": 0, "name": "chairSeat" },
+      "2s5b": { "x": 8+0.15, "y": 7, "r":0, "h": 0, "name": "chairSeat" },
+
+      "2s1c": { "x": 8-0.15, "y": 7+0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s2c": { "x": 8-0.075, "y": 7+0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s3c": { "x": 8, "y": 7+0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s4c": { "x": 8+0.075, "y": 7+0.075, "r":0, "h": 0, "name": "chairSeat" },
+      "2s5c": { "x": 8+0.15, "y": 7+0.075, "r":0, "h": 0, "name": "chairSeat" },
+
+      "2f1": { "x": 8-0.15, "y": 7+0.15, "r":0, "h": 0, "name": "chariFrontLeg" },
+      "2f2": { "x": 8-0.075, "y": 7+0.15, "r":0, "h": 0, "name": "chariFrontspan" },
+      "2f3": { "x": 8, "y": 7+0.15, "r":0, "h": 0, "name": "chariFrontspan" },
+      "2f4": { "x": 8+0.075, "y": 7+0.15, "r":0, "h": 0, "name": "chariFrontspan" },
+      "2f5": { "x": 8+0.15, "y": 7+0.15, "r":0, "h": 0, "name": "chariFrontLeg" },
+
       "3": {
           "x": 27.5,
           "y": 25.5,
