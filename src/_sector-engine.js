@@ -117,7 +117,7 @@ var gameEngineJS = (function () {
       oLevelSprites = oLevel.sprites;
 
       // breaks each voxel object into sprites
-      prepareVoxelObjects();
+      // prepareVoxelObjects();
 
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
@@ -545,6 +545,7 @@ var gameEngineJS = (function () {
       fFloorLooktimer = fLooktimer * 0.15;
       // var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+      
 
 
       // for each screen-column

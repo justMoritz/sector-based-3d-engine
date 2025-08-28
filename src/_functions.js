@@ -604,6 +604,5 @@ function prepareVoxelObjects () {
       voxelObjectCounter++;
     }
   }
-  console.log(allSprites);
-  console.log(oLevelSprites);
 }
+
