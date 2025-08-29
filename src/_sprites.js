@@ -131,7 +131,7 @@ var _updateSpriteBuffer = function () {
 function _drawSpritesNew (i) {
   if( EDITMODE ){ return; }
 
-
+  // only check every 8th 
   if(i % 8){
     return;
   }
@@ -169,6 +169,11 @@ function _drawSpritesNew (i) {
 
       if( fDistanceToSprite < 1 ){
         if(i % 20){
+          return;
+        }
+      }
+      if( fDistanceToSprite < 0.5 ){
+        if(i % 40){
           return;
         }
       }
