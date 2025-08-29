@@ -212,8 +212,8 @@ function _drawVoxels (i) {
               screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
 
               // repeat sideways — thickness increases as you get closer
-              // let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
-              let thickness = 1;
+              let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
+              // let thickness = 1;
               // e.g. 10 units away = 1 column, 1 unit away = 10 columns
 
               for (let dx = 1; dx < thickness; dx++) {
