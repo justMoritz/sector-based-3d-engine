@@ -128,9 +128,11 @@ var _updateSpriteBuffer = function () {
 
 
 
-function _drawSpritesNew (i) {
+function _drawVoxels (i) {
   if( EDITMODE ){ return; }
-
+  if(i % 40){
+    return;
+  }
 
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
@@ -159,105 +161,132 @@ function _drawSpritesNew (i) {
         Math.pow(fPlayerY - intersection.y, 2)
       );
 
-      // Fisheye correction
-      // fDistanceToSprite *= Math.cos(fAngleDifferences)
 
-      
       fSampleX = 1;
 
+      for (let subVoxel of currentSpriteObject["vox"]) {
 
-            
-      if ("vox" in currentSpriteObject) {
+        // --- world-space position of this subVoxel ---
+        let subX = sprite["x"] + subVoxel.x;
+        let subY = sprite["y"] + subVoxel.y;
 
-        for (let subVoxel of currentSpriteObject["vox"]) {
+        // vector from player to subVoxel
+        let fVecX = subX - fPlayerX;
+        let fVecY = subY - fPlayerY;
 
-          // --- world-space position of this subVoxel ---
-          let subX = sprite["x"] + subVoxel.x;
-          let subY = sprite["y"] + subVoxel.y;
+        // distance
+        let fDistanceToSub = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+        if (fDistanceToSub <= 0.1) continue; // skip too close
 
-          // vector from player to subVoxel
-          let fVecX = subX - fPlayerX;
-          let fVecY = subY - fPlayerY;
+        // angle from player forward to subVoxel
+        let fAngleToSub = Math.atan2(fVecY, fVecX) - fPlayerA;
+        if (fAngleToSub < -PI___) fAngleToSub += PIx2;
+        if (fAngleToSub > PI___)  fAngleToSub -= PIx2;
 
-          // distance
-          let fDistanceToSub = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
-          if (fDistanceToSub <= 0.1) continue; // skip too close
+        // project angle to screen column
+        let nSubColumn = Math.floor(
+          (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth
+        );
 
-          // angle from player forward to subVoxel
-          let fAngleToSub = Math.atan2(fVecY, fVecX) - fPlayerA;
-          if (fAngleToSub < -PI___) fAngleToSub += PIx2;
-          if (fAngleToSub > PI___)  fAngleToSub -= PIx2;
+        if (nSubColumn < 0 || nSubColumn >= nScreenWidth) continue;
 
-          // project angle to screen column
-          let nSubColumn = Math.floor(
-            (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth
-          );
+        // vertical span on screen
+        let fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSub * ((1 - sprite["h"]) + fPlayerH);
+        let fSpriteCeil  = fscreenHeightFactor - nScreenHeight / fDistanceToSub * (sprite["h"] + currentSpriteObject["hghtFctr"] - fPlayerH);
 
-          if (nSubColumn < 0 || nSubColumn >= nScreenWidth) continue;
+        // loop vertical pixels
+        for (let sj = Math.floor(fSpriteCeil); sj < fSpriteFloor; sj++) {
+          if (sj < 0 || sj >= nScreenHeight) continue;
 
-          // vertical span on screen
-          let fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSub * ((1 - sprite["h"]) + fPlayerH);
-          let fSpriteCeil  = fscreenHeightFactor - nScreenHeight / fDistanceToSub * (sprite["h"] + currentSpriteObject["hghtFctr"] - fPlayerH);
+          if (fDepthBufferR[sj * nScreenWidth + nSubColumn] >= fDistanceToSub) {
+            let fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
 
-          // loop vertical pixels
-          for (let sj = Math.floor(fSpriteCeil); sj < fSpriteFloor; sj++) {
-            if (sj < 0 || sj >= nScreenHeight) continue;
+            // sample subVoxel texture
+            let fSamplePixel = [255,222,111]
 
-            if (fDepthBufferR[sj * nScreenWidth + nSubColumn] >= fDistanceToSub) {
-              let fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+            // transparency check
+            // let bIsTransparentPix = fSamplePixel.every(e => e === 0);
+            let bIsTransparentPix = false;
+            // if (!bIsTransparentPix) {
+              fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
+              screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
 
-              // copy parent’s props into subVoxel for sampling
-              // subVoxel.width    = currentSpriteObject.width;
-              // subVoxel.height   = currentSpriteObject.height;
-              // subVoxel.aspctRt  = currentSpriteObject.aspctRt;
-              // subVoxel.hghtFctr = currentSpriteObject.hghtFctr;
-              // subVoxel.scale    = currentSpriteObject.scale;
+              // repeat sideways — thickness increases as you get closer
+              // let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
+              let thickness = 1;
+              // e.g. 10 units away = 1 column, 1 unit away = 10 columns
 
-              // // sample subVoxel texture
-              // let fSamplePixel = _getSamplePixelDirect(
-              //   subVoxel,
-              //   0.5,           // center X of the billboard (since each voxel is its own tiny sprite)
-              //   fSampleY,
-              //   1,1,0,0,
-              //   fDistanceToSub,
-              //   1,true
-              // );
-
-              // sample subVoxel texture
-              let fSamplePixel = [255,222,111]
-
-              // transparency check
-              // let bIsTransparentPix = fSamplePixel.every(e => e === 0);
-              let bIsTransparentPix = false;
-              // if (!bIsTransparentPix) {
-                fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
-                screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
-
-                // repeat sideways — thickness increases as you get closer
-                // let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
-                let thickness = 1;
-                // e.g. 10 units away = 1 column, 1 unit away = 10 columns
-
-                // fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
-                // screen[sj * nScreenWidth + i] = fSamplePixel
-
-                for (let dx = 1; dx < thickness; dx++) {
-                  let col = nSubColumn + dx;
-                  if (col >= 0 && col < nScreenWidth) {
-                    fDepthBufferR[sj * nScreenWidth + col] = fDistanceToSub;
-                    screen[sj * nScreenWidth + col] = fSamplePixel;
-                  }
+              for (let dx = 1; dx < thickness; dx++) {
+                let col = nSubColumn + dx;
+                if (col >= 0 && col < nScreenWidth) {
+                  fDepthBufferR[sj * nScreenWidth + col] = fDistanceToSub;
+                  screen[sj * nScreenWidth + col] = fSamplePixel;
                 }
-              // }
+              }
+            // }
 
-            }
           }
         }
-
-        // don’t also render parent as flat sprite
-        continue;
       }
 
     }
   }
 }
+
+
+// function _drawVoxelColumnsSimple(i) {
+//   if (EDITMODE) return;
+
+//   if(i % 40){
+//     return;
+//   }
+
+//   for (let spriteKey in oLevelSprites) {
+//     let sprite = oLevelSprites[spriteKey];
+//     let vox = allSprites[sprite.name].vox;
+
+//     for (let subVoxel of vox) {
+//       // world position
+//       let subX = sprite.x + subVoxel.x;
+//       let subY = sprite.y + subVoxel.y;
+
+//       // vector to player
+//       let dx = subX - fPlayerX;
+//       let dy = subY - fPlayerY;
+//       let dist2 = dx*dx + dy*dy;
+//       if (dist2 <= 0.01) continue;
+
+//       let dist = Math.sqrt(dist2);
+
+//       // angle relative to player
+//       let angle = Math.atan2(dy, dx) - fPlayerA;
+//       if (angle < -PI___) angle += PIx2;
+//       if (angle >  PI___) angle -= PIx2;
+
+//       // skip outside FOV
+//       if (Math.abs(angle) > fFOV * 0.5) continue;
+
+//       // screen column
+//       let col = Math.floor(
+//         (0.5 * (angle / (fFOV / 2)) + 0.5) * nScreenWidth
+//       );
+//       if (col < 0 || col >= nScreenWidth) continue;
+
+//       // vertical span
+//       let floor = fscreenHeightFactor + nScreenHeight / dist * ((1 - sprite.h) + fPlayerH);
+//       let ceil  = fscreenHeightFactor - nScreenHeight / dist * (sprite.h + allSprites[sprite.name].hghtFctr - fPlayerH);
+
+//       let yTop = Math.max(0, Math.floor(ceil));
+//       let yBot = Math.min(nScreenHeight - 1, Math.floor(floor));
+
+//       // draw column with flat color
+//       for (let sj = yTop; sj <= yBot; sj++) {
+//         let bufIdx = sj * nScreenWidth + col;
+//         if (fDepthBufferR[bufIdx] < dist) continue;
+
+//         screen[bufIdx] = [255, 222, 111]; // placeholder pixel
+//         fDepthBufferR[bufIdx] = dist;
+//       }
+//     }
+//   }
+// }

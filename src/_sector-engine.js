@@ -575,7 +575,9 @@ var gameEngineJS = (function () {
         checkSectors(sPlayerSector, i);
 
         setPalette(spritesPalette);
-        _drawSpritesNew(i);
+        _drawVoxels(i);
+
+        // _drawVoxelColumnsSimple(i);
 
       } // end column loop
 
