@@ -344,8 +344,8 @@ function _drawVoxels (i) {
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
           var fSamplePixel;
           
-          // fSamplePixel = _getSamplePixelDirect( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-          fSamplePixel = [255,222,111]
+          fSamplePixel = _getSamplePixelDirect( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+          // fSamplePixel = [255,222,111]
 
         
           // transparency
@@ -354,7 +354,13 @@ function _drawVoxels (i) {
           if( !bIsTransparentPix ){
             fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
             screen[sj * nScreenWidth + i] = fSamplePixel
-            screen[sj * nScreenWidth + (i+1)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-1)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-2)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-3)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-4)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-5)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-6)] = fSamplePixel
+            screen[sj * nScreenWidth + (i-7)] = fSamplePixel
           }
         
         }
