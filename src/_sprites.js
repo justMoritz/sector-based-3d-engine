@@ -391,6 +391,8 @@ function _drawCrazyVoxels (i) {
               subVoxel.hghtFctr = currentSpriteObject.hghtFctr;
               subVoxel.scale    = currentSpriteObject.scale;
 
+
+              // TODO: Incorporate looktimer
               light = sj * 0.0066;
 
               // sample subVoxel texture

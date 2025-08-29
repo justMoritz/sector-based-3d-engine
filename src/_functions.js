@@ -519,7 +519,7 @@ function teleportPlayer (x, y, a) {
 };
 
 function getCurrentPlayerPos (log) {
-  var currentPlayerPos = `${fPlayerX}, ${fPlayerY}, ${fPlayerA}`; 
+  var currentPlayerPos = `${fPlayerX}, ${fPlayerY}, ${fPlayerA}, ${fPlayerH}`; 
   if(log){
     console.log(currentPlayerPos);
   }
