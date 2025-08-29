@@ -132,6 +132,11 @@ function _drawSpritesNew (i) {
   if( EDITMODE ){ return; }
 
 
+  if(i % 8){
+    return;
+  }
+
+
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
@@ -160,7 +165,18 @@ function _drawSpritesNew (i) {
       );
 
       // Fisheye correction
-      fDistanceToSprite *= Math.cos(fAngleDifferences)
+      // fDistanceToSprite *= Math.cos(fAngleDifferences)
+
+      if( fDistanceToSprite < 1 ){
+        if(i % 20){
+          return;
+        }
+      }
+      else if( fDistanceToSprite < 0.2 ){
+        if(i % 80){
+          return;
+        }
+      }
 
 
       // checks which sprite angle preset to use
