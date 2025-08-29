@@ -115,9 +115,10 @@ var gameEngineJS = (function () {
       
       // load sprites
       oLevelSprites = oLevel.sprites;
+      oLevelVoxels = oLevel.voxels;
 
       // breaks each voxel object into sprites
-      prepareVoxelObjects();
+      // prepareVoxelObjects();
 
       // loads textures and creates mipMaps
       oLevelTextures = prepareTextures(textures);
@@ -131,6 +132,7 @@ var gameEngineJS = (function () {
       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
 
       bakeWallLighting(4);
+      bakeVoxelPositions();
 
       main();
 
@@ -545,6 +547,7 @@ var gameEngineJS = (function () {
       fFloorLooktimer = fLooktimer * 0.15;
       // var fPerspectiveCalculation = 1.999;
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
+      
 
 
       // for each screen-column
@@ -575,6 +578,7 @@ var gameEngineJS = (function () {
 
         setPalette(spritesPalette);
         _drawSpritesNew(i);
+        _drawCrazyVoxels(i);
 
       } // end column loop
 

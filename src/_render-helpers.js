@@ -142,7 +142,8 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   var shadingFactor = Math.max(0.5, 1 - depthValue / Math.min(40, fDepth));
 
   var lightShade = 1;
-  if(typeof fLightValue !== "undefined" && !isSprite){
+  // if(typeof fLightValue !== "undefined" && !isSprite){
+  if(typeof fLightValue !== "undefined"){
     lightShade = fLightValue + oLevel.baseLight;
   }
 
@@ -229,7 +230,7 @@ var _getSamplePixelDirect = function (texture, x, y, fSampleXScale, fSampleYScal
   // currentColorPixel = currentPixel || [0, 0, 0]; 
 
   var lightShade = 1;
-  if(typeof fLightValue !== "undefined" && !isSprite){
+  if(typeof fLightValue !== "undefined"){
     lightShade = fLightValue + oLevel.baseLight;
   }
 
@@ -729,7 +730,6 @@ function drawBackground (i, j) {
 
   return sPixelToDraw;
 }
-
 
 
 

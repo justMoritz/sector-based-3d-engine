@@ -519,7 +519,7 @@ function teleportPlayer (x, y, a) {
 };
 
 function getCurrentPlayerPos (log) {
-  var currentPlayerPos = `${fPlayerX}, ${fPlayerY}, ${fPlayerA}`; 
+  var currentPlayerPos = `${fPlayerX}, ${fPlayerY}, ${fPlayerA}, ${fPlayerH}`; 
   if(log){
     console.log(currentPlayerPos);
   }
@@ -533,77 +533,32 @@ function setPalette ( input ){
   oRenderPalette = input;
 }
 
+function bakeVoxelPositions() {
+  for (var key in oLevelVoxels) {
+    var element = oLevelVoxels[key];
+    var currentVoxBluePrint = allSprites[element.name];
 
-// Breaks out each Voxel objects into its constituent sprites. 
-// This allows us not having to rewrite voxel-specific-logic, and allows us to treat each voxel-subobject as just a sprite
-function prepareVoxelObjects () {
+    // deep copy of the vox array
+    element["voxPos"] = currentVoxBluePrint.vox.map(v => ({
+      x: v.x,
+      y: v.y,
+      texture: v.texture
+    }));
 
-  var voxelObjectCounter = 0;
-  var voxelCounter = 0;
+    // precompute cos/sin for this element’s rotation
+    var cosR = Math.cos(element.r || 0);
+    var sinR = Math.sin(element.r || 0);
 
-  // Create and push into allSprites a new object for each sprite the voxel object consists of
-  // i.e. backleg, backspan, etc. of a table etc.
-  for (let aKey in allSprites) {
-    var currentSpriteTexObj = allSprites[aKey];
-    
-    if("subVox" in currentSpriteTexObj){
-      
-      for (let avKey in currentSpriteTexObj["subVox"]) {
-        
-        var newAllSpriteObject = {};
-        newAllSpriteObject["texture"] = currentSpriteTexObj["subVox"][avKey];
-        newAllSpriteObject["height"] = currentSpriteTexObj["height"];
-        newAllSpriteObject["width"] = currentSpriteTexObj["width"];
-        newAllSpriteObject["aspctRt"] = currentSpriteTexObj["aspctRt"];
-        newAllSpriteObject["hghtFctr"] = currentSpriteTexObj["hghtFctr"];
-        newAllSpriteObject["scale"] = currentSpriteTexObj["scale"];
-        newAllSpriteObject["isVox"] = true;
-        
-        allSprites[avKey] = (newAllSpriteObject);
-      }
-
+    // rotate each voxel offset
+    for (let v of element.voxPos) {
+      let oldX = v.x;
+      let oldY = v.y;
+      v.x = oldX * cosR - oldY * sinR;
+      v.y = oldX * sinR + oldY * cosR;
     }
   }
-
-  // Then, look at oLevelSprites (the Sprite objects placed in the level)
-  // see if they are a voxel object, then create each subpart
-  for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
-    var spriteInLevel = oLevelSprites[Object.keys(oLevelSprites)[si]];
-    var currentSpriteObject = allSprites[spriteInLevel["name"]];
-
-    
-    // find the sprites that contain subvoxels
-    if ( "vox" in currentSpriteObject ) {
-
-      var rotation = spriteInLevel["r"] || 0;
-      var cosR = Math.cos(rotation);
-      var sinR = Math.sin(rotation);
-      
-      // for each subvoxel, create a new sprite object, 
-      for (let svj = 0; svj < currentSpriteObject["vox"].length; svj++) {
-        var subVoxelElement = currentSpriteObject["vox"][svj];
-
-        // apply rotation to local offsets
-        var ox = subVoxelElement["x"];
-        var oy = subVoxelElement["y"];
-        var rx = ox * cosR - oy * sinR;
-        var ry = ox * sinR + oy * cosR;
-        
-
-        var newSpriteObject = {};
-        newSpriteObject["name"] = subVoxelElement["subVox"];
-        newSpriteObject["x"]    = spriteInLevel["x"] + rx;
-        newSpriteObject["y"]    = spriteInLevel["y"] + ry;
-        newSpriteObject["h"]    = spriteInLevel["h"];
-        newSpriteObject["r"]    = rotation;
-
-        oLevelSprites["voxel"+voxelObjectCounter.toString()+'-'+voxelCounter.toString()] = newSpriteObject;
-        voxelCounter++;
-      }
-      
-      voxelObjectCounter++;
-    }
-  }
-  console.log(allSprites);
-  console.log(oLevelSprites);
 }
+
+
+
+
