@@ -162,17 +162,20 @@ function _drawSpritesNew (i) {
       // Fisheye correction
       fDistanceToSprite *= Math.cos(fAngleDifferences)
 
-      // The angle the sprite is facing relative to the player
-      var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
-      if (fSpriteBeautyAngle < 0) {
-        fSpriteBeautyAngle += PIx2;
-      }
-      if (fSpriteBeautyAngle > PIx2) {
-        fSpriteBeautyAngle -= PIx2;
-      }
 
       // checks which sprite angle preset to use
       if ("angles" in currentSpriteObject) {
+
+        // The angle the sprite is facing relative to the player
+        var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
+        if (fSpriteBeautyAngle < 0) {
+          fSpriteBeautyAngle += PIx2;
+        }
+        if (fSpriteBeautyAngle > PIx2) {
+          fSpriteBeautyAngle -= PIx2;
+        }
+
+
         if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
           sprite["a"] = "B";
         } else if (
@@ -197,7 +200,12 @@ function _drawSpritesNew (i) {
       var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
       var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
 
-      fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
+      if ( "isVox" in currentSpriteObject ) {
+        fSampleX = 1;
+      }else{
+        fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
+      }
+      
 
       for(var sj = 0; sj < nScreenHeight; sj ++){
 
@@ -241,9 +249,10 @@ function _drawSpritesNew (i) {
             fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
           }
 
-          // for vox-test, only use directSampling (bypass bilinear)
+          // for vox-test
           else if ( "isVox" in currentSpriteObject ) {
             fSamplePixel = _getSamplePixelDirect( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            // fSamplePixel = [255,244,233];
           }
 
           // regular sampling
