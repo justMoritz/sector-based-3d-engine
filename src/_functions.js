@@ -533,6 +533,31 @@ function setPalette ( input ){
   oRenderPalette = input;
 }
 
+function bakeVoxelPositions() {
+  for (var key in oLevelVoxels) {
+    var element = oLevelVoxels[key];
+    var currentVoxBluePrint = allSprites[element.name];
+
+    // deep copy of the vox array
+    element["voxPos"] = currentVoxBluePrint.vox.map(v => ({
+      x: v.x,
+      y: v.y,
+      texture: v.texture
+    }));
+
+    // precompute cos/sin for this element’s rotation
+    var cosR = Math.cos(element.r || 0);
+    var sinR = Math.sin(element.r || 0);
+
+    // rotate each voxel offset
+    for (let v of element.voxPos) {
+      let oldX = v.x;
+      let oldY = v.y;
+      v.x = oldX * cosR - oldY * sinR;
+      v.y = oldX * sinR + oldY * cosR;
+    }
+  }
+}
 
 
 

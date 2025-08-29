@@ -266,7 +266,7 @@ function _drawCrazyVoxels (i) {
   if( EDITMODE ){ return; }
 
   // only check every 8th 
-  if(i % 8){
+  if(i % 10){
     return;
   }
 
@@ -312,7 +312,7 @@ function _drawCrazyVoxels (i) {
         }
       }
       else if( fDistanceToSprite < 1 ){
-        if(i % 40){
+        if(i % 60){
           return;
         }
       }
@@ -331,26 +331,13 @@ function _drawCrazyVoxels (i) {
             
       if ("vox" in currentSpriteObject) {
 
-        for (var subVoxel of currentSpriteObject["vox"]) {
+        for (var subVoxel of sprite["voxPos"]) {
 
-          // // world-space position of this subVoxel
+          // world-space position of this subVoxel
+          // No Trig for rotation ... to expensive
+          // instead we calculate the rotation at level-load, write them into oLevelSprites
           var subX = sprite["x"] + subVoxel.x;
           var subY = sprite["y"] + subVoxel.y;
-
-
-          // Trig for rotation ... to expensive
-          // TODO: Idea: 
-          //       calculate the rotation at level-load, write them into oLevelSprites
-          // Subvox with parent rotation
-          // var cosR = Math.cos(sprite.r || 0);
-          // var sinR = Math.sin(sprite.r || 0);
-
-          // var rx = subVoxel.x * cosR - subVoxel.y * sinR;
-          // var ry = subVoxel.x * sinR + subVoxel.y * cosR;
-
-          // var subX = sprite.x + rx;
-          // var subY = sprite.y + ry;
-
 
           // vector from player to subVoxel
           var fVecX = subX - fPlayerX;
