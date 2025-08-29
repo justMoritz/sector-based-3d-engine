@@ -91,6 +91,9 @@ var fRayAngleGlob;
 
 var oRenderPalette;
 
+var oLevelSprites;
+var oLevelVoxels;
+
 
 var oMap;
 
