@@ -139,10 +139,10 @@ function _drawSpritesNew (i) {
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
 
-    var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2);
+    var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2);
+    var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2);
+    var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2);
 
 
     var intersection = intersectionPoint(
@@ -160,46 +160,10 @@ function _drawSpritesNew (i) {
       );
 
       // Fisheye correction
-      fDistanceToSprite *= Math.cos(fAngleDifferences)
-
-
-      // checks which sprite angle preset to use
-      if ("angles" in currentSpriteObject) {
-        // The angle the sprite is facing relative to the player
-        var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
-        if (fSpriteBeautyAngle < 0) {
-          fSpriteBeautyAngle += PIx2;
-        }
-        if (fSpriteBeautyAngle > PIx2) {
-          fSpriteBeautyAngle -= PIx2;
-        }
-
-        if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
-          sprite["a"] = "B";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx05 &&
-          +fSpriteBeautyAngle < +PIx1
-        ) {
-          sprite["a"] = "L";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx1 &&
-          +fSpriteBeautyAngle < +PIx1_5
-        ) {
-          sprite["a"] = "F";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx1_5 &&
-          +fSpriteBeautyAngle < +PIx2
-        ) {
-          sprite["a"] = "R";
-        }
-      }
+      // fDistanceToSprite *= Math.cos(fAngleDifferences)
 
       
-
-      var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
-      var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
-
-      fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
+      fSampleX = 1;
 
 
             
@@ -243,31 +207,39 @@ function _drawSpritesNew (i) {
               let fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
 
               // copy parent’s props into subVoxel for sampling
-              subVoxel.width    = currentSpriteObject.width;
-              subVoxel.height   = currentSpriteObject.height;
-              subVoxel.aspctRt  = currentSpriteObject.aspctRt;
-              subVoxel.hghtFctr = currentSpriteObject.hghtFctr;
-              subVoxel.scale    = currentSpriteObject.scale;
+              // subVoxel.width    = currentSpriteObject.width;
+              // subVoxel.height   = currentSpriteObject.height;
+              // subVoxel.aspctRt  = currentSpriteObject.aspctRt;
+              // subVoxel.hghtFctr = currentSpriteObject.hghtFctr;
+              // subVoxel.scale    = currentSpriteObject.scale;
+
+              // // sample subVoxel texture
+              // let fSamplePixel = _getSamplePixelDirect(
+              //   subVoxel,
+              //   0.5,           // center X of the billboard (since each voxel is its own tiny sprite)
+              //   fSampleY,
+              //   1,1,0,0,
+              //   fDistanceToSub,
+              //   1,true
+              // );
 
               // sample subVoxel texture
-              let fSamplePixel = _getSamplePixelDirect(
-                subVoxel,
-                0.5,           // center X of the billboard (since each voxel is its own tiny sprite)
-                fSampleY,
-                1,1,0,0,
-                fDistanceToSub,
-                1,true
-              );
+              let fSamplePixel = [255,222,111]
 
               // transparency check
-              let bIsTransparentPix = fSamplePixel.every(e => e === 0);
-              if (!bIsTransparentPix) {
+              // let bIsTransparentPix = fSamplePixel.every(e => e === 0);
+              let bIsTransparentPix = false;
+              // if (!bIsTransparentPix) {
                 fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
                 screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
 
                 // repeat sideways — thickness increases as you get closer
-                let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
+                // let thickness = Math.max(1, Math.floor(30 / (fDistanceToSub+0.001))); 
+                let thickness = 1;
                 // e.g. 10 units away = 1 column, 1 unit away = 10 columns
+
+                // fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
+                // screen[sj * nScreenWidth + i] = fSamplePixel
 
                 for (let dx = 1; dx < thickness; dx++) {
                   let col = nSubColumn + dx;
@@ -276,7 +248,7 @@ function _drawSpritesNew (i) {
                     screen[sj * nScreenWidth + col] = fSamplePixel;
                   }
                 }
-              }
+              // }
 
             }
           }
@@ -286,65 +258,6 @@ function _drawSpritesNew (i) {
         continue;
       }
 
-
-
-      for(var sj = 0; sj < nScreenHeight; sj ++){
-
-        // makes sure that a) Sprite is not hidden by any wall, 
-        // not hidden by any floor pixel
-        // and we're drawing within the sprite-height
-        if( 
-          fDepthBufferR[sj * nScreenWidth + i] >= fDistanceToSprite  &&
-          sj > fSpriteCeil && sj <= fSpriteFloor
-          )
-        {
-
-
-          var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
-          var fSamplePixel;
-          var sAnimationFrame = '';
-
-
-          // if angles exist in the sprite, sample the appropriate walkframe for the angle
-          if (sprite["move"] && "walkframes" in currentSpriteObject) {
-            if (animationTimer < 5) {
-              sAnimationFrame = "W1";
-            } 
-            else if (animationTimer >= 5 && animationTimer < 10) {
-              sAnimationFrame = "W2";
-            }
-            else {
-              sAnimationFrame = "";
-            }
-            
-            if(sAnimationFrame !== ""){
-              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-            }
-            else{
-              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-            }
-          }
-
-          // if angles exist in the sprite sample the appropriate angle
-          else if (sprite["a"]) {
-            fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-          }
-
-          // regular sampling
-          else{
-            fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-          }
-
-          // transparency
-          var bIsTransparentPix = fSamplePixel.every(element => element === 0);
-          
-          if( !bIsTransparentPix ){
-            fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
-            screen[sj * nScreenWidth + i] = fSamplePixel
-          }
-        
-        }
-      }
     }
   }
 }
