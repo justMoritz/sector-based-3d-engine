@@ -291,10 +291,16 @@ function _drawCrazyVoxels (i) {
 
     // If there is an intersection, update fDistanceToSprite
     if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
-      fDistanceToSprite = Math.sqrt(
-        Math.pow(fPlayerX - intersection.x, 2) +
-        Math.pow(fPlayerY - intersection.y, 2)
-      );
+      
+      // was:
+      // fDistanceToSprite = Math.sqrt(
+      //   Math.pow(fPlayerX - intersection.x, 2) +
+      //   Math.pow(fPlayerY - intersection.y, 2)
+      // );
+
+      var sdx = fPlayerX - intersection.x;
+      var sdy = fPlayerY - intersection.y;
+      fDistanceToSprite = Math.sqrt(sdx * sdx + sdy * sdy);
 
       // Fisheye correction
       // fDistanceToSprite *= Math.cos(fAngleDifferences)
@@ -325,23 +331,38 @@ function _drawCrazyVoxels (i) {
             
       if ("vox" in currentSpriteObject) {
 
-        for (let subVoxel of currentSpriteObject["vox"]) {
+        for (var subVoxel of currentSpriteObject["vox"]) {
 
-          // --- world-space position of this subVoxel ---
-          let subX = sprite["x"] + subVoxel.x;
-          let subY = sprite["y"] + subVoxel.y;
+          // // world-space position of this subVoxel
+          var subX = sprite["x"] + subVoxel.x;
+          var subY = sprite["y"] + subVoxel.y;
+
+
+          // Trig for rotation ... to expensive
+          // TODO: Idea: 
+          //       calculate the rotation at level-load, write them into oLevelSprites
+          // Subvox with parent rotation
+          // var cosR = Math.cos(sprite.r || 0);
+          // var sinR = Math.sin(sprite.r || 0);
+
+          // var rx = subVoxel.x * cosR - subVoxel.y * sinR;
+          // var ry = subVoxel.x * sinR + subVoxel.y * cosR;
+
+          // var subX = sprite.x + rx;
+          // var subY = sprite.y + ry;
+
 
           // vector from player to subVoxel
-          let fVecX = subX - fPlayerX;
-          let fVecY = subY - fPlayerY;
+          var fVecX = subX - fPlayerX;
+          var fVecY = subY - fPlayerY;
 
           // distance
-          let fDistanceToSub = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
+          var fDistanceToSub = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
           if (fDistanceToSub <= 0.1) continue; // skip too close
 
 
           // angle from player forward to subVoxel
-          let fAngleToSub = Math.atan2(fVecY, fVecX) - fPlayerA;
+          var fAngleToSub = Math.atan2(fVecY, fVecX) - fPlayerA;
           if (fAngleToSub < -PI___) fAngleToSub += PIx2;
           if (fAngleToSub > PI___)  fAngleToSub -= PIx2;
 
@@ -349,29 +370,32 @@ function _drawCrazyVoxels (i) {
           fDistanceToSub *= Math.cos(fAngleToSub);
 
           // project angle to screen column
-          let nSubColumn = Math.floor(
-            (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth
-          );
+          // was: Math.floor(  (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth );
+          var nSubColumn = ( (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth ) << 0;
 
           if (nSubColumn < 0 || nSubColumn >= nScreenWidth) continue;
 
           // vertical span on screen
-          let fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSub * ((1 - sprite["h"]) + fPlayerH);
-          let fSpriteCeil  = fscreenHeightFactor - nScreenHeight / fDistanceToSub * (sprite["h"] + currentSpriteObject["hghtFctr"] - fPlayerH);
+          var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSub * ((1 - sprite["h"]) + fPlayerH);
+          var fSpriteCeil  = fscreenHeightFactor - nScreenHeight / fDistanceToSub * (sprite["h"] + currentSpriteObject["hghtFctr"] - fPlayerH);
 
-          // sorts the subsprite back to front for drawing
+          // sorts the subsprite back to front for drawing, farthest first
           currentSpriteObject["vox"].sort((a, b) => {
             var da = (sprite.x + a.x - fPlayerX) ** 2 + (sprite.y + a.y - fPlayerY) ** 2;
             var db = (sprite.x + b.x - fPlayerX) ** 2 + (sprite.y + b.y - fPlayerY) ** 2;
-            return db - da; // farthest first
+            return db - da;
           });
 
+          var light = 1;
+
           // loop vertical pixels
-          for (let sj = Math.floor(fSpriteCeil); sj < fSpriteFloor; sj++) {
+          // was: for (var sj = Math.floor(fSpriteCeil); sj < fSpriteFloor; sj++) {
+          for (var sj = (fSpriteCeil << 0); sj < fSpriteFloor; sj++) {
+
             if (sj < 0 || sj >= nScreenHeight) continue;
 
             if (fDepthBufferR[sj * nScreenWidth + nSubColumn] >= fDistanceToSub) {
-              let fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+              var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
 
               // copy parent’s props into subVoxel for sampling
               subVoxel.width    = currentSpriteObject.width;
@@ -380,33 +404,48 @@ function _drawCrazyVoxels (i) {
               subVoxel.hghtFctr = currentSpriteObject.hghtFctr;
               subVoxel.scale    = currentSpriteObject.scale;
 
+              light = sj * 0.0066;
+
               // sample subVoxel texture
-              let fSamplePixel = _getSamplePixelDirect(
+              var fSamplePixel = _getSamplePixelDirect(
                 subVoxel,
                 1,
                 fSampleY,
                 1,1,0,0,
                 fDistanceToSub,
-                1,true
+                light,
+                true
               );
 
               // transparency check
               var bIsTransparentPix = fSamplePixel.every(e => e === 0);
               if (!bIsTransparentPix) {
 
-
                 // this renders essentially one screen column where the subsprite is locted
-                fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
-                screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
-
-                // Adds thickness
-                var width = Math.max(1, Math.floor(20 / (fDistanceToSub + 0.001)));
+                // We don't need this, really
+                // fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
+                // screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
                 
+                // Expand (smear, basically) the very thin, single-column subVox into a arbitrary thickness
+                var fThickness = Math.max(1, Math.floor(25 / (fDistanceToSub + 0.001)));
 
-                for (var dx = -Math.floor(width/2); dx <= Math.floor(width/2); dx++) {
+                for (var dx = -Math.floor(fThickness/2); dx <= Math.floor(fThickness/2); dx++) {
                   var col = nSubColumn + dx;
                   if (col >= 0 && col < nScreenWidth) {
                     if (fDistanceToSub < fDepthBufferR[sj * nScreenWidth + col] - 0.001) {
+
+                      // samplepixel for the expanded subVox
+                      var fSampleX = (dx + fThickness/2) / fThickness;
+                      fSamplePixel = _getSamplePixelDirect(
+                        subVoxel,
+                        fSampleX,
+                        fSampleY,
+                        1,1,0,0,
+                        fDistanceToSub,
+                        light,
+                        true
+                      );
+
                       screen[sj * nScreenWidth + col] = fSamplePixel;
                       fDepthBufferR[sj * nScreenWidth + col] = fDistanceToSub;
                     }

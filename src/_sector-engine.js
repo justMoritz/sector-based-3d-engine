@@ -132,6 +132,7 @@ var gameEngineJS = (function () {
       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
 
       bakeWallLighting(4);
+      
 
       main();
 
