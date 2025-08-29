@@ -567,8 +567,8 @@ function prepareVoxelObjects () {
 
   // Then, look at oLevelSprites (the Sprite objects placed in the level)
   // see if they are a voxel object, then create each subpart
-  for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
-    var spriteInLevel = oLevelSprites[Object.keys(oLevelSprites)[si]];
+  for (var si = 0; si < Object.keys(oLevelVoxels).length; si++) {
+    var spriteInLevel = oLevelVoxels[Object.keys(oLevelVoxels)[si]];
     var currentSpriteObject = allSprites[spriteInLevel["name"]];
 
     
@@ -591,13 +591,14 @@ function prepareVoxelObjects () {
         
 
         var newSpriteObject = {};
-        newSpriteObject["name"] = subVoxelElement["subVox"];
-        newSpriteObject["x"]    = spriteInLevel["x"] + rx;
-        newSpriteObject["y"]    = spriteInLevel["y"] + ry;
-        newSpriteObject["h"]    = spriteInLevel["h"];
-        newSpriteObject["r"]    = rotation;
+        newSpriteObject["name"]  = subVoxelElement["subVox"];
+        newSpriteObject["x"]     = spriteInLevel["x"] + rx;
+        newSpriteObject["y"]     = spriteInLevel["y"] + ry;
+        newSpriteObject["h"]     = spriteInLevel["h"];
+        newSpriteObject["r"]     = rotation;
+        newSpriteObject["isVox"] = true;
 
-        oLevelSprites["voxel"+voxelObjectCounter.toString()+'-'+voxelCounter.toString()] = newSpriteObject;
+        oLevelVoxels["voxel"+voxelObjectCounter.toString()+'-'+voxelCounter.toString()] = newSpriteObject;
         voxelCounter++;
       }
       
@@ -605,5 +606,5 @@ function prepareVoxelObjects () {
     }
   }
   console.log(allSprites);
-  console.log(oLevelSprites);
+  console.log(oLevelVoxels);
 }

@@ -274,3 +274,91 @@ function _drawSpritesNew (i) {
     }
   }
 }
+
+
+
+
+
+
+function _drawVoxels (i) {
+  if( EDITMODE ){ return; }
+
+  if(i % 8){
+    return;
+  }
+
+  // for each sprite object
+  for (var si = 0; si < Object.keys(oLevelVoxels).length; si++) {
+    var sprite = oLevelVoxels[Object.keys(oLevelVoxels)[si]];
+
+    // reference to the global sprite object (texture etc. will need later)
+    var currentSpriteObject = allSprites[sprite["name"]];
+
+    var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+
+
+    var intersection = intersectionPoint(
+      { x: fPlayerX, y: fPlayerY },
+      { x: fPlayerEndX, y: fPlayerEndY },
+      { x: spriteAx, y: spriteAy },
+      { x: spriteBx, y: spriteBy }
+    );
+
+    // If there is an intersection, update fDistanceToWall
+    if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+      fDistanceToSprite = Math.sqrt(
+        Math.pow(fPlayerX - intersection.x, 2) +
+        Math.pow(fPlayerY - intersection.y, 2)
+      );
+
+      // Fisheye correction
+      fDistanceToSprite *= Math.cos(fAngleDifferences)
+
+      var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
+      var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
+
+      // if ( "isVox" in currentSpriteObject ) {
+        fSampleX = 1;
+      // }else{
+        // fSampleX = texSampleLerp( spriteAx ,spriteAy, spriteBx,  spriteBy, intersection.x, intersection.y );
+      // }
+      
+
+      for(var sj = 0; sj < nScreenHeight; sj ++){
+
+
+        // makes sure that a) Sprite is not hidden by any wall, 
+        // not hidden by any floor pixel
+        // and we're drawing within the sprite-height
+        if( 
+          fDepthBufferR[sj * nScreenWidth + i] >= fDistanceToSprite  &&
+          sj > fSpriteCeil && sj <= fSpriteFloor
+          )
+        {
+
+
+          // var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+          var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
+          var fSamplePixel;
+          
+          // fSamplePixel = _getSamplePixelDirect( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+          fSamplePixel = [255,222,111]
+
+        
+          // transparency
+          var bIsTransparentPix = fSamplePixel.every(element => element === 0);
+          
+          if( !bIsTransparentPix ){
+            fDepthBufferR[sj * nScreenWidth + i] =  fDistanceToSprite;
+            screen[sj * nScreenWidth + i] = fSamplePixel
+            screen[sj * nScreenWidth + (i+1)] = fSamplePixel
+          }
+        
+        }
+      }
+    }
+  }
+}
