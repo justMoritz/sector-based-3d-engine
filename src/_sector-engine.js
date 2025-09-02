@@ -250,7 +250,6 @@ var gameEngineJS = (function () {
 
       var sectorWalls = oMap[currentSector].walls; 
 
-
       var sectorFloorFactor = 1;
       var sectorCeilingFactor = 1;
       var sSectorFloorTexture = "Y";
@@ -293,7 +292,6 @@ var gameEngineJS = (function () {
           fDistanceToWall *= Math.cos(fAngleDifferences)
 
           
-          
           // Wall Type (texture)
           sWallType = currentWall[4];
           // sWallType = "U";
@@ -306,6 +304,10 @@ var gameEngineJS = (function () {
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer. Also used for lighting below
           wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
+          
+          // TODO: Bake the wall angle against the world at load-time. Then adjust the position absed on this. This should give us World-space texture
+          // That can repeat over severl/all sectors without needing too many adjustments
+          // wallSamplePosition = texSampleLerp( 0,0,  10 , 10, intersection.x, intersection.y );
 
           
           // get accurate, dynamic lighting value, only used in editor, since we need to see it live
@@ -576,9 +578,11 @@ var gameEngineJS = (function () {
         setPalette(worldPalette);
         checkSectors(sPlayerSector, i);
 
-        setPalette(spritesPalette);
-        _drawSpritesNew(i);
-        _drawCrazyVoxels(i);
+        if ( !EDITMODE ) {
+          setPalette(spritesPalette);
+          _drawSpritesNew(i);
+          _drawCrazyVoxels(i);
+        }
 
       } // end column loop
 

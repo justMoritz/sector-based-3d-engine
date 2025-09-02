@@ -129,7 +129,7 @@ var _updateSpriteBuffer = function () {
 
 
 function _drawSpritesNew (i) {
-  if( EDITMODE ){ return; }
+  if( EDITMODE || !oLevelSprites ){ return; }
 
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
@@ -268,7 +268,7 @@ function _drawSpritesNew (i) {
 }
 
 function _drawCrazyVoxels (i) {
-  if( EDITMODE ){ return; }
+  if( EDITMODE || !oLevelVoxels ){ return; }
 
   // only check every 8th 
   if(i % 10){
@@ -302,7 +302,6 @@ function _drawCrazyVoxels (i) {
       //   Math.pow(fPlayerX - intersection.x, 2) +
       //   Math.pow(fPlayerY - intersection.y, 2)
       // );
-
       var sdx = fPlayerX - intersection.x;
       var sdy = fPlayerY - intersection.y;
       fDistanceToSprite = Math.sqrt(sdx * sdx + sdy * sdy);
@@ -331,8 +330,6 @@ function _drawCrazyVoxels (i) {
           return;
         }
       }
-
-      fSampleX = 1;
             
       if ("vox" in currentSpriteObject) {
 
@@ -352,12 +349,10 @@ function _drawCrazyVoxels (i) {
           var fDistanceToSub = Math.sqrt(fVecX * fVecX + fVecY * fVecY);
           if (fDistanceToSub <= 0.1) continue; // skip too close
 
-
           // angle from player forward to subVoxel
           var fAngleToSub = Math.atan2(fVecY, fVecX) - fPlayerA;
           if (fAngleToSub < -PI___) fAngleToSub += PIx2;
           if (fAngleToSub > PI___)  fAngleToSub -= PIx2;
-
 
           fDistanceToSub *= Math.cos(fAngleToSub);
 
@@ -400,30 +395,25 @@ function _drawCrazyVoxels (i) {
               // TODO: Incorporate looktimer
               light = sj * 0.0066;
 
-              // sample subVoxel texture
-              var fSamplePixel = _getSamplePixelDirect(
-                subVoxel,
-                1,
-                fSampleY,
-                1,1,0,0,
-                fDistanceToSub,
-                light,
-                true
-              );
-
-              // transparency check
+              // transparency check...
+              // sample subVoxel texture, first column of the texture only. Only used for transparency check—
+              // it's cheaper to do this only once for the entire column, before the smear. 
+              // This does mean that within each subvox, transparency is only set here. 
+              // So, if a column is 3 pixels wide (for example) all 3 pixels wide would be transparent
+              // It's not a bad tradeoff IMO
+              var fSamplePixel = _getSamplePixelDirect( subVoxel, 1, fSampleY, 1, 1, 0, 0, 1, 1, true );
               var bIsTransparentPix = fSamplePixel.every(e => e === 0);
               if (!bIsTransparentPix) {
 
-                // this renders essentially one screen column where the subsprite is locted
-                // We don't need this, really
-                // fDepthBufferR[sj * nScreenWidth + nSubColumn] = fDistanceToSub;
-                // screen[sj * nScreenWidth + nSubColumn] = fSamplePixel;
-                
-                // Expand (smear, basically) the very thin, single-column subVox into a arbitrary thickness
-                var fThickness = Math.max(1, Math.floor(25 / (fDistanceToSub + 0.001)));
+                // Instead of rendering essentially one screen column where the subsprite is actually located,                
+                // we expand (smear) the very thin, single-column subVox into a arbitrary thickness, which correlates
+                // To the distance from player, simulating perspective
+                // was: var fThickness = Math.max(1, Math.floor(25 / (fDistanceToSub + 0.001)));
+                var fThickness = (25 / (fDistanceToSub + 0.001)) | 0 || 1;
 
-                for (var dx = -Math.floor(fThickness/2); dx <= Math.floor(fThickness/2); dx++) {
+
+                // was: for (var dx = -Math.floor(fThickness/2); dx <= Math.floor(fThickness/2); dx++) {
+                for (var dx = -(fThickness >> 1); dx <= (fThickness >> 1); dx++) {
                   var col = nSubColumn + dx;
                   if (col >= 0 && col < nScreenWidth) {
                     if (fDistanceToSub < fDepthBufferR[sj * nScreenWidth + col] - 0.001) {
@@ -444,15 +434,13 @@ function _drawCrazyVoxels (i) {
                       fDepthBufferR[sj * nScreenWidth + col] = fDistanceToSub;
                     }
                   }
-                }
+                } 
 
-
-              }
-
-            }
-          }
-        }
-      }
-    }
-  }
+              } // end if (!bIsTransparentPix)
+            } // end  if (fDepthBufferR[sj …
+          } // end for (var sj …
+        } // end for (var subVoxel of sprite["voxPos"]) …
+      } // end if ("vox" in currentSpriteObject)
+    } // end if (!isNaN(intersection.x) && !isNaN(intersection.y))
+  } // end for each sprite object
 }

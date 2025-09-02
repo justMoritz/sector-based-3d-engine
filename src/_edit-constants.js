@@ -54,6 +54,7 @@ if (bUseSkew){
     nDrawWidth = nScreenWidth - nRemovePixels;
 }
 
+var animationTimer = 0;
 
 var bTurnLeft;
 var bTurnRight;

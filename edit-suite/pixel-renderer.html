@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pixel Renderer Tool</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    textarea, input {
+      width: 100%;
+      margin: 5px 0 15px;
+      padding: 5px;
+      font-family: monospace;
+    }
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    canvas {
+      margin-top: 20px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      border: 1px solid #555;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h2>Pixel Renderer</h2>
+  <label for="pixels">Pixels (JSON array of [r,g,b]):</label>
+  <textarea id="pixels" rows="8" placeholder="Paste your pixel array here..."></textarea>
+
+  <label for="width">Width:</label>
+  <input id="width" type="number" placeholder="e.g. 32">
+
+  <label for="height">Height:</label>
+  <input id="height" type="number" placeholder="e.g. 32">
+
+  <button onclick="renderPixels()">Render</button>
+
+  <canvas id="pixelCanvas"></canvas>
+
+  <script>
+    function renderPixels() {
+      try {
+        const pixels = JSON.parse(document.getElementById("pixels").value);
+        const width = parseInt(document.getElementById("width").value, 10);
+        const height = parseInt(document.getElementById("height").value, 10);
+
+        if (!Array.isArray(pixels) || isNaN(width) || isNaN(height)) {
+          alert("Please provide valid pixel array, width, and height.");
+          return;
+        }
+
+        const canvas = document.getElementById("pixelCanvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        const imageData = ctx.createImageData(width, height);
+
+        for (let i = 0; i < pixels.length; i++) {
+          const [r,g,b] = pixels[i];
+          imageData.data[i*4 + 0] = r;
+          imageData.data[i*4 + 1] = g;
+          imageData.data[i*4 + 2] = b;
+          imageData.data[i*4 + 3] = 255;
+        }
+        ctx.putImageData(imageData, 0, 0);
+
+        // scale up for visibility
+        const scale = 8;
+        canvas.style.width = (width * scale) + "px";
+        canvas.style.height = (height * scale) + "px";
+      } catch (err) {
+        alert("Error parsing pixels: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

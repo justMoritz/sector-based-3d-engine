@@ -647,6 +647,8 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   var fDirectDistFloor;
 
   fPlayerHinSector = fSectorFloorHeight;
+
+  
   fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
   // Calculate the direct distance from the player to the floor pixel
@@ -659,6 +661,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   // Calculate real-world coordinates with the player angle
   var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+  
 
   // live lighting in editor, otherwise sector-based lighting
   if( EDITMODE ){
@@ -696,6 +699,7 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture, currentSect
   // Calculate real-world coordinates with the player angle
   var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
   var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+  
 
 
   // live lighting in editor, otherwise sector-based lighting
