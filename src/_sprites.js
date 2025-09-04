@@ -197,6 +197,53 @@ function _drawSpritesNew (i) {
         }
       }
 
+
+      // checks which sprite angle preset to use
+      // if ("superangles" in currentSpriteObject) {
+      //   // The angle the sprite is facing relative to the player
+      //   var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
+      //   if (fSpriteBeautyAngle < 0) {
+      //     fSpriteBeautyAngle += PIx2;
+      //   }
+      //   if (fSpriteBeautyAngle > PIx2) {
+      //     fSpriteBeautyAngle -= PIx2;
+      //   }
+
+      //   // normalize to 0–2π
+      //   fSpriteBeautyAngle = fSpriteBeautyAngle % PIx2;
+
+      //   // total steps (36 for 360°/10° each)
+      //   var steps = currentSpriteObject["superAnglesCount"];
+      //   var stepSize = PIx2 / steps; // 10° in radians
+
+      //   // compute index (0–35)
+      //   var index = Math.floor(fSpriteBeautyAngle / stepSize);
+
+      //   // sprite key from A01 to A36
+      //   var key = "A" + String(index + 1).padStart(2, "0");
+
+      //   sprite["s"] = key;
+      // }
+
+      
+      if ("superangles" in currentSpriteObject) {
+        // relative angle between sprite facing and player
+        var fSpriteBeautyAngle = fPlayerA - sprite["r"];
+
+        // normalize into 0..2π
+        if (fSpriteBeautyAngle < 0) fSpriteBeautyAngle += PIx2;
+        if (fSpriteBeautyAngle >= PIx2) fSpriteBeautyAngle -= PIx2;
+
+        // slice into X steps
+        var steps = currentSpriteObject["superAnglesCount"];
+        var stepSize = PIx2 / steps;
+        var index = Math.floor(fSpriteBeautyAngle / stepSize);
+
+        // assign key A01..A36
+        sprite["s"] = "A" + String(index + 1).padStart(2, "0");
+      }
+
+
       var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
       var fSpriteCeil = fscreenHeightFactor - nScreenHeight / fDistanceToSprite * (sprite["h"] + currentSpriteObject['hghtFctr'] - fPlayerH);
 
@@ -241,6 +288,11 @@ function _drawSpritesNew (i) {
             else{
               fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
             }
+          }
+
+          // if superangles exist in the sprite sample the appropriate angle
+          else if (sprite["s"]) {
+            fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
           }
 
           // if angles exist in the sprite sample the appropriate angle

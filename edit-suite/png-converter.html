@@ -1,79 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PNG File Parser</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #output {
-            width: 100%;
-            height: 300px;
-            resize: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNG Batch Parser</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #output {
+      width: 100%;
+      height: 400px;
+      resize: none;
+      font-family: monospace;
+    }
+    .inputRow {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>PNG File Parser</h1>
-    <input type="file" id="fileInput" accept=".png">
-    <textarea id="output" readonly></textarea>
+  <h1>PNG Batch Parser</h1>
+  
+  <div class="inputRow">
+    <label for="fileInput">Select PNGs:</label>
+    <input type="file" id="fileInput" accept=".png" multiple>
+  </div>
+  
+  <div class="inputRow">
+    <label for="prefixInput">Variable prefix:</label>
+    <input type="text" id="prefixInput" placeholder="e.g. sprite">
+  </div>
 
-    <script>
-        function fetchAndParsePNG(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
+  <textarea id="output" readonly></textarea>
 
-                reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+  <script>
+    function fetchAndParsePNG(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
 
-                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        const pixels = [];
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
 
-                        for (let i = 0; i < imageData.data.length; i += 4) {
-                            pixels.push([imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]]);
-                        }
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = [];
 
-                        resolve(pixels);
-                    };
+            for (let i = 0; i < imageData.data.length; i += 4) {
+              pixels.push([imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]]);
+            }
 
-                    img.onerror = function() {
-                        reject(new Error('Failed to load image'));
-                    };
+            resolve(pixels);
+          };
 
-                    img.src = event.target.result;
-                };
+          img.onerror = function() {
+            reject(new Error('Failed to load image'));
+          };
 
-                reader.onerror = function() {
-                    reject(new Error('Failed to read file'));
-                };
+          img.src = event.target.result;
+        };
 
-                reader.readAsDataURL(file);
-            });
-        }
+        reader.onerror = function() {
+          reject(new Error('Failed to read file'));
+        };
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        reader.readAsDataURL(file);
+      });
+    }
 
-            fetchAndParsePNG(file)
-                .then(pixels => {
-                    const outputTextarea = document.getElementById('output');
-                    outputTextarea.value = JSON.stringify(pixels);
-                })
-                .catch(error => {
-                    console.error('Error fetching or parsing PNG:', error);
-                });
-        });
-    </script>
+    document.getElementById('fileInput').addEventListener('change', async function(event) {
+      const files = event.target.files;
+      if (!files.length) return;
+
+      const prefix = document.getElementById('prefixInput').value || "file";
+
+      const outputTextarea = document.getElementById('output');
+      outputTextarea.value = "Processing...\n";
+
+      const results = await Promise.all(
+        Array.from(files).map(file => fetchAndParsePNG(file))
+      );
+
+      let output = "";
+      results.forEach((pixels, index) => {
+        const number = String(index + 1).padStart(3, "0"); // 001, 002, etc.
+        output += `var ${prefix}${number} = ${JSON.stringify(pixels)};\n\n`;
+      });
+
+      outputTextarea.value = output;
+    });
+  </script>
 </body>
 </html>

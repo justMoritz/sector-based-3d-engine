@@ -110,3 +110,6 @@ OLD!!!!!
 
 
 Could be handy https://notisrac.github.io/FileToCArray/
+
+
+mkdir -p sprites && for f in *.png; do magick "$f" -resize 64x64\! -filter point "sprites/$f"; done
