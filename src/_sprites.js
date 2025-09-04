@@ -131,6 +131,7 @@ var _updateSpriteBuffer = function () {
 function _drawSpritesNew (i) {
   if( EDITMODE || !oLevelSprites ){ return; }
 
+
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];

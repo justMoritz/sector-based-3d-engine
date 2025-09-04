@@ -117,6 +117,7 @@ var gameEngineJS = (function () {
       oLevelSprites = oLevel.sprites;
       oLevelVoxels = oLevel.voxels;
 
+
       // breaks each voxel object into sprites
       // prepareVoxelObjects();
 
@@ -580,8 +581,8 @@ var gameEngineJS = (function () {
 
         if ( !EDITMODE ) {
           setPalette(spritesPalette);
-          _drawSpritesNew(i);
           _drawCrazyVoxels(i);
+          _drawSpritesNew(i);
         }
 
       } // end column loop
