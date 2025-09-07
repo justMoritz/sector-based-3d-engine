@@ -12,8 +12,8 @@ var _moveSprites = function () {
       var fMovementSpeed = sprite["speed"] || 0.03;
 
       // move the sprite along it's radiant line
-      sprite["x"] = +sprite["x"] + +Math.cos(sprite["r"]) * fMovementSpeed;
-      sprite["y"] = +sprite["y"] + +Math.sin(sprite["r"]) * fMovementSpeed;
+      sprite["x"] = +sprite["x"] + +fastCos(sprite["r"]) * fMovementSpeed;
+      sprite["y"] = +sprite["y"] + +fastSin(sprite["r"]) * fMovementSpeed;
 
       // collision coordinates (attempting to center sprite)
       var fCollideY = +sprite["y"] - 0.65; // 0.5
@@ -31,15 +31,15 @@ var _moveSprites = function () {
 
       //   // // reverse last movement
       //   sprite["x"] =
-      //     +sprite["x"] - +Math.cos(sprite["r"]) * fMovementSpeed * 2;
+      //     +sprite["x"] - +fastCos(sprite["r"]) * fMovementSpeed * 2;
       //   sprite["y"] =
-      //     +sprite["y"] - +Math.sin(sprite["r"]) * fMovementSpeed * 2;
+      //     +sprite["y"] - +fastSin(sprite["r"]) * fMovementSpeed * 2;
 
       //   // // repeat may help unstuck sprites
-      //   // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-      //   // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
-      //   // sprite["x"] = +(sprite["x"]) - +(Math.cos(sprite["r"])) * fMovementSpeed;
-      //   // sprite["y"] = +(sprite["y"]) - +(Math.sin(sprite["r"])) * fMovementSpeed;
+      //   // sprite["x"] = +(sprite["x"]) - +(fastCos(sprite["r"])) * fMovementSpeed;
+      //   // sprite["y"] = +(sprite["y"]) - +(fastSin(sprite["r"])) * fMovementSpeed;
+      //   // sprite["x"] = +(sprite["x"]) - +(fastCos(sprite["r"])) * fMovementSpeed;
+      //   // sprite["y"] = +(sprite["y"]) - +(fastSin(sprite["r"])) * fMovementSpeed;
 
       //   // change the angle and visible angle
       //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2; // TODO: sometimes buggie
@@ -48,8 +48,8 @@ var _moveSprites = function () {
       //   if (sprite["stuckcounter"] > 10) {
       //     sprite["stuckcounter"] = 0;
       //     sprite["r"] = 0.5;
-      //     sprite["x"] = +sprite["x"] - +Math.cos(sprite["r"]) * 0.5;
-      //     sprite["y"] = +sprite["y"] - +Math.sin(sprite["r"]) * 0.5;
+      //     sprite["x"] = +sprite["x"] - +fastCos(sprite["r"]) * 0.5;
+      //     sprite["y"] = +sprite["y"] - +fastSin(sprite["r"]) * 0.5;
 
       //     // sprite["move"]  = false;
       //     // sprite["x"]  = 0;
@@ -139,10 +139,11 @@ function _drawSpritesNew (i) {
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
 
-    var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAx = sprite["x"] + fastCos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAy = sprite["y"] + fastSin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBx = sprite["x"] + fastCos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBy = sprite["y"] + fastSin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+
 
 
     var intersection = intersectionPoint(
@@ -160,7 +161,7 @@ function _drawSpritesNew (i) {
       );
 
       // Fisheye correction
-      fDistanceToSprite *= Math.cos(fAngleDifferences)
+      fDistanceToSprite *= fastCos(fAngleDifferences)
 
       // to close
       if( fDistanceToSprite < 0.5 ){
@@ -231,6 +232,9 @@ function _drawSpritesNew (i) {
         // relative angle between sprite facing and player
         var fSpriteBeautyAngle = fPlayerA - sprite["r"];
 
+        // flip by 180deg because I'm an idiot (and exported things like a chump lmao)
+        fSpriteBeautyAngle += Math.PI;
+
         // normalize into 0..2π
         if (fSpriteBeautyAngle < 0) fSpriteBeautyAngle += PIx2;
         if (fSpriteBeautyAngle >= PIx2) fSpriteBeautyAngle -= PIx2;
@@ -243,6 +247,7 @@ function _drawSpritesNew (i) {
         // assign key A01..A36
         sprite["s"] = "A" + String(index + 1).padStart(2, "0");
       }
+      
 
 
       var fSpriteFloor = fscreenHeightFactor + nScreenHeight / fDistanceToSprite * ((1-sprite["h"]) + (fPlayerH)) ; 
@@ -291,6 +296,27 @@ function _drawSpritesNew (i) {
             }
           }
 
+
+          // Like walkframes, but SUPER ;)
+          if (sprite["move"] && "superWalkframes" in currentSpriteObject) {
+            if (animationTimer < 5) {
+              sAnimationFrame = "W1";
+            } 
+            else if (animationTimer >= 5 && animationTimer < 10) {
+              sAnimationFrame = "W2";
+            }
+            else {
+              sAnimationFrame = "";
+            }
+            
+            if(sAnimationFrame !== ""){
+              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            }
+            else{
+              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            }
+          }
+
           // if superangles exist in the sprite sample the appropriate angle
           else if (sprite["s"]) {
             fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
@@ -335,10 +361,10 @@ function _drawCrazyVoxels (i) {
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
 
-    var spriteAx = sprite["x"] + Math.cos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteAy = sprite["y"] + Math.sin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBx = sprite["x"] + Math.cos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
-    var spriteBy = sprite["y"] + Math.sin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAx = sprite["x"] + fastCos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteAy = sprite["y"] + fastSin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBx = sprite["x"] + fastCos(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
+    var spriteBy = sprite["y"] + fastSin(fPlayerA + PIdiv2) * currentSpriteObject["aspctRt"] 
 
     var intersection = intersectionPoint(
       { x: fPlayerX, y: fPlayerY },
@@ -360,7 +386,7 @@ function _drawCrazyVoxels (i) {
       fDistanceToSprite = Math.sqrt(sdx * sdx + sdy * sdy);
 
       // Fisheye correction
-      // fDistanceToSprite *= Math.cos(fAngleDifferences)
+      // fDistanceToSprite *= fastCos(fAngleDifferences)
 
       // the closer we get, the more we skip
       if( fDistanceToSprite < 1.5 ){
@@ -407,7 +433,7 @@ function _drawCrazyVoxels (i) {
           if (fAngleToSub < -PI___) fAngleToSub += PIx2;
           if (fAngleToSub > PI___)  fAngleToSub -= PIx2;
 
-          fDistanceToSub *= Math.cos(fAngleToSub);
+          fDistanceToSub *= fastCos(fAngleToSub);
 
           // project angle to screen column
           // was: Math.floor(  (0.5 * (fAngleToSub / (fFOV / 2)) + 0.5) * nScreenWidth );

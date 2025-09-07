@@ -96,8 +96,18 @@ var _getSamplePixelBilinear = function(texture, x, y, fSampleXScale, fSampleYSca
   // Integer and fractionals
   var x0 = ~~(x);
   var y0 = ~~(y);
-  var x1 = (x0 + 1) % texWidth;  
-  var y1 = (y0 + 1) % texHeight;
+
+  // prevents wrapping on sprite by Math.min-ing it.
+  if (isSprite) {
+    // var x1 = Math.min(x0 + 1, texWidth - 1);
+    // var y1 = Math.min(y0 + 1, texHeight - 1);
+    var x1 = mathMinBitwise(x0 + 1, texWidth - 1);
+    var y1 = mathMinBitwise(y0 + 1, texHeight - 1);
+  } else {
+    var x1 = (x0 + 1) % texWidth;  
+    var y1 = (y0 + 1) % texHeight;
+  }
+
   var dx = x - x0;
   var dy = y - y0;
 
@@ -324,9 +334,13 @@ var _fPrepareFrame = function (oInput, eTarget) {
   var sOutput = [];
 
   // this is the maximum of variation created by the lookup timer, aka the final look-modifier value
-  var neverMoreThan = Math.round(
-    nScreenHeight / _rh.skipEveryXrow(fLooktimer) - 1
-  );
+  // var neverMoreThan = Math.round(
+  //   nScreenHeight / _rh.skipEveryXrow(fLooktimer) - 1
+  // );
+
+  // fast round
+  var neverMoreThan = ( (nScreenHeight / _rh.skipEveryXrow(fLooktimer) - 1) + 0.5 ) | 0;
+
 
   // used to skew the image
   var globalPrintIndex = 0;
@@ -607,12 +621,11 @@ var _round2bitwise = function (input) {
 
 var _fDrawFrame = function (screen, target) {
   _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
-  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
   _drawToCanvas( screen );
 };
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
+  // _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 
@@ -655,12 +668,12 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
   fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
   
-  fRealDistance = fDirectDistFloor / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob ) ;
   fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   
   // Calculate real-world coordinates with the player angle
-  var floorPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
-  var floorPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+  var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+  var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
   
 
   // live lighting in editor, otherwise sector-based lighting
@@ -693,12 +706,12 @@ function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture, currentSect
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
   fDirectDistCeil = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
   
-  fRealDistance = fDirectDistCeil / Math.cos(fPlayerA - fRayAngleGlob ) ;
+  fRealDistance = fDirectDistCeil / fastCos(fPlayerA - fRayAngleGlob ) ;
   fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   
   // Calculate real-world coordinates with the player angle
-  var ceilPointX = fPlayerX + Math.cos(fRayAngleGlob) * fRealDistance;
-  var ceilPointY = fPlayerY + Math.sin(fRayAngleGlob) * fRealDistance;
+  var ceilPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+  var ceilPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
   
 
 

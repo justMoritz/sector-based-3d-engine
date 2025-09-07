@@ -28,8 +28,8 @@ var _moveHelpers = {
     var nWallsHit = 0;
 
     // We're using fPlayerAngle = 0 for the direction, since it doesn't matter which direction we are firing the ray in.
-    fEntityEndX = fEntityX + 1 * fDepth;  // fEyeX = Math.cos(0) === 1
-    fEntityEndY = fEntityY + 0 * fDepth;  // fEyeY = Math.sin(0) === 0
+    fEntityEndX = fEntityX + 1 * fDepth;  // fEyeX = fastCos(0) === 1
+    fEntityEndY = fEntityY + 0 * fDepth;  // fEyeY = fastSin(0) === 0
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var currentWall = allCurrentWalls[w];
@@ -456,12 +456,12 @@ var _moveHelpers = {
         const fOrigY = fPlayerY;
       
         // walk
-        let fNewPlayerX = fOrigX - (Math.sin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
-        let fNewPlayerY = fOrigY + (Math.cos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+        let fNewPlayerX = fOrigX - (fastSin(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
+        let fNewPlayerY = fOrigY + (fastCos(fPlayerA) + 5.0 * 0.0051) * oDifferences.x * 0.05;
       
         // strafe
-        fNewPlayerX += (Math.cos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
-        fNewPlayerY += (Math.sin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+        fNewPlayerX += (fastCos(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
+        fNewPlayerY += (fastSin(fPlayerA) + 5.0 * 0.0051) * -oDifferences.y * 0.05;
       
         if (!_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY)) {
           fPlayerX = fNewPlayerX;
@@ -505,8 +505,8 @@ var _moveHelpers = {
 
     if (bStrafeLeft) {
 
-      var fNewPlayerX = fPlayerX + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
-      var fNewPlayerY = fPlayerY - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;    
+      var fNewPlayerX = fPlayerX + (fastSin(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerY = fPlayerY - (fastCos(fPlayerA) + 0.025 ) * fMoveFactor;    
 
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
@@ -516,8 +516,8 @@ var _moveHelpers = {
 
     if (bStrafeRight) {
 
-      var fNewPlayerX = fPlayerX - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
-      var fNewPlayerY = fPlayerY + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerX = fPlayerX - (fastSin(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerY = fPlayerY + (fastCos(fPlayerA) + 0.025 ) * fMoveFactor;
 
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
@@ -527,8 +527,8 @@ var _moveHelpers = {
 
     if (bMoveForward && bPlayerMayMoveForward) {
 
-      var fNewPlayerX = fPlayerX + (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
-      var fNewPlayerY = fPlayerY + (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerX = fPlayerX + (fastCos(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerY = fPlayerY + (fastSin(fPlayerA) + 0.025 ) * fMoveFactor;
 
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
@@ -538,8 +538,8 @@ var _moveHelpers = {
 
     if (bMoveBackward) {
 
-      var fNewPlayerX = fPlayerX - (Math.cos(fPlayerA) + 0.025 ) * fMoveFactor;
-      var fNewPlayerY = fPlayerY - (Math.sin(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerX = fPlayerX - (fastCos(fPlayerA) + 0.025 ) * fMoveFactor;
+      var fNewPlayerY = fPlayerY - (fastSin(fPlayerA) + 0.025 ) * fMoveFactor;
 
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;

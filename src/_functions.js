@@ -103,8 +103,8 @@ function toggleFullscreen( canvasElement ) {
 
 // Function to rotate a point (x, y) by an angle
 function rotatePoint(x, y, angle) {
-  var cosAngle = Math.cos(angle);
-  var sinAngle = Math.sin(angle);
+  var cosAngle = fastCos(angle);
+  var sinAngle = fastSin(angle);
   var rotatedX = x * cosAngle - y * sinAngle;
   var rotatedY = x * sinAngle + y * cosAngle;
   return { x: rotatedX, y: rotatedY };
@@ -546,8 +546,8 @@ function bakeVoxelPositions() {
     }));
 
     // precompute cos/sin for this element’s rotation
-    var cosR = Math.cos(element.r || 0);
-    var sinR = Math.sin(element.r || 0);
+    var cosR = fastCos(element.r || 0);
+    var sinR = fastSin(element.r || 0);
 
     // rotate each voxel offset
     for (let v of element.voxPos) {
@@ -559,8 +559,42 @@ function bakeVoxelPositions() {
   }
 }
 
+/**
+ * Branchless Math.min using bitwise ops.
+ * Only safe for non-negative 32-bit integers.
+ */
+function mathMinBitwise(i, max) {
+  // (i ^ max) & -(i > max) isolates the difference if i > max, else 0
+  // XORing with i flips to max when i > max
+  return i ^ ((i ^ max) & -(i > max));
+}
+
+/**
+ * Branchless Math.max using bitwise ops.
+ * Only safe for non-negative 32-bit integers.
+ */
+function mathMaxBitwise(i, min) {
+  // If i < min, result is min, else i
+  return i ^ ((i ^ min) & -(i < min));
+}
 
 
 
 
 
+// This works in conjunction with the sin/cos tables defined in constants.js
+// Intead of calculating, we're indexing into an array and getting our approximations that way.
+function fastSin(rad) {
+  // return(Math.sin(rad));
+  // Map radian to table index
+  let idx = (rad / PIx2) * TABLE_SIZE;
+  idx &= (TABLE_SIZE - 1); // if TABLE_SIZE is power of two, fast wrap
+  return sinTable[idx | 0];
+}
+
+function fastCos(rad) {
+  // return(Math.cos(rad));
+  let idx = (rad / PIx2) * TABLE_SIZE;
+  idx &= (TABLE_SIZE - 1);
+  return cosTable[idx | 0];
+}

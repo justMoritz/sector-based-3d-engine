@@ -290,7 +290,7 @@ var gameEngineJS = (function () {
           );
 
           // Fisheye correction
-          fDistanceToWall *= Math.cos(fAngleDifferences)
+          fDistanceToWall *= fastCos(fAngleDifferences)
 
           
           // Wall Type (texture)
@@ -469,7 +469,9 @@ var gameEngineJS = (function () {
       sPostProcessing = '';
     }
     else if (bUseSkew) {
-      nScreenWidth = 458;
+      // nScreenWidth = 916;
+      // nScreenHeight = 440;
+      nScreenWidth = 468;
       nScreenHeight = 220;
       nLookLimit = 8;
       fFOV = PI___ / 2.25;
@@ -478,7 +480,8 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
-      sPostProcessing = '10bit';
+      // sPostProcessing = '10bit';
+      sPostProcessing = '';
     }
     else {
       nScreenWidth = 320;
@@ -510,7 +513,21 @@ var gameEngineJS = (function () {
       gameRun = setInterval(gameLoop, 33);
     }
 
+    // variables for FPS measurement (TEMP)
+    var lastTime = performance.now();
+    var fps = 0;
+    // END variables for FPS measurement (TEMP)
+
     function gameLoop() {
+
+      // Output for FPS measurement (TEMP)
+      var now = performance.now();
+      var delta = now - lastTime;   // milliseconds since last frame
+      lastTime = now;
+      fps = 1000 / delta;           // frames per second (rough)
+      _debugOutput( fps.toFixed(1))
+      // END Output for FPS measurement (TEMP)
+
       gameTimer++
 
       animationTimer++;
@@ -558,8 +575,8 @@ var gameEngineJS = (function () {
               
         // Calculate the direction of the current ray
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
-        var fEyeX = Math.cos(fRayAngle);
-        var fEyeY = Math.sin(fRayAngle);
+        var fEyeX = fastCos(fRayAngle);
+        var fEyeY = fastSin(fRayAngle);
         var rayLength = fDepth;
         fPlayerEndX = fPlayerX + fEyeX * rayLength;
         fPlayerEndY = fPlayerY + fEyeY * rayLength;
