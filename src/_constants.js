@@ -43,7 +43,6 @@ var nDrawWidth = nScreenWidth;
 var nRemovePixels = 0;
 
 
-
 var bTurnLeft;
 var bTurnRight;
 var bStrafeLeft;
@@ -93,6 +92,7 @@ var oRenderPalette;
 
 var oLevelSprites;
 var oLevelVoxels;
+
 
 
 var oMap;

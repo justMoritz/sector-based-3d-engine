@@ -143,50 +143,74 @@ var _moveHelpers = {
   // takes a vector from current position to requested new position (maybe x2?)
   // check all the walls in the current sector for intersection against that vector
   // If the vector collides with any wall EXCEPT a portal
-  testWallCollision: function( testX, testY ){
+  testWallCollision: function( testX, testY, spriteMode = false, spriteX, spriteY ){
 
     // look at all walls in the current player sector
     var allCurrentWalls = oMap[sPlayerSector].walls;
+
+    if(spriteMode){
+      var fCheckX = spriteX;
+      var fCheckY = spriteY;
+    }
+    else{
+      var fCheckX = fPlayerX;
+      var fCheckY = fPlayerY;
+    }
+    
+    // console.log('being called, brb', spriteMode);
 
 
     for( var w = 0; w < allCurrentWalls.length; w++ ){
       var fTestDistanceToWall = fDepth;
       var currentWall = allCurrentWalls[w];
       var intersection = intersectionPoint(
-        { x: fPlayerX, y: fPlayerY },
+        { x: fCheckX, y: fCheckY },
         { x: testX, y: testY },
         { x: currentWall[0], y: currentWall[1] },
         { x: currentWall[2], y: currentWall[3] }
       );
       if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
         fTestDistanceToWall = Math.sqrt(
-          Math.pow(fPlayerX - intersection.x, 2) +
-          Math.pow(fPlayerY - intersection.y, 2)
+          Math.pow(fCheckX - intersection.x, 2) +
+          Math.pow(fCheckY - intersection.y, 2)
         );
         // close enough to be considered hitting the wall
         if(fTestDistanceToWall < 1){
 
-          // if this wall we are hitting is considered a portal
-          if(currentWall[9] != false){
-            var collisionSector = currentWall[9];
+          if( !spriteMode ){
+            // if this wall we are hitting is considered a portal
+            if(currentWall[9] != false){
+              var collisionSector = currentWall[9];
 
-            // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            if( fPlayerH - (oLevel.map[collisionSector].floor) < -0.5 ){
-              return true; // don't allow move
+              // Doesn't allow player to move over an incline that is too large (player needs to jump)
+              if( fPlayerH - (oLevel.map[collisionSector].floor) < -0.5 ){
+                return true; // don't allow move
+              }
+
+              // console.log(`walking into ${collisionSector}`)
+              
+              // set new global sector and set new player Height
+              sPlayerSector = collisionSector;
+              sLastKnownSector = sPlayerSector;
+              _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
+
+              // and allow moving
+              return false;
             }
-
-            // console.log(`walking into ${collisionSector}`)
-            
-            // set new global sector and set new player Height
-            sPlayerSector = collisionSector;
-            sLastKnownSector = sPlayerSector;
-            _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
-
-            // and allow moving
-            return false;
+            else{
+              // non-portal wall, don't allow move
+              return true;
+            }
           }
-          else{
-            // non-portal wall, don't allow move
+          // sprite logic
+          else {
+            // console.log('hey look, a sprite');
+            if(currentWall[9] != false){
+              // console.log('dis is portal, you good bro');
+              return true; // TODO: For debugging only. I'm turning you around at portals too, buddy
+              return false;
+            }
+            // console.log('SHTAPIT');
             return true;
           }
         }
@@ -491,11 +515,11 @@ var _moveHelpers = {
   move: function () {
     
     if (bTurnLeft) {
-      fPlayerA -= 0.05;
+      fPlayerA -= 0.045;
     }
 
     if (bTurnRight) {
-      fPlayerA += 0.05;
+      fPlayerA += 0.045;
     }
 
     var fMoveFactor = 0.1;

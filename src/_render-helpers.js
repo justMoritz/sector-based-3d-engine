@@ -351,8 +351,6 @@ var _fPrepareFrame = function (oInput, eTarget) {
   if (fLooktimer > 0 && isFinite(neverMoreThan)) {
     fLookModifier = neverMoreThan;
   }
-
-  // _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
   
   // iterate each row at a time
   for (var row = 0; row < nScreenHeight; row++) {
@@ -455,6 +453,30 @@ var _drawToCanvas24bit = function ( pixels ) {
   // Use putImageData to draw the pixels onto the canvas
   cCtx.putImageData(imageData, 0, 0);
 }
+
+
+
+/**
+ * Draws to Canvas in full 24 bit color, no post-processing
+ * @param {*} pixels 
+ */
+var _drawToCanvasAntialias = function ( pixels ) {
+  eCanvas.width = nDrawWidth;
+  eCanvas.height = nScreenHeight;
+
+  // 👇 only blur edges
+  const aaPixels = antialiasEdges(pixels, nDrawWidth, nScreenHeight);
+
+  var imageData = cCtx.createImageData(nDrawWidth, nScreenHeight);
+  for (let i = 0; i < aaPixels.length; i++) {
+    let c = aaPixels[i];
+    imageData.data[i*4]     = c[0];
+    imageData.data[i*4 + 1] = c[1];
+    imageData.data[i*4 + 2] = c[2];
+    imageData.data[i*4 + 3] = 255;
+  }
+  cCtx.putImageData(imageData, 0, 0);
+};
 
 
 // Precompute color expansion tables
@@ -625,7 +647,7 @@ var _fDrawFrame = function (screen, target) {
 };
 
 var _fDrawFrameWithSkew = function (screen, target) {
-  // _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
+  _debugOutput(`A: ${_round2bitwise(fPlayerA)} X:${_round2bitwise(fPlayerX)} Y:${_round2bitwise(fPlayerY)}}`);
   var frame = _fPrepareFrame(screen);
   var target = target || eScreen;
 

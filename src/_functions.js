@@ -598,3 +598,5 @@ function fastCos(rad) {
   idx &= (TABLE_SIZE - 1);
   return cosTable[idx | 0];
 }
+
+

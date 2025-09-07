@@ -330,8 +330,6 @@ var _fPrepareFrame = function (oInput, eTarget) {
   if (fLooktimer > 0 && isFinite(neverMoreThan)) {
     fLookModifier = neverMoreThan;
   }
-
-  // _debugOutput(`${_rh.skipEveryXrow(fLooktimer)}, ${fLooktimer} , ${fLookModifier}, ${fLookModifier}`)
   
   // iterate each row at a time
   for (var row = 0; row < nScreenHeight; row++) {
@@ -412,101 +410,6 @@ var _drawToCanvas = function ( pixels ) {
 }
 
 
-var _drawToCanvasWithBayerDithering = function (pixels) {
-
-  eCanvas.width = nScreenWidth;
-  eCanvas.height = nScreenHeight;
-  
-  // Create an ImageData object with the pixel data
-  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
-
-  // Define the Bayer matrix
-  var bayerMatrix = [
-    [ 1,  9,  3, 11 ],
-    [ 13, 5, 15, 7 ],
-    [ 4, 12,  2, 10 ],
-    [ 16, 8, 14, 6 ]
-  ];
-
-  // Convert values to shades of colors with Bayer dithering
-  for (var y = 0; y < nScreenHeight; y++) {
-    for (var x = 0; x < nScreenWidth; x++) {
-      var i = (y * nScreenWidth + x) * 4;
-      var color = pixels[y * nScreenWidth + x];
-
-      // Calculate the threshold based on Bayer matrix
-      var threshold = (bayerMatrix[y % 4][x % 4] / 17) * 255;
-
-      // Apply dithering
-      var newColor = color.map(function(component) {
-        return component > threshold ? 255 : 0;
-      });
-
-      // Set the color components in the ImageData
-      imageData.data[i] = newColor[0];     // Red
-      imageData.data[i + 1] = newColor[1]; // Green
-      imageData.data[i + 2] = newColor[2]; // Blue
-      imageData.data[i + 3] = 255;         // Alpha
-    }
-  }
-  
-  // Use putImageData to draw the pixels onto the canvas
-  cCtx.putImageData(imageData, 0, 0);
-}
-
-
-var _drawToCanvasWithBayerDithering1 = function (pixels) {
-
-  var palette = [
-    [255, 0, 0],
-    [0, 255, 0],
-    [0, 0, 255],
-    [0, 0, 0],
-    [255, 255, 255],
-  ];
-
-  eCanvas.width = nScreenWidth;
-  eCanvas.height = nScreenHeight;
-  
-  // Create an ImageData object with the pixel data
-  var imageData = cCtx.createImageData(nScreenWidth, nScreenHeight);
-
-  // Define the Bayer matrix
-  var bayerMatrix = [
-    [ 1,  9,  3, 11 ],
-    [ 13, 5, 15, 7 ],
-    [ 4, 12,  2, 10 ],
-    [ 16, 8, 14, 6 ]
-  ];
-
-  // Convert values to shades of colors with Bayer dithering and palette
-  for (var y = 0; y < nScreenHeight; y++) {
-    for (var x = 0; x < nScreenWidth; x++) {
-      var i = (y * nScreenWidth + x) * 4;
-      var color = pixels[y * nScreenWidth + x];
-
-      // Calculate the threshold based on Bayer matrix
-      var threshold = (bayerMatrix[y % 4][x % 4] / 17) * 255;
-
-      // Find the closest color in the palette
-      var closestColor = findClosestColor(color, palette);
-
-      // Apply dithering
-      var newColor = closestColor.map(function(component) {
-        return component > threshold ? 255 : 0;
-      });
-
-      // Set the color components in the ImageData
-      imageData.data[i] = newColor[0];     // Red
-      imageData.data[i + 1] = newColor[1]; // Green
-      imageData.data[i + 2] = newColor[2]; // Blue
-      imageData.data[i + 3] = 255;         // Alpha
-    }
-  }
-  
-  // Use putImageData to draw the pixels onto the canvas
-  cCtx.putImageData(imageData, 0, 0);
-}
 
 // Function to find the closest color in the palette
 function findClosestColor(color, palette) {
@@ -534,35 +437,9 @@ function colorDistanceSquared(color1, color2) {
 
 
 
-var _fDrawFrame = function (screen, target) {
-  var changeLookTimer = ~~(fLooktimer*10)
-
-  // _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY} + H: ${ fPlayerH }`)
-  // var frame = screen
-  // var target = target || eScreen;
-
-  // var sOutput = "";  
-  // var sCanvasOutput = "";
-
-  // // interates over each row again, and omits the first and last 30 pixels, to disguise the skewing!
-  // nPrintIndex = 0;
-
-  // for (var row = 0 ; row < nScreenHeight ; row++) {
-  // // for (var row = 0 ; row < nScreenHeight ; row++) {
-  //   for (var pix = 0; pix < nScreenWidth; pix++) {
-  //     // H-blank based on screen-width
-  //     if (nPrintIndex % nScreenWidth == 0) {
-  //       sOutput += "<br>";
-  //     }
-  //     // sOutput += _convertPixelToAscii(frame[nPrintIndex], 0);
-  //     sOutput += frame[nPrintIndex];
-  //     sCanvasOutput += frame[nPrintIndex];
-  //     nPrintIndex++;
-  //   }
-  // }
-  // eScreen.innerHTML = sOutput;
-  _drawToCanvasWithBayerDithering( screen );
-};
+// var _fDrawFrame = function (screen, target) {
+//   _fDrawFrame( screen );
+// };
 
 var _fDrawFrameWithSkew = function (screen, target) {
   _debugOutput(`A: ${fPlayerA} X:${fPlayerX} Y:${fPlayerY}}`);
@@ -599,8 +476,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
     }
   }
   // target.innerHTML = sCanvasOutput;
-  _drawToCanvasWithBayerDithering( sCanvasOutput );
-  // _drawToCanvas( frame );
+  _drawToCanvas( frame );
 };
 
 

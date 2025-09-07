@@ -467,6 +467,7 @@ var gameEngineJS = (function () {
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = false;
       sPostProcessing = '';
+      bTexFiltering = false;
     }
     else if (bUseSkew) {
       // nScreenWidth = 916;
@@ -480,8 +481,8 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
-      // sPostProcessing = '10bit';
-      sPostProcessing = '';
+      sPostProcessing = '10bit';
+      // bTexFiltering = false;
     }
     else {
       nScreenWidth = 320;
@@ -514,18 +515,18 @@ var gameEngineJS = (function () {
     }
 
     // variables for FPS measurement (TEMP)
-    var lastTime = performance.now();
-    var fps = 0;
+    // var lastTime = performance.now();
+    // var fps = 0;
     // END variables for FPS measurement (TEMP)
 
     function gameLoop() {
 
       // Output for FPS measurement (TEMP)
-      var now = performance.now();
-      var delta = now - lastTime;   // milliseconds since last frame
-      lastTime = now;
-      fps = 1000 / delta;           // frames per second (rough)
-      _debugOutput( fps.toFixed(1))
+      // var now = performance.now();
+      // var delta = now - lastTime;   // milliseconds since last frame
+      // lastTime = now;
+      // fps = 1000 / delta;           // frames per second (rough)
+      // _debugOutput( fps.toFixed(1))
       // END Output for FPS measurement (TEMP)
 
       gameTimer++

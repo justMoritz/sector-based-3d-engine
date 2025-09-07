@@ -11,6 +11,9 @@ var _moveSprites = function () {
       // var fMovementSpeed = 0.01;
       var fMovementSpeed = sprite["speed"] || 0.03;
 
+      var oldX = sprite["x"];
+      var oldY = sprite["y"];
+
       // move the sprite along it's radiant line
       sprite["x"] = +sprite["x"] + +fastCos(sprite["r"]) * fMovementSpeed;
       sprite["y"] = +sprite["y"] + +fastSin(sprite["r"]) * fMovementSpeed;
@@ -19,47 +22,16 @@ var _moveSprites = function () {
       var fCollideY = +sprite["y"] - 0.65; // 0.5
       var fCollideX = +sprite["x"] + 0.125; // 0.25
 
-      var fCollideY2 = +sprite["y"] + 0.425; // 0.25
-      var fCollideX2 = +sprite["x"] - 0.65; //0.5
+      if (_moveHelpers.testWallCollision(sprite["x"], sprite["y"], true, oldX, oldY)) {
+        sprite["x"] = oldX;
+        sprite["y"] = oldY;
+        sprite["r"] = (+sprite["r"] + PI___) % PIx2;
+      }
 
-      // TODO: new collision
-      // if (
-      //   map[~~fCollideY * nMapWidth + ~~fCollideX] != "." ||
-      //   map[~~fCollideY2 * nMapWidth + ~~fCollideX2] != "."
-      // ) {
-      //   sprite["stuckcounter"]++;
-
-      //   // // reverse last movement
-      //   sprite["x"] =
-      //     +sprite["x"] - +fastCos(sprite["r"]) * fMovementSpeed * 2;
-      //   sprite["y"] =
-      //     +sprite["y"] - +fastSin(sprite["r"]) * fMovementSpeed * 2;
-
-      //   // // repeat may help unstuck sprites
-      //   // sprite["x"] = +(sprite["x"]) - +(fastCos(sprite["r"])) * fMovementSpeed;
-      //   // sprite["y"] = +(sprite["y"]) - +(fastSin(sprite["r"])) * fMovementSpeed;
-      //   // sprite["x"] = +(sprite["x"]) - +(fastCos(sprite["r"])) * fMovementSpeed;
-      //   // sprite["y"] = +(sprite["y"]) - +(fastSin(sprite["r"])) * fMovementSpeed;
-
-      //   // change the angle and visible angle
-      //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2; // TODO: sometimes buggie
-
-      //   // if sprite keeps getting stuck, shove it outta there
-      //   if (sprite["stuckcounter"] > 10) {
-      //     sprite["stuckcounter"] = 0;
-      //     sprite["r"] = 0.5;
-      //     sprite["x"] = +sprite["x"] - +fastCos(sprite["r"]) * 0.5;
-      //     sprite["y"] = +sprite["y"] - +fastSin(sprite["r"]) * 0.5;
-
-      //     // sprite["move"]  = false;
-      //     // sprite["x"]  = 0;
-      //     // sprite["7"]  = 0;
-      //   }
-      // }
 
       // if sprite is close to the player, and facing the player, turn around
       if (sprite["z"] < 1 && sprite["a"] !== "B") {
-        sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2;
+        sprite["r"] = (+sprite["r"] + PI___) % PIx2;
       }
       // if player hits sprite, prevent moving
       if (sprite["z"] < 0.75) {
@@ -274,19 +246,17 @@ function _drawSpritesNew (i) {
           var fSampleY = (sj - fSpriteCeil) / (fSpriteFloor - fSpriteCeil);
           var fSamplePixel;
           var sAnimationFrame = '';
+          var animFrames = [
+            "W1","W1","W1","W1","W1",
+            "","","","","","",
+            "W2","W2","W2","W2","W2",
+          ];
 
 
           // if angles exist in the sprite, sample the appropriate walkframe for the angle
           if (sprite["move"] && "walkframes" in currentSpriteObject) {
-            if (animationTimer < 5) {
-              sAnimationFrame = "W1";
-            } 
-            else if (animationTimer >= 5 && animationTimer < 10) {
-              sAnimationFrame = "W2";
-            }
-            else {
-              sAnimationFrame = "";
-            }
+            
+            sAnimationFrame = animFrames[animationTimer];
             
             if(sAnimationFrame !== ""){
               fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
@@ -299,15 +269,8 @@ function _drawSpritesNew (i) {
 
           // Like walkframes, but SUPER ;)
           if (sprite["move"] && "superWalkframes" in currentSpriteObject) {
-            if (animationTimer < 5) {
-              sAnimationFrame = "W1";
-            } 
-            else if (animationTimer >= 5 && animationTimer < 10) {
-              sAnimationFrame = "W2";
-            }
-            else {
-              sAnimationFrame = "";
-            }
+
+            sAnimationFrame = animFrames[animationTimer];
             
             if(sAnimationFrame !== ""){
               fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
@@ -522,4 +485,39 @@ function _drawCrazyVoxels (i) {
       } // end if ("vox" in currentSpriteObject)
     } // end if (!isNaN(intersection.x) && !isNaN(intersection.y))
   } // end for each sprite object
+}
+
+
+
+
+
+
+
+function spriteHitsWall(sprite) {
+  // project sprite's facing direction into a screen column
+  const dirX = fastCos(sprite["r"]);
+  const dirY = fastSin(sprite["r"]);
+
+  // angle from player to sprite's forward vector
+  const fAngleToSprite = Math.atan2(dirY, dirX);
+
+  // normalize angle to 0..2π
+  let relAngle = fAngleToSprite - fPlayerA;
+  if (relAngle < 0) relAngle += PIx2;
+  if (relAngle >= PIx2) relAngle -= PIx2;
+
+  // which screen column that angle corresponds to
+  const col = Math.floor((relAngle / fFOV) * nScreenWidth);
+  if (col < 0 || col >= nScreenWidth) return false; // off-screen, ignore
+
+  // how far sprite wants to move forward
+  const stepDist = sprite["speed"] || 0.03;
+  const newZ = sprite["z"] - stepDist;
+
+  // compare with depth buffer at that column
+  if (newZ <= fDepthBuffer[col]) {
+    return false; // open space
+  } else {
+    return true; // wall is closer than new position
+  }
 }
