@@ -1,9 +1,10 @@
+
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 14,
-  "fPlayerY": 8.2,
-  "fPlayerA": 1.3,
+  "fPlayerX": 9.95,
+  "fPlayerY": 6.33,
+  "fPlayerA": 0.89,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -131,7 +132,7 @@ var _testmap =
           "y": 12,
           "h": 0,
           "r": 3.14,
-          "move": true,
+          // "move": true,
           "name": "P"
       },
       "1s": {
