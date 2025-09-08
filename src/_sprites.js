@@ -533,9 +533,9 @@ var _generateRandomCoordinates = function () {
 
 // generate random Sprites
 var _generateRandomSprites = function (nNumberOfSprites) {
-  nNumberOfSprites = 20
+  nNumberOfSprites = 15;
     // nNumberOfSprites || Math.round((nMapWidth * nMapWidth) / 15);
-  // generates random Pogels or Obetrls! :oooo
+  // generates random SUPERpogels
   var oRandomLevelSprites = {};
   for (var m = 0; m < nNumberOfSprites; m++) {
     var randAngle = _randomIntFromInterval(0, PIx2);
@@ -545,8 +545,8 @@ var _generateRandomSprites = function (nNumberOfSprites) {
       x: randomCoordinates.x,
       y: randomCoordinates.y,
       r: randAngle,
-      // name: nSpriteRand === 1 ? "O" : "P",
-      name: "superpogel",
+      name: nSpriteRand === 1 ? "lil" : "superpogel",
+      // name: "superpogel",
       move: true,
       sc: 1,
       speed: _randomIntFromInterval(1.5, 3) * 0.01,
