@@ -2,9 +2,9 @@
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 9.95,
-  "fPlayerY": 6.33,
-  "fPlayerA": 0.89,
+  "fPlayerX": 14,
+  "fPlayerY": 10,
+  "fPlayerA": 1.17,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -95,29 +95,29 @@ var _testmap =
     }
   },
   "sprites": {
-      // "0": {
-      //     "x": 12,
-      //     "y": 15,
-      //     "h": 0.2,
-      //     "r": 0,
-      //     "name": "P"
-      // },
-      // "0s": {
-      //     "x": 17,
-      //     "y": 10,
-      //     "h": -0.2,
-      //     "r": 3.14,
-      //     "name": "SP"
-      // },
-      // "0s2": {
-      //     "x": 17,
-      //     "y": 8,
-      //     "h": 0,
-      //     "r": 5.1,
-      //     "name": "superpogel",
-      //     "move": true,
-      //     "speed": 0.025,
-      // },
+      "0": {
+          "x": 12,
+          "y": 15,
+          "h": 0.2,
+          "r": 0,
+          "name": "P"
+      },
+      "0s": {
+          "x": 17,
+          "y": 10,
+          "h": -0.2,
+          "r": 3.14,
+          "name": "SP"
+      },
+      "0s2": {
+          "x": 17,
+          "y": 8,
+          "h": 0,
+          "r": 5.1,
+          "name": "superpogel",
+          "move": true,
+          "speed": 0.025,
+      },
       "0s22": {
           "x": 14,
           "y": 16,
@@ -125,15 +125,7 @@ var _testmap =
           "r": 6.1,
           "name": "superpogel",
           "move": true,
-          "speed": 0.025,
-      },
-      "0s3": {
-          "x": 17,
-          "y": 12,
-          "h": 0,
-          "r": 3.14,
-          // "move": true,
-          "name": "P"
+          "speed": 0.095,
       },
       "1s": {
           "x": 12,

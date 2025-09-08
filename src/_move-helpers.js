@@ -93,7 +93,7 @@ var _moveHelpers = {
   // Similar to Player Sector Check, but for sprites.
   // Broken into its own function for clarity. 
   // This function gets called a lot!
-  spriteSectorCheck: function (fEntityX, fEntityY) {
+  spriteSectorCheckOLD: function (fEntityX, fEntityY) {
 
     // Check for player in last known sector
     if( _moveHelpers.testEntityInSector( sLastKnownSector, fEntityX, fEntityY ) ){
@@ -126,6 +126,54 @@ var _moveHelpers = {
       }
     }
   },
+
+  // swept collision approach:
+  // Casting a ray from the old to the new (projected) coordinates.
+  // checks all walls on the way. Since it's a continuous line, if it hits any walls, 
+  // the move is illegal and we need to try again :)
+  spriteSectorCheck: function (fOldX, fOldY, fNewX, fNewY) {
+    var bWasHit = false;
+    var oClosestHit = null;
+    var nClosestHitLen = 2000; 
+    var nClosestHitSector = 0;
+  
+    for (var si in oMap) {
+      if (si == 0) continue; 
+
+      var currentSector = oMap[si];
+  
+      var allCurrentWalls = currentSector.walls;
+      for (var wi = 0; wi < allCurrentWalls.length; wi++) {
+        var wall = allCurrentWalls[wi];
+  
+        var intersection = intersectionPoint(
+          { x: fOldX, y: fOldY },
+          { x: fNewX, y: fNewY },
+          { x: wall[0], y: wall[1] },
+          { x: wall[2], y: wall[3] }
+        );
+
+        // After ever wall that was positively hit, we need to determine the closest hit to the sprite
+        if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+          bWasHit = true;
+
+          // some fast-magic screwery that determines the closest hit
+          var hitLenSq = (intersection.x - fOldX) ** 2 + (intersection.y - fOldY) ** 2;
+
+          if (hitLenSq < nClosestHitLen) {
+            nClosestHitLen = hitLenSq;
+            oClosestHit = { x: intersection.x, y: intersection.y };
+            nClosestHitSector = wall[9];
+          }
+        }
+      } // end wall loop
+    } // end sector loop
+    var oHitPoint = {};
+    oHitPoint.hit = bWasHit;
+    oHitPoint.coords = oClosestHit;
+    oHitPoint.connectingSector = nClosestHitSector;
+    return oHitPoint;
+  },  
 
 
   // sets the player height when a sector is changed

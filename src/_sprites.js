@@ -14,17 +14,60 @@ var _moveSprites = function () {
       var oldX = sprite["x"];
       var oldY = sprite["y"];
 
-      // move the sprite along it's radiant line
-      sprite["x"] = +sprite["x"] + +fastCos(sprite["r"]) * fMovementSpeed;
-      sprite["y"] = +sprite["y"] + +fastSin(sprite["r"]) * fMovementSpeed;
+      // projected move along the sprite's radiant line
+      var newX = +sprite["x"] + +fastCos(sprite["r"]) * fMovementSpeed;
+      var newY =  +sprite["y"] + +fastSin(sprite["r"]) * fMovementSpeed;
 
 
-      if (_moveHelpers.testWallCollisionSprite(sprite, oldX, oldY)) {
-        sprite["x"] = oldX;
-        sprite["y"] = oldY;
-        sprite["r"] = (+sprite["r"] + PI___) % PIx2 - 0.2;
+      // check line segment (oldX,oldY → newX,newY) against ALL walls
+      var hasHitAnyWalls = _moveHelpers.spriteSectorCheck(oldX, oldY, newX, newY);
+
+      var bIsLegelMove = true;
+      var bUpdateValues = false;
+      var fheightBuffer = 0;
+      var nConnectingSectorBuffer = 0;
+    
+      // checks if we have a sector that's passable, if so, we allow the move
+      if (hasHitAnyWalls["hit"]) {
+        if ( hasHitAnyWalls["connectingSector"]) {
+
+          var targetSector = hasHitAnyWalls["connectingSector"];
+          var targetFloor = oMap[targetSector].floor;
+        
+          // sprites can't walk over obstacles that are too high
+          if (sprite["h"] - targetFloor < -0.5) {
+            bIsLegelMove = false;
+          } 
+          else {
+            bUpdateValues = true;  
+            nConnectingSectorBuffer = targetSector;
+            fheightBuffer = targetFloor;
+          }
+        }  
+        else{
+          bIsLegelMove = false;
+        }    
+      }      
+      else if(hasHitAnyWalls["coords"]) {
+        bIsLegelMove = false;
       }
+      
+      // move if no wall was hit or wall is not too high
+      if ( bIsLegelMove ) {
+        sprite["x"] = newX;
+        sprite["y"] = newY;
 
+        if( bUpdateValues ){
+          sprite["h"] = fheightBuffer;
+          sprite["sc"] = nConnectingSectorBuffer;
+        }
+      }
+      else{
+        // if so, place the sprite Just before the wall is hit and turn around
+        sprite["x"] = hasHitAnyWalls["coords"]["x"] - fastCos(sprite["r"]) * 0.01;
+        sprite["y"] = hasHitAnyWalls["coords"]["y"] - fastSin(sprite["r"]) * 0.01;
+        sprite["r"] = (sprite["r"] + PI___) % PIx2 + sinTable[animationTimer*2+50];  // A little bit of randomness here.
+      }
 
       // if sprite is close to the player, and facing the player, turn around
       // if (sprite["z"] < 1 && ( sprite["a"] !== "B" ) ) {
@@ -51,16 +94,10 @@ var _moveSprites = function () {
         bPlayerMayMoveForward = true;
       }
 
-      // TODO: sprites hitting each other
-      // for(var sj=0; sj < Object.keys(oLevelSprites).length; sj++ ){
-      //   var jsprite = oLevelSprites[Object.keys(oLevelSprites)[sj]];
-      //   if( jsprite["z"] - sprite["z"] > 2 ){
-      //     jsprite["r"] = (+(sprite["r"]) + PIx1_5 ) % PIx2;
-      //   }
-      // }
     } // end if sprite move
   }
 };
+
 
 
 // checks every sprite every few frames to make sure they behaveb (are in the sector we're expecting). \
@@ -549,7 +586,7 @@ var _generateRandomSprites = function (nNumberOfSprites) {
       // name: "superpogel",
       move: true,
       sc: 1,
-      speed: _randomIntFromInterval(1.5, 3) * 0.01,
+      speed: _randomIntFromInterval(1.5, 5) * 0.01,
     };
     oRandomLevelSprites[m] = oRandomSprite;
   }
