@@ -18,21 +18,32 @@ var _moveSprites = function () {
       sprite["x"] = +sprite["x"] + +fastCos(sprite["r"]) * fMovementSpeed;
       sprite["y"] = +sprite["y"] + +fastSin(sprite["r"]) * fMovementSpeed;
 
-      // collision coordinates (attempting to center sprite)
-      var fCollideY = +sprite["y"] - 0.65; // 0.5
-      var fCollideX = +sprite["x"] + 0.125; // 0.25
 
-      if (_moveHelpers.testWallCollision(sprite["x"], sprite["y"], true, oldX, oldY)) {
+      if (_moveHelpers.testWallCollisionSprite(sprite, oldX, oldY)) {
         sprite["x"] = oldX;
         sprite["y"] = oldY;
-        sprite["r"] = (+sprite["r"] + PI___) % PIx2;
+        sprite["r"] = (+sprite["r"] + PI___) % PIx2 - 0.2;
       }
 
 
       // if sprite is close to the player, and facing the player, turn around
+      // if (sprite["z"] < 1 && ( sprite["a"] !== "B" ) ) {
+      //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2;
+      // }
+
       if (sprite["z"] < 1 && sprite["a"] !== "B") {
-        sprite["r"] = (+sprite["r"] + PI___) % PIx2;
+        // vector from sprite → player
+        var dx = fPlayerX - sprite.x;
+        var dy = fPlayerY - sprite.y;
+        var angleToPlayer = Math.atan2(dy, dx);
+      
+        // reflect heading across line perpendicular to player direction
+        var angleDiff = sprite["r"] - angleToPlayer;
+        var reflected = angleToPlayer - angleDiff;
+      
+        sprite["r"] = (reflected + PIx1_5) % PIx2;
       }
+
       // if player hits sprite, prevent moving
       if (sprite["z"] < 0.75) {
         bPlayerMayMoveForward = false;
@@ -50,6 +61,29 @@ var _moveSprites = function () {
     } // end if sprite move
   }
 };
+
+
+// checks every sprite every few frames to make sure they behaveb (are in the sector we're expecting). \
+// This is expensive, maybe it's only useful for fast sprites
+function _spriteSanityCheck() {
+  for(var si in oLevelSprites){
+      
+    for (var sector in oMap) {
+      if(sector != 0){
+        if ( _moveHelpers.testEntityInSector( sector, oLevelSprites[si]["x"], oLevelSprites[si]["y"] )){
+          // console.log(`${oLevelSprites[si]['sc']} was found in ${sector}`);
+          if ( oLevelSprites[si]['sc'] != sector){
+            // console.log('not supposed to be here');
+            oLevelSprites[si]['sc'] = sector;
+            oLevelSprites[si]["h"] = oLevel.map[sector].floor;
+            // oLevelSprites[si]['speed'] = 0.02;
+          }
+          break;
+        }  
+      }
+    }
+  }
+}
 
 /**
  * Sorts List
@@ -141,38 +175,6 @@ function _drawSpritesNew (i) {
       }
 
       // checks which sprite angle preset to use
-      if ("angles" in currentSpriteObject) {
-        // The angle the sprite is facing relative to the player
-        var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
-        if (fSpriteBeautyAngle < 0) {
-          fSpriteBeautyAngle += PIx2;
-        }
-        if (fSpriteBeautyAngle > PIx2) {
-          fSpriteBeautyAngle -= PIx2;
-        }
-
-        if (fSpriteBeautyAngle >= PI_0 && fSpriteBeautyAngle < PIx05) {
-          sprite["a"] = "B";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx05 &&
-          +fSpriteBeautyAngle < +PIx1
-        ) {
-          sprite["a"] = "L";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx1 &&
-          +fSpriteBeautyAngle < +PIx1_5
-        ) {
-          sprite["a"] = "F";
-        } else if (
-          +fSpriteBeautyAngle >= +PIx1_5 &&
-          +fSpriteBeautyAngle < +PIx2
-        ) {
-          sprite["a"] = "R";
-        }
-      }
-
-
-      // checks which sprite angle preset to use
       // if ("superangles" in currentSpriteObject) {
       //   // The angle the sprite is facing relative to the player
       //   var fSpriteBeautyAngle = fPlayerA - sprite["r"] + PIdiv4;
@@ -250,22 +252,9 @@ function _drawSpritesNew (i) {
             "W1","W1","W1","W1","W1",
             "","","","","","",
             "W2","W2","W2","W2","W2",
+            "","","","","","",
           ];
-
-
-          // if angles exist in the sprite, sample the appropriate walkframe for the angle
-          if (sprite["move"] && "walkframes" in currentSpriteObject) {
-            
-            sAnimationFrame = animFrames[animationTimer];
-            
-            if(sAnimationFrame !== ""){
-              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-            }
-            else{
-              fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-            }
-          }
-
+          var sectorLightValue = oMap[sprite["sc"]]["bakedSectorLight"] + 0.1;
 
           // Like walkframes, but SUPER ;)
           if (sprite["move"] && "superWalkframes" in currentSpriteObject) {
@@ -273,26 +262,22 @@ function _drawSpritesNew (i) {
             sAnimationFrame = animFrames[animationTimer];
             
             if(sAnimationFrame !== ""){
-              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]][sAnimationFrame], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, sectorLightValue, true);
             }
             else{
-              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+              fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, sectorLightValue, true);
             }
           }
 
           // if superangles exist in the sprite sample the appropriate angle
           else if (sprite["s"]) {
-            fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            fSamplePixel = _getSamplePixel( currentSpriteObject["superangles"][sprite["s"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, sectorLightValue, true);
           }
 
-          // if angles exist in the sprite sample the appropriate angle
-          else if (sprite["a"]) {
-            fSamplePixel = _getSamplePixel( currentSpriteObject["angles"][sprite["a"]], fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
-          }
 
           // regular sampling
           else{
-            fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, 1, true);
+            fSamplePixel = _getSamplePixel( currentSpriteObject, fSampleX, fSampleY, 1, 1, 0, 0, fDistanceToSprite, sectorLightValue, true);
           }
 
           // transparency
@@ -521,3 +506,52 @@ function spriteHitsWall(sprite) {
     return true; // wall is closer than new position
   }
 }
+
+
+var _randomIntFromInterval = function (min, max) {
+  // min and max included
+  return ~~(Math.random() * (max - min + 1) + min);
+};
+
+// generates only pogels that can be placed
+var _generateRandomCoordinates = function () {
+  var x = +_randomIntFromInterval(18, 30) + 0;
+  var y = +_randomIntFromInterval(14, 30) - 0;
+
+  // while (map[~~y * nDrawWidth + ~~x] != ".") {
+    // x = +_randomIntFromInterval(0, 20) + 1;
+    // y = +_randomIntFromInterval(0, 20) - 1;
+  // }
+
+  var oCoordinates = {
+    x: x,
+    y: y,
+  };
+
+  return oCoordinates;
+};
+
+// generate random Sprites
+var _generateRandomSprites = function (nNumberOfSprites) {
+  nNumberOfSprites = 20
+    // nNumberOfSprites || Math.round((nMapWidth * nMapWidth) / 15);
+  // generates random Pogels or Obetrls! :oooo
+  var oRandomLevelSprites = {};
+  for (var m = 0; m < nNumberOfSprites; m++) {
+    var randAngle = _randomIntFromInterval(0, PIx2);
+    var nSpriteRand = _randomIntFromInterval(0, 3);
+    var randomCoordinates = _generateRandomCoordinates();
+    var oRandomSprite = {
+      x: randomCoordinates.x,
+      y: randomCoordinates.y,
+      r: randAngle,
+      // name: nSpriteRand === 1 ? "O" : "P",
+      name: "superpogel",
+      move: true,
+      sc: 1,
+      speed: _randomIntFromInterval(1.5, 3) * 0.01,
+    };
+    oRandomLevelSprites[m] = oRandomSprite;
+  }
+  return oRandomLevelSprites;
+};

@@ -114,7 +114,14 @@ var gameEngineJS = (function () {
       sLastKnownSector = sPlayerSector;
       
       // load sprites
-      oLevelSprites = oLevel.sprites;
+      // oLevelSprites = oLevel.sprites;
+      // oLevelSprites = _generateRandomSprites();
+      oLevelSprites = {
+        ...oLevel.sprites,
+        ..._generateRandomSprites()
+      };
+      _spriteSanityCheck();
+
       oLevelVoxels = oLevel.voxels;
 
 
@@ -132,8 +139,10 @@ var gameEngineJS = (function () {
 
       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
 
+      _generateRandomSprites();
       bakeWallLighting(4);
       bakeVoxelPositions();
+      prepSprites();
 
       main();
 
@@ -481,7 +490,7 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
-      sPostProcessing = '10bit';
+      // sPostProcessing = '10bit';
       // bTexFiltering = false;
     }
     else {
@@ -532,7 +541,7 @@ var gameEngineJS = (function () {
       gameTimer++
 
       animationTimer++;
-      if (animationTimer > 15) {
+      if (animationTimer > 19) {
         animationTimer = 0;
       }
 
@@ -548,12 +557,14 @@ var gameEngineJS = (function () {
       _moveHelpers.playerHeight();
 
       _moveSprites();
-
       _updateSpriteBuffer();
+      if ( animationTimer == 0 ) {
+        _spriteSanityCheck();
+      }
 
       _moveHelpers.playerSectorCheck();
 
-      _worldFunctions(gameTimer);
+      // _worldFunctions(gameTimer);
       
       // normalize player angle
       if (fPlayerA < 0) {
@@ -570,10 +581,9 @@ var gameEngineJS = (function () {
       fscreenHeightFactor = nScreenHeight / fPerspectiveCalculation;
       
 
-
       // for each screen-column
       for (var i = 0; i < nScreenWidth; i++) {
-              
+
         // Calculate the direction of the current ray
         var fRayAngle = fPlayerA - fFOV / 2 + (i / nScreenWidth) * fFOV;
         var fEyeX = fastCos(fRayAngle);
@@ -593,7 +603,7 @@ var gameEngineJS = (function () {
         
         fRayAngleGlob = fRayAngle;
 
-        // checks the current sector, and potentially updates the sector the player might be in
+        // checks current sector, potentially updates the sector the player might be in, renders all sectors
         setPalette(worldPalette);
         checkSectors(sPlayerSector, i);
 
@@ -606,7 +616,8 @@ var gameEngineJS = (function () {
       } // end column loop
 
       
-      if (  bUseSkew ) {
+      // draws the output
+      if ( bUseSkew ) {
         _fDrawFrameWithSkew(screen);
       }else{
         _fDrawFrame(screen); 

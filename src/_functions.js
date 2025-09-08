@@ -426,6 +426,30 @@ function bakeSectorFlatLight(sector, lights, samplesPerAxis = 4) {
   sector.bakedSectorLight = total / count;
 }
 
+
+/**
+ * For all sprites in the global sprite object, 
+ * find the sector they start out in, and write it in, 
+ * along with the starting height
+ */
+function prepSprites (){
+
+  for(var si in oLevelSprites){
+    
+    for (var sector in oMap) {
+      if(sector != 0){
+        if ( _moveHelpers.testEntityInSector( sector, oLevelSprites[si]["x"], oLevelSprites[si]["y"] )){
+          // set starting sector
+          oLevelSprites[si]["sc"] = +sector;
+          // set new sprite height
+          oLevelSprites[si]["h"] = oLevel.map[sector].floor;
+          break;
+        }  
+      }
+    }
+  }
+}
+
 /**
  * Catches something like oLevel.map[1].ceilTex,
  * and turns it into oLevel.map.1.ceilTex

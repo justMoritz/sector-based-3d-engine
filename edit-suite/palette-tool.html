@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Palette Editor</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  #paletteInput { width: 100%; height: 120px; }
+  #canvas { border: 1px solid #444; margin-top: 10px; cursor: pointer; }
+  #colorPicker { display: none; position: absolute; }
+</style>
+</head>
+<body>
+  <h2>Palette Editor</h2>
+  <p>Paste your palette array (e.g. <code>[[0,0,0],[230,213,126],...]</code>) below:</p>
+  <textarea id="paletteInput"></textarea><br>
+  <button id="loadBtn">Load Palette</button>
+  <canvas id="canvas" width="600" height="400"></canvas>
+  <input type="color" id="colorPicker">
+  
+<script>
+let palette = [];
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const colorPicker = document.getElementById('colorPicker');
+const textarea = document.getElementById('paletteInput');
+const cellSize = 20; // pixel size of each swatch
+let selectedIndex = -1;
+
+function drawPalette() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  palette.forEach((rgb, i) => {
+    const [r,g,b] = rgb;
+    const x = (i % Math.floor(canvas.width / cellSize)) * cellSize;
+    const y = Math.floor(i / Math.floor(canvas.width / cellSize)) * cellSize;
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(x, y, cellSize, cellSize);
+    ctx.strokeStyle = "#333";
+    ctx.strokeRect(x, y, cellSize, cellSize);
+  });
+}
+
+document.getElementById('loadBtn').addEventListener('click', () => {
+  try {
+    palette = JSON.parse(textarea.value);
+    drawPalette();
+  } catch(e) {
+    alert("Invalid JSON array");
+  }
+});
+
+canvas.addEventListener('click', e => {
+  if (!palette.length) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const cols = Math.floor(canvas.width / cellSize);
+  const col = Math.floor(x / cellSize);
+  const row = Math.floor(y / cellSize);
+  selectedIndex = row * cols + col;
+  if (selectedIndex >= palette.length) return;
+
+  const [r,g,b] = palette[selectedIndex];
+  colorPicker.value = rgbToHex(r,g,b);
+  colorPicker.style.left = (e.pageX+5) + "px";
+  colorPicker.style.top = (e.pageY+5) + "px";
+  colorPicker.style.display = "block";
+  colorPicker.click();
+});
+
+colorPicker.addEventListener('input', () => {
+  if (selectedIndex < 0) return;
+  const hex = colorPicker.value;
+  const rgb = hexToRgb(hex);
+  palette[selectedIndex] = [rgb.r, rgb.g, rgb.b];
+  textarea.value = JSON.stringify(palette);
+  drawPalette();
+});
+
+function rgbToHex(r,g,b) {
+  return "#" + [r,g,b].map(v => v.toString(16).padStart(2,"0")).join('');
+}
+function hexToRgb(hex) {
+  const val = parseInt(hex.slice(1), 16);
+  return {r: (val>>16)&255, g: (val>>8)&255, b: val&255};
+}
+</script>
+</body>
+</html>
