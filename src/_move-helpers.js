@@ -704,5 +704,36 @@ var _moveHelpers = {
       }
     }
   },
+
+
+  _updateCamera: function (gameTimer) {
+
+    var cameraPath = oLevel["cameraPath"];
+
+    var segmentDuration = 140; // e.g. 4s at 60fps
+  
+    var numSegments = cameraPath.length - 1;
+    var totalDuration = numSegments * segmentDuration;
+  
+    // After the full path time has elapsed, stop animating
+    if (gameTimer >= totalDuration) {
+      return false; 
+    }
+  
+    var segmentIndex = Math.floor(gameTimer / segmentDuration);
+    var localT = (gameTimer % segmentDuration) / segmentDuration;
+  
+    var start = cameraPath[segmentIndex];
+    var end   = cameraPath[segmentIndex + 1];
+  
+    fPlayerX = simpleLerpPoint(start.x, end.x, localT);
+    fPlayerY = simpleLerpPoint(start.y, end.y, localT);
+    fPlayerA = angleLerpPoint(start.a, end.a, localT);
+    fPlayerH = simpleLerpPoint(start.h, end.h, localT);
+  
+    return true; // still running
+  }
   
 };
+
+

@@ -74,21 +74,27 @@ var _moveSprites = function () {
       //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2;
       // }
 
-      if (sprite["z"] < 1 && sprite["a"] !== "B") {
-        // vector from sprite → player
-        var dx = fPlayerX - sprite.x;
-        var dy = fPlayerY - sprite.y;
+      if (sprite["z"] < 2 && sprite["a"] !== "B" && !sprite["bounceCooldown"]) {
+        // do the reflection
+        var dx = fPlayerX - sprite["x"];
+        var dy = fPlayerY - sprite["y"];
         var angleToPlayer = Math.atan2(dy, dx);
       
-        // reflect heading across line perpendicular to player direction
         var angleDiff = sprite["r"] - angleToPlayer;
         var reflected = angleToPlayer - angleDiff;
       
         sprite["r"] = (reflected + PIx1_5) % PIx2;
+      
+        sprite["bounceCooldown"] = 30; 
       }
+      
+      if (sprite["bounceCooldown"] > 0) {
+        sprite["bounceCooldown"]--;
+      }
+      
 
       // if player hits sprite, prevent moving
-      if (sprite["z"] < 0.75) {
+      if (sprite["z"] < 1.25) {
         bPlayerMayMoveForward = false;
       } else {
         bPlayerMayMoveForward = true;
@@ -253,7 +259,9 @@ function _drawSpritesNew (i) {
         // slice into X steps
         var steps = currentSpriteObject["superAnglesCount"];
         var stepSize = PIx2 / steps;
-        var index = Math.floor(fSpriteBeautyAngle / stepSize);
+        
+        var index = Math.floor(fSpriteBeautyAngle / stepSize) % steps;
+        // var index = Math.floor(fSpriteBeautyAngle / stepSize);
 
         // assign key A01..A36
         sprite["s"] = "A" + String(index + 1).padStart(2, "0");

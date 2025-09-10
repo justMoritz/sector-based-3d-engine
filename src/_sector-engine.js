@@ -491,6 +491,7 @@ var gameEngineJS = (function () {
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
       sPostProcessing = '10bit';
+      sPostProcessing = '';
       // bTexFiltering = false;
     }
     else {
@@ -507,6 +508,10 @@ var gameEngineJS = (function () {
     }
 
   };
+
+
+
+
 
   /**
    * The basic game loop
@@ -538,7 +543,7 @@ var gameEngineJS = (function () {
       // _debugOutput( fps.toFixed(1))
       // END Output for FPS measurement (TEMP)
 
-      gameTimer++
+      gameTimer++;
 
       animationTimer++;
       if (animationTimer > 19) {
@@ -553,8 +558,14 @@ var gameEngineJS = (function () {
         oLevelSprites = oLevel.sprites;
       }
 
-      _moveHelpers.move();
-      _moveHelpers.playerHeight();
+      if( oLevel["cameraPath"] && _moveHelpers._updateCamera(gameTimer) ){  
+        // intro-sequence
+      } else {
+        _moveHelpers.move();
+        _moveHelpers.playerHeight();
+      }
+
+
 
       _moveSprites();
       _updateSpriteBuffer();

@@ -46,6 +46,15 @@ function texSampleLerp( ax,ay, bx ,by, hx, hy ){
   return distanceAH / totalLength;
 }
 
+function simpleLerpPoint(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function angleLerpPoint(a, b, t) {
+  var diff = ((b - a + PI___) % (PIx2)) - PI___;
+  return a + diff * t;
+}
+
 
 var epsilon = 0.0001;
 function approximatelyEqual(a, b, epsilon) {
