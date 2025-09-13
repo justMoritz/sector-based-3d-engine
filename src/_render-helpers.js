@@ -682,6 +682,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   var fDirectDistFloor;
 
   fPlayerHinSector = fSectorFloorHeight;
+  
 
   
   fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;

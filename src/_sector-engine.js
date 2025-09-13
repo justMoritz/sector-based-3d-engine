@@ -352,7 +352,7 @@ var gameEngineJS = (function () {
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)) ; 
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
           
@@ -496,7 +496,7 @@ var gameEngineJS = (function () {
     }
     else {
       nScreenWidth = 320;
-      nScreenHeight = 220;
+      nScreenHeight = 200;
       nLookLimit = 10;
       fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
       fFOV_div2 = fFOV / 2;
@@ -505,6 +505,7 @@ var gameEngineJS = (function () {
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
       sPostProcessing = '10bit';
+      sPostProcessing = '';
     }
 
   };

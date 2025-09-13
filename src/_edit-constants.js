@@ -117,3 +117,15 @@ skewValues[5] = 1;
 
 DEBUGMODE = false;
 EDITMODE  = true;
+
+
+var TABLE_SIZE = 2048;
+
+var sinTable = new Float32Array(TABLE_SIZE);
+var cosTable = new Float32Array(TABLE_SIZE);
+
+for (let i = 0; i < TABLE_SIZE; i++) {
+  var angle = (i / TABLE_SIZE) * PIx2;
+  sinTable[i] = Math.sin(angle);
+  cosTable[i] = Math.cos(angle);
+}
