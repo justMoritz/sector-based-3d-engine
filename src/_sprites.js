@@ -187,6 +187,7 @@ function _drawSpritesNew (i) {
 
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
+    // console.log(sprite["name"]);
 
     var spriteAx = sprite["x"] + fastCos(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
     var spriteAy = sprite["y"] + fastSin(fPlayerA - PIdiv2) * currentSpriteObject["aspctRt"] 
@@ -590,7 +591,7 @@ var _generateRandomSprites = function (nNumberOfSprites) {
       x: randomCoordinates.x,
       y: randomCoordinates.y,
       r: randAngle,
-      name: nSpriteRand === 1 ? "lil" : "superpogel",
+      name: nSpriteRand === 1 ? "superobetrl" : "superpogel",
       // name: "superpogel",
       move: true,
       sc: 1,

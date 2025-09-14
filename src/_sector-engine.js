@@ -495,8 +495,8 @@ var gameEngineJS = (function () {
       // bTexFiltering = false;
     }
     else {
-      nScreenWidth = 320;
-      nScreenHeight = 200;
+      nScreenWidth = 640;
+      nScreenHeight = 380;
       nLookLimit = 10;
       fFOV = PI___ / 2.5; // (PI___ / 4.0 originally)
       fFOV_div2 = fFOV / 2;

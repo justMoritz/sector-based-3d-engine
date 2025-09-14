@@ -121,6 +121,20 @@ var _testmap =
           "r": 0,
           "name": "SP"
       },
+      "0s2222": {
+          "x": 17,
+          "y": 11,
+          "h": -0.2,
+          "r": 0,
+          "name": "superpogel"
+      },
+      "0s2223": {
+          "x": 17,
+          "y": 12,
+          "h": -0.2,
+          "r": 0,
+          "name": "superobetrl"
+      },
       "0s2": {
           "x": 17,
           "y": 8,
@@ -153,6 +167,13 @@ var _testmap =
           "r": 3.15,
           "name": "supertable"
       },
+      "1s42o": {
+        "x": 11.8,
+        "y": 10,
+        "h": -0.15,
+        "r": 3.15,
+        "name": "superobetrl"
+    },
       "1s2": {
           "x": 12,
           "y": 9.25,
@@ -221,7 +242,7 @@ var _testmap =
           "y": 7,
           "h": 0,
           "r": 3.11,
-          "name": "O",
+          "name": "superobetrl",
           "move": true,
       },
   },
