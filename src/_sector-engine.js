@@ -114,13 +114,13 @@ var gameEngineJS = (function () {
       sLastKnownSector = sPlayerSector;
       
       // load sprites
-      // oLevelSprites = oLevel.sprites;
+      oLevelSprites = oLevel.sprites;
       // oLevelSprites = _generateRandomSprites();
-      oLevelSprites = {
-        ...oLevel.sprites,
-        ..._generateRandomSprites()
-      };
-      _spriteSanityCheck();
+      // oLevelSprites = {
+      //   ...oLevel.sprites,
+      //   ..._generateRandomSprites()
+      // };
+      // _spriteSanityCheck();
 
       oLevelVoxels = oLevel.voxels;
 
