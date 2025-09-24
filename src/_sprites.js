@@ -74,33 +74,47 @@ var _moveSprites = function () {
       //   sprite["r"] = (+sprite["r"] + PIx1_5) % PIx2;
       // }
 
-      if (sprite["z"] < 2 && sprite["a"] !== "B" && !sprite["bounceCooldown"]) {
-        // do the reflection
-        var dx = fPlayerX - sprite["x"];
-        var dy = fPlayerY - sprite["y"];
-        var angleToPlayer = Math.atan2(dy, dx);
-      
-        var angleDiff = sprite["r"] - angleToPlayer;
-        var reflected = angleToPlayer - angleDiff;
-      
-        sprite["r"] = (reflected + PIx1_5) % PIx2;
-      
-        sprite["bounceCooldown"] = 30; 
-      }
-      
-      if (sprite["bounceCooldown"] > 0) {
-        sprite["bounceCooldown"]--;
-      }
-      
 
-      // if player hits sprite, prevent moving
-      if (sprite["z"] < 1.25) {
-        bPlayerMayMoveForward = false;
-      } else {
-        bPlayerMayMoveForward = true;
-      }
 
     } // end if sprite move
+
+    // player collision
+    if (sprite["z"] < 1.5 && sprite["a"] !== "B" && !sprite["bounceCooldown"]) {
+      // do the reflection
+      var dx = fPlayerX - sprite["x"];
+      var dy = fPlayerY - sprite["y"];
+      var angleToPlayer = Math.atan2(dy, dx);
+    
+      var angleDiff = sprite["r"] - angleToPlayer;
+      var reflected = angleToPlayer - angleDiff;
+    
+      // sprite["r"] = (reflected + PIx1_5) % PIx2;
+      // sprite["r"] = (sprite["r"] + PI___) % PIx2 + sinTable[animationTimer*2+50];  // A little bit of randomness here.
+
+      if (sprite["canMove"]) {
+        sprite["move"] = !sprite["move"];
+        sprite["r"] = (reflected + PI___) % PIx2 + sinTable[animationTimer*2+50]; 
+      }
+      else{
+        // sprite["r"] = sprite["r"] + sinTable[animationTimer*2+50]
+        // sprite["x"] = sprite["x"] + fastCos(fPlayerA)*0.1;
+        // sprite["y"] = sprite["y"] + fastSin(fPlayerA)*0.1;
+      }
+    
+      sprite["bounceCooldown"] = 20; 
+    }
+    
+    if (sprite["bounceCooldown"] > 0) {
+      sprite["bounceCooldown"]--;
+    }
+    
+
+    // if player hits sprite, prevent moving
+    if (sprite["z"] < 1.25) {
+      bPlayerMayMoveForward = false;
+    } else {
+      bPlayerMayMoveForward = true;
+    }
   }
 };
 
