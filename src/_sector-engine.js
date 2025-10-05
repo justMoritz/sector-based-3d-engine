@@ -479,8 +479,6 @@ var gameEngineJS = (function () {
       // bTexFiltering = false;
     }
     else if (bUseSkew) {
-      // nScreenWidth = 916;
-      // nScreenHeight = 440;
       nScreenWidth = 468;
       nScreenHeight = 220;
       nLookLimit = 8;
