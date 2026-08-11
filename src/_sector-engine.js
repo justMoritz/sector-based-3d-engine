@@ -488,7 +488,7 @@ var gameEngineJS = (function () {
       nDrawWidth = nScreenWidth - nRemovePixels * 2;
       fscreenHeightFactorFloor = nScreenHeight / 2;
       bUseFancyLighting = true;
-      sPostProcessing = '10bit';
+      // sPostProcessing = '10bit';
       sPostProcessing = '';
       // bTexFiltering = false;
     }
