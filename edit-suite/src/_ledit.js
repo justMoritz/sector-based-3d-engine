@@ -20,6 +20,8 @@ var ledit = (function(){
       handleConnectMode(event);
     } else if (appMode === "lights") {
       handleLightMode(event);
+    } else if (appMode === "sprites") {
+      handleSpriteMode(event);
     }
 
     _lhelpers.generateLevelData();
@@ -400,6 +402,7 @@ var ledit = (function(){
     mapSecMeta[currentSector] = {
       "id": "sector"+currentSector,
       "floor": sectorDefaults.floor,
+      "slope": sectorDefaults.slope,
       "ceil": sectorDefaults.ceil,
       "ceilTex": sectorDefaults.ceilTex,
       "floorTex": sectorDefaults.floorTex,
@@ -454,8 +457,44 @@ var ledit = (function(){
       const L = lightsObj[draggingLightId];
       L.x = _lhelpers.roundToNearest(mouseX)/100;
       L.y = _lhelpers.roundToNearest(mouseY)/100;
-      
+
       syncLightUI(draggingLightId);   // <— keeps the sidebar in sync
+
+      _lhelpers.drawGrid();
+    }
+  }
+
+
+  // keep this somewhere global
+  let draggingSpriteId = null;
+
+  function handleSpriteMode(event) {
+    const mouseX = (event.clientX - offsetX) / scale;
+    const mouseY = (event.clientY - offsetY) / scale;
+
+    // not dragging? try to pick (only while mouse is down)
+    if (!isDragging && event.buttons === 1) {
+      const key = _lhelpers.findClickedPoint2S(mouseX, mouseY, spritesObject);
+
+      if (key != null && spritesObject[key]) {
+        isDragging = true;
+        draggingSpriteId = key;
+
+        // highlight the UI row
+        highlightSpriteUI(key);
+
+        return; // wait for mousemove to move it
+      }
+      return; // nothing picked, do nothing
+    }
+
+    // dragging? move the selected sprite
+    if (isDragging && draggingSpriteId != null && spritesObject[draggingSpriteId]) {
+      const S = spritesObject[draggingSpriteId];
+      S.x = _lhelpers.roundToNearest(mouseX)/100;
+      S.y = _lhelpers.roundToNearest(mouseY)/100;
+
+      syncSpriteUI(draggingSpriteId); // <— keeps the sidebar in sync
 
       _lhelpers.drawGrid();
     }
@@ -560,33 +599,208 @@ var ledit = (function(){
     console.log(lightsObj);
     lightCounter++;
 
-    _lhelpers.drawGrid(); 
+    _lhelpers.drawGrid();
   };
-  
+
+
+  // global registry of UI rows
+  const spriteUI = {}; // { [key]: { el, inputs: {x,y,h,r,name} } }
+
+  function registerSpriteUI(key, el) {
+    spriteUI[key] = {
+      el,
+      inputs: {
+        x: el.querySelector('input[data-k="x"]'),
+        y: el.querySelector('input[data-k="y"]'),
+        h: el.querySelector('input[data-k="h"]'),
+        r: el.querySelector('input[data-k="r"]'),
+        name: el.querySelector('input[data-k="name"]'),
+      }
+    };
+  }
+
+  function syncSpriteUI(key) {
+    const ui = spriteUI[key];
+    const S  = spritesObject[key];
+    if (!ui || !S) return;
+
+    // write current model into the inputs
+    ui.inputs.x.value = S.x;
+    ui.inputs.y.value = S.y;
+    ui.inputs.h.value = S.h;
+    ui.inputs.r.value = S.r;
+    ui.inputs.name.value = S.name;
+  }
+
+  function highlightSpriteUI(key) {
+    // clear highlights
+    Object.values(spriteUI).forEach(ui => {
+      ui.el.classList.remove("this--active");
+    });
+    // add to the one we're dragging
+    if (spriteUI[key]) {
+      spriteUI[key].el.classList.add("this--active");
+    }
+  }
+
+
+  /**
+   * Adding a new sprite
+   */
+  var handleAddNewSprite = function () {
+    const key = String(spriteCounter);
+    currentSprite = key;
+
+    // Create new sprite object with defaults
+    spritesObject[key] = {
+      "x": 2,
+      "y": 2,
+      "h": 0,
+      "r": 0,
+      "name": "P"
+    };
+
+    // Build the DOM element
+    const spriteEl = document.createElement('div');
+    spriteEl.className = 'sector-selector';
+    spriteEl.dataset.id = key;
+
+    spriteEl.innerHTML = spritesSelectorTemplate.replace(new RegExp("XXX", 'g'), key);
+
+    registerSpriteUI(key, spriteEl);
+    syncSpriteUI(key); // set initial values
+
+    // Add to the DOM
+    spritesList.appendChild(spriteEl);
+
+    // Attach input listeners
+    spriteEl.querySelectorAll('input').forEach(input => {
+      const inputKey = input.dataset.k;
+      input.addEventListener('input', (e) => {
+        if (inputKey === 'name') {
+          spritesObject[key][inputKey] = e.target.value;
+        } else {
+          const val = parseFloat(e.target.value);
+          if (!isNaN(val)) {
+            spritesObject[key][inputKey] = val;
+          }
+        }
+        _lhelpers.drawGrid();
+      });
+
+      // Also initialize value from current sprite object (optional redundancy)
+      input.value = spritesObject[key][inputKey];
+    });
+
+
+    // Delete button
+    spriteEl.querySelector('[data-act="delete"]').addEventListener('click', () => {
+      delete spritesObject[key];
+      delete spriteUI[key];
+      spriteEl.remove();
+      _lhelpers.drawGrid();
+    });
+
+    spriteCounter++;
+
+    _lhelpers.drawGrid();
+  };
+
+
+
+  /**
+   * Rotates the current sector's wall order clockwise by one, changing which
+   * wall is wall[0] -- the wall the floor slope tilts around.
+   */
+  var handleRotateSectorWalls = function () {
+    if (!currentSector || !mapdataObj[currentSector] || mapdataObj[currentSector].length < 2) return;
+
+    const walls = mapdataObj[currentSector];
+
+    // Figure out which way this sector's walls wind on screen (shoelace formula, using
+    // each wall's start point as the polygon vertex sequence), so "clockwise" is always
+    // actually clockwise regardless of which direction the sector happened to be drawn in.
+    let signedArea = 0;
+    for (let w = 0; w < walls.length; w++) {
+      const p0 = walls[w].a;
+      const p1 = walls[(w + 1) % walls.length].a;
+      signedArea += (p0.x * p1.y) - (p1.x * p0.y);
+    }
+
+    if (signedArea > 0) {
+      // already winds clockwise on screen -- advancing forward through the array is clockwise
+      walls.push(walls.shift());
+    } else {
+      // winds counter-clockwise on screen -- advance backward instead
+      walls.unshift(walls.pop());
+    }
+
+    _lhelpers.drawGrid();
+  };
+
 
 
   /**
    * Remove Sectors
    */
-  var handleRemoveSector = function (event) {
+  var handleRemoveSector = function (removeBtn) {
+    const removedId = parseInt(removeBtn.dataset.removeId, 10);
+    if (!removedId || removedId < 1 || removedId >= mapdataObj.length) return;
+
+    if (!confirm(`Delete Sector ${removedId}? This can't be undone.`)) return;
+
+    // Drop the sector's data. splice() shifts every later index down by one,
+    // which is exactly how the DOM rows get renumbered below.
+    mapdataObj.splice(removedId, 1);
+    mapSecMeta.splice(removedId, 1);
+    drawMeta.splice(removedId, 1);
+
+    // Fix up every portal (wall.sC, exported as wall[9]) that references a sector
+    // number, since sector numbers above the deleted one just shifted down by one.
+    for (let s = 1; s < mapdataObj.length; s++) {
+      for (const wall of mapdataObj[s]) {
+        const sC = parseInt(wall.sC, 10);
+        if (!sC) continue; // 0 / unset = no portal
+        if (sC === removedId) {
+          // this portal pointed at the sector we just deleted -- nothing sensible
+          // to point it at anymore, so fall back to a solid wall
+          wall.sC = 0;
+        } else if (sC > removedId) {
+          wall.sC = sC - 1;
+        }
+      }
+    }
+
+    // the starting sector is just a sector number too, so it needs the same treatment
+    const startId = parseInt(startingSector, 10);
+    if (startId === removedId) {
+      startingSector = 1;
+      if (startingSectorInput) startingSectorInput.value = startingSector;
+    } else if (startId > removedId) {
+      startingSector = startId - 1;
+      if (startingSectorInput) startingSectorInput.value = startingSector;
+    }
+
+    // remove the row, then renumber the rest of the sidebar to match the new indices.
+    // Scoped to sector rows specifically (.sector-row) -- lights and sprites reuse the same
+    // CSS classes (.sector-selector/.sector-name/.remove-sector) for styling, so a document-wide
+    // query on those would relabel light/sprite rows as "Sector N" too.
+    removeBtn.closest('.sector-row').remove();
     let reshuffleCounter = 1;
-    const dataRemoveId = event.target.dataset.removeId;
-    // remove that sector
-    document.querySelector(`[data-id="${dataRemoveId}"]`).remove();
-
-    // reshuffle all other sectors 
-    let allSectorSelectors = document.querySelectorAll(".sector-selector");
-
-    allSectorSelectors.forEach ( (element) => {
+    selectorlist.querySelectorAll(".sector-row").forEach((element) => {
       element.dataset.id = reshuffleCounter;
       element.querySelector(".sector-name").innerHTML = `Sector ${reshuffleCounter}`;
-      element.querySelector(".remove-sector").dataset.remove_id = reshuffleCounter;
+      element.querySelector(".sector-remove-btn").dataset.removeId = reshuffleCounter;
       reshuffleCounter++;
     });
 
-    // unselects all sectors
-    document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
+    sectorCounter = mapdataObj.length; // next sector added continues right after the last real one
+
+    // unselects all sectors -- whatever was selected may now be a different sector
+    selectorlist.querySelectorAll(".sector-row").forEach( (ss) => { ss.classList.remove("this--active") });
     currentSector = 0;
+
+    _lhelpers.drawGrid();
   };
 
 
@@ -594,14 +808,15 @@ var ledit = (function(){
   /**
    * Select a given sector selector ( sectorselect, selectsector, switchsector )
    */
-  var handleSelectSector = function (event) {
-    document.querySelectorAll(".sector-selector").forEach( (ss) => { ss.classList.remove("this--active") });
-    event.target.classList.add('this--active');
+  var handleSelectSector = function (selectorEl) {
+    selectorlist.querySelectorAll(".sector-row").forEach( (ss) => { ss.classList.remove("this--active") });
+    selectorEl.classList.add('this--active');
     // sets the Global current sector we're working with
-    currentSector = event.target.dataset.id;
+    currentSector = selectorEl.dataset.id;
     
     // writes the current sector Meta into the files
     floorInput.value = mapSecMeta[currentSector].floor;
+    slopeInput.value = mapSecMeta[currentSector].slope || 0;
     ceilInput.value = mapSecMeta[currentSector].ceil;
     ceilTexInput.value = mapSecMeta[currentSector].ceilTex;
     floorTexInput.value = mapSecMeta[currentSector].floorTex;
@@ -658,8 +873,8 @@ var ledit = (function(){
     gridCanvas.width = window.innerWidth;
     gridCanvas.height = window.innerHeight;
 
-    // sets up buttons
-    allLSBbuttons = document.querySelectorAll('.left-sidebar__button');
+    // sets up buttons (mode buttons only -- excludes the zoom action buttons below)
+    allLSBbuttons = document.querySelectorAll('.left-sidebar__button[data-mode]');
     
     // sets up sector handling
     selectorlist = document.querySelector('#selectorlist');
@@ -669,6 +884,25 @@ var ledit = (function(){
     // sets up lights handling
     lightsList = document.querySelector('#lightslist');
     lightAdd = document.querySelector('#lightAdd');
+
+    // sets up sprites handling
+    spritesList = document.querySelector('#spriteslist');
+    spriteAdd = document.querySelector('#spriteAdd');
+
+    // zoom buttons
+    document.querySelector('[data-action="zoom-in"]').addEventListener('click', () => { _lhelpers.handleZoom(0.1); });
+    document.querySelector('[data-action="zoom-out"]').addEventListener('click', () => { _lhelpers.handleZoom(-0.1); });
+    document.querySelector('[data-action="zoom-reset"]').addEventListener('click', () => {
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      _lhelpers.drawGrid();
+    });
+
+    // rotate the current sector's wall order (which wall is wall[0])
+    document.querySelector('#rotateWallsBtn').addEventListener('click', () => {
+      handleRotateSectorWalls();
+    });
 
 
     // Attach event listeners
@@ -725,6 +959,9 @@ var ledit = (function(){
       else if ( event.key === 'l' ){ // letter P
         document.querySelector('[data-mode="lights"]').click();
       }
+      else if ( event.key === 's' ){ // letter S
+        document.querySelector('[data-mode="sprites"]').click();
+      }
     });
 
 
@@ -738,7 +975,10 @@ var ledit = (function(){
         _lhelpers.handleMouseDown(event);
       }
       else if (appMode === "lights") {
-        handleMouseInteraction(event); 
+        handleMouseInteraction(event);
+      }
+      else if (appMode === "sprites") {
+        handleMouseInteraction(event);
       }
       else{
         isDragging = false;
@@ -751,6 +991,9 @@ var ledit = (function(){
         handleMouseInteraction(event);
       }
       else if (isDragging && appMode === "lights") {
+        handleMouseInteraction(event);
+      }
+      else if (isDragging && appMode === "sprites") {
         handleMouseInteraction(event);
       }
       else if ( appMode === "pan"){
@@ -767,13 +1010,20 @@ var ledit = (function(){
     sectorAdd.addEventListener('click', () => {
       handleAddNewSector();
     });
-    // Remove a given sector
+    // Remove/select a sector. Uses closest() rather than a bare classList check on
+    // event.target, since a click on the "-" or the "Sector N" label lands on the
+    // inner <span>, not the element the class actually lives on. Targets .sector-remove-btn/
+    // .sector-row specifically -- NOT the shared .remove-sector/.sector-selector CSS classes --
+    // since lights and sprites rows reuse those same class names for styling.
     selectorlist.addEventListener('click', (event) => {
-      if (event.target.classList.contains('remove-sector')) {
-        handleRemoveSector(event);
+      const removeBtn = event.target.closest('.sector-remove-btn');
+      if (removeBtn) {
+        handleRemoveSector(removeBtn);
+        return;
       }
-      else if (event.target.classList.contains('sector-selector')) {
-        handleSelectSector(event);
+      const selectorEl = event.target.closest('.sector-row');
+      if (selectorEl) {
+        handleSelectSector(selectorEl);
       }
     });
 
@@ -784,16 +1034,11 @@ var ledit = (function(){
       console.log('Add new light at default position');
       handleAddNewLight();
     });
-    // Remove a given light
-    selectorlist.addEventListener('click', (event) => {
-      if (event.target.classList.contains('remove-sector')) {
-        console.log('remove light');
-        // handleRemoveLight(event);
-      }
-      else if (event.target.classList.contains('sector-selector')) {
-        console.log('select light');
-        // handleSelectLight(event);
-      }
+
+
+    // Add new Sprite
+    spriteAdd.addEventListener('click', () => {
+      handleAddNewSprite();
     });
 
 
@@ -807,6 +1052,7 @@ var ledit = (function(){
     sectorconnectorinput = document.querySelector("#sectorconnectorinput");
 
     floorInput = document.querySelector("#floor");
+    slopeInput = document.querySelector("#slope");
     ceilInput = document.querySelector("#ceil");
     ceilTexInput = document.querySelector("#ceilTex");
     floorTexInput = document.querySelector("#floorTex");
@@ -825,6 +1071,7 @@ var ledit = (function(){
     // sectorconnectorinput.addEventListener('blur', () => { sectorSelectorIsFocussed = false; });
 
     floorInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floor"); });
+    slopeInput.addEventListener('input', (e) => { handleValueChangeSector(e, "slope"); });
     ceilInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceil"); });
     ceilTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "ceilTex"); });
     floorTexInput.addEventListener('input', (e) => { handleValueChangeSector(e, "floorTex"); });

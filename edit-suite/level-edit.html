@@ -418,6 +418,12 @@ x
         <button data-mode="pan" title="pan" class="left-sidebar__button">P</button>
         <div class="super-tiny">Lights</div>
         <button data-mode="lights" title="Lights edit mode" class="left-sidebar__button">L</button>
+        <div class="super-tiny">Sprites</div>
+        <button data-mode="sprites" title="Sprites edit mode" class="left-sidebar__button">S</button>
+        <div class="super-tiny">Zoom</div>
+        <button data-action="zoom-in" title="Zoom in" class="left-sidebar__button">+</button>
+        <button data-action="zoom-out" title="Zoom out" class="left-sidebar__button">-</button>
+        <button data-action="zoom-reset" title="Reset zoom and pan" class="left-sidebar__button">1:1</button>
     </div>
 
     <div class="right-sidebar">
@@ -453,6 +459,14 @@ x
             <label for="floor">
                 <span>Floor Height:</span>
                 <input id="floor" type="number" placeholder="i.e. 0" step="0.1">
+            </label>
+            <label for="slope" title="Tilts the floor around this sector's first wall (the wall drawn first). 0 = flat.">
+                <span>Floor Slope:</span>
+                <input id="slope" type="number" placeholder="i.e. 0" step="0.005">
+            </label>
+            <label>
+                <span>Wall 0:</span>
+                <button id="rotateWallsBtn" type="button" class="small" title="Rotates the selected sector's walls clockwise, changing which wall is wall[0] (the slope's reference wall, highlighted on the canvas in orange).">Rotate ↻</button>
             </label>
             <label for="ceil">
                 <span>Ceiling Height:</span>
@@ -501,7 +515,16 @@ x
             <div id="lightAdd" class="sector-add">
                 <span> + </span>
             </div>
-            
+            <br>
+            <h4>sprites</h4>
+            <div class="sector-list__container">
+                <div id="spriteslist" class="sector-list">
+                </div>
+            </div>
+            <div id="spriteAdd" class="sector-add">
+                <span> + </span>
+            </div>
+
         </div>
 
         

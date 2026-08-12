@@ -219,8 +219,12 @@ var _moveHelpers = {
           if(currentWall[9] != false){
             var collisionSector = currentWall[9];
 
-            // Doesn't allow player to move over an incline that is too large (player needs to jump)
-            if( fPlayerH - (oLevel.map[collisionSector].floor) < -0.5 ){
+            // Doesn't allow player to move over an incline that is too large (player needs to jump).
+            // Uses the next sector's floor height right at the crossing point, so a sloped
+            // sector's edge is checked accurately instead of against its flat reference height.
+            var oCollisionSlopeRef = _makeSlopeRef( oMap[collisionSector].walls, oMap[collisionSector].slope );
+            var fCollisionFloorHeight = _slopeFloorFactorAt( oLevel.map[collisionSector].floor, oCollisionSlopeRef, intersection.x, intersection.y );
+            if( fPlayerH - fCollisionFloorHeight < -0.5 ){
               return true; // don't allow move
             }
             
@@ -655,6 +659,12 @@ var _moveHelpers = {
 
   // Calculations related to jumping, falling, and sector height changes. Called 1x ea. frame
   playerHeight: function(){
+
+    // On a sloped sector, the floor the player should stand on depends on where they are
+    // standing, not just which sector they're in -- recompute it every frame so it follows
+    // the slope continuously as the player walks across it.
+    var oSlopeRef = _makeSlopeRef( oMap[sPlayerSector].walls, oMap[sPlayerSector].slope );
+    nSectorFloorHeight = _slopeFloorFactorAt( oMap[sPlayerSector].floor, oSlopeRef, fPlayerX, fPlayerY );
 
     // Jumping
     if (bJumping && !bFalling) {

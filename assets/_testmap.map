@@ -469,6 +469,7 @@ var _testmap =
       ],
       "floor": 0.2,
       "ceil": 6,
+      "slope": 0.2,
       "floorTex": "C",
       "ceilTex": "bg"
     },

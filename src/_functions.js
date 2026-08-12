@@ -36,7 +36,33 @@ function intersectionPoint(a0, a1, b0, b1) {
 }
 
 
-// Linear interpolation function to find sample position 
+// Build-style slope: a sector's floor tilts around its first wall (walls[0]).
+// Height at any (x,y) = base floor + slope * (signed perpendicular distance to that wall's line).
+// Returns null for flat sectors so callers can skip the extra math entirely.
+// Shared by the renderer (_sector-engine.js/_render-helpers.js) and collision (_move-helpers.js).
+function _makeSlopeRef (sectorWalls, fSlope) {
+  if (!fSlope) return null;
+  var wall0 = sectorWalls[0];
+  var fDX = wall0[2] - wall0[0];
+  var fDY = wall0[3] - wall0[1];
+  return {
+    x: wall0[0],
+    y: wall0[1],
+    dx: fDX,
+    dy: fDY,
+    len: Math.sqrt(fDX * fDX + fDY * fDY),
+    slope: fSlope
+  };
+}
+
+function _slopeFloorFactorAt (fBaseFactor, oSlopeRef, x, y) {
+  if (!oSlopeRef) return fBaseFactor;
+  var fPerp = ((x - oSlopeRef.x) * oSlopeRef.dy - (y - oSlopeRef.y) * oSlopeRef.dx) / oSlopeRef.len;
+  return fBaseFactor + oSlopeRef.slope * fPerp;
+}
+
+
+// Linear interpolation function to find sample position
 function texSampleLerp( ax,ay, bx ,by, hx, hy ){
   var distanceAH = Math.sqrt(Math.pow(hx - ax, 2) + Math.pow(hy - ay, 2));
   var totalLength = Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));

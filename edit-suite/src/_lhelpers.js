@@ -42,15 +42,13 @@ _lhelpers = {
   drawGrid: function(wall1, wall2) {
     ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 
-    // XXXXX
-    // Apply transformations for zooming and panning
+    // screen = world * scale + offset, consistently, everywhere below.
+    // This matches the click-to-world inversion used throughout _ledit.js:
+    // (event.clientX - offsetX) / scale -- so no canvas ctx.scale/ctx.translate here,
+    // that was double-applying scale on top of the manual `* scale` math further down.
     ctx.save();
-    ctx.scale(scale, scale);
-    ctx.translate(offsetX, offsetY);
-    
-    
 
-    // Calculate visible grid range
+    // Calculate visible grid range, in world units
     const visibleWidth = gridCanvas.width / scale;
     const visibleHeight = gridCanvas.height / scale;
     const startX = -offsetX / scale;
@@ -62,12 +60,12 @@ _lhelpers = {
     ctx.beginPath();
     ctx.strokeStyle = '#dadada'; // Lighter color for sub-rules
     for (let x = Math.floor(startX / subRuleInterval) * subRuleInterval; x <= endX; x += subRuleInterval) {
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
+        ctx.moveTo(x * scale + offsetX, startY * scale + offsetY);
+        ctx.lineTo(x * scale + offsetX, endY * scale + offsetY);
     }
     for (let y = Math.floor(startY / subRuleInterval) * subRuleInterval; y <= endY; y += subRuleInterval) {
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
+        ctx.moveTo(startX * scale + offsetX, y * scale + offsetY);
+        ctx.lineTo(endX * scale + offsetX, y * scale + offsetY);
     }
     ctx.stroke();
 
@@ -75,22 +73,22 @@ _lhelpers = {
     ctx.beginPath();
     ctx.strokeStyle = '#555';
     for (let x = Math.floor(startX / mainRuleInterval) * mainRuleInterval; x <= endX; x += mainRuleInterval) {
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
+        ctx.moveTo(x * scale + offsetX, startY * scale + offsetY);
+        ctx.lineTo(x * scale + offsetX, endY * scale + offsetY);
     }
     for (let y = Math.floor(startY / mainRuleInterval) * mainRuleInterval; y <= endY; y += mainRuleInterval) {
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
+        ctx.moveTo(startX * scale + offsetX, y * scale + offsetY);
+        ctx.lineTo(endX * scale + offsetX, y * scale + offsetY);
     }
     ctx.stroke();
 
     // Draw red line at (0, 0) if it's within visible range
     ctx.beginPath();
     ctx.strokeStyle = 'red';
-    ctx.moveTo(0, startY);
-    ctx.lineTo(0, endY);
-    ctx.moveTo(startX, 0);
-    ctx.lineTo(endX, 0);
+    ctx.moveTo(0 * scale + offsetX, startY * scale + offsetY);
+    ctx.lineTo(0 * scale + offsetX, endY * scale + offsetY);
+    ctx.moveTo(startX * scale + offsetX, 0 * scale + offsetY);
+    ctx.lineTo(endX * scale + offsetX, 0 * scale + offsetY);
     ctx.stroke();
 
     // iterate over the map object and draw each wall
@@ -123,12 +121,12 @@ _lhelpers = {
       if ( Object.keys(element).length > 0 ) {
         for (const wall of element) {
           // Retrieve start and end points of the wall segment
-          const startX = wall.a.x * scale + 0;
-          const startY = wall.a.y * scale + 0;
-          const endX = wall.b.x * scale + 0;
-          const endY = wall.b.y * scale + 0;
+          const startX = wall.a.x * scale + offsetX;
+          const startY = wall.a.y * scale + offsetY;
+          const endX = wall.b.x * scale + offsetX;
+          const endY = wall.b.y * scale + offsetY;
 
-          // Print Each Wall 
+          // Print Each Wall
           ctx.strokeStyle = '#444';
           if( wall.sC != 0 ){
             ctx.strokeStyle = '#F44';
@@ -141,12 +139,12 @@ _lhelpers = {
           ctx.lineTo(endX, endY);
           ctx.stroke();
 
-          // Print Coordinates
+          // Print Coordinates (world units, not screen-space, so the label doesn't change under pan/zoom)
           ctx.fillStyle = '#aaa';
           ctx.font = '10px Arial';
           ctx.textAlign = 'left';
-          ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-          ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+          ctx.fillText(`(${(wall.a.x/100).toFixed(2)}, ${(wall.a.y/100).toFixed(2)})`, startX + 5, startY - 5);
+          ctx.fillText(`(${(wall.b.x/100).toFixed(2)}, ${(wall.b.y/100).toFixed(2)})`, endX + 5, endY - 5);
 
           // print points
           ctx.beginPath();
@@ -161,15 +159,58 @@ _lhelpers = {
           ctx.fillStyle = fillColorBasedOnHeight;
           // console.log(ctx.fillStyle);
           ctx.beginPath();
-          ctx.moveTo(element[0].a.x * scale + 0, element[0].a.y * scale + 0);
+          ctx.moveTo(element[0].a.x * scale + offsetX, element[0].a.y * scale + offsetY);
           for (const wall of element) {
-              const startX = wall.a.x * scale + 0;
-              const startY = wall.a.y * scale + 0;
+              const startX = wall.a.x * scale + offsetX;
+              const startY = wall.a.y * scale + offsetY;
               ctx.lineTo(startX, startY);
           }
           ctx.closePath();
         }
         ctx.fill();
+      }
+
+      // Highlight wall[0] for sloped sectors -- that's the wall the slope tilts around,
+      // so it's worth knowing which one it is at a glance.
+      const sectorSlope = parseFloat(mapSecMeta[i].slope);
+      if (sectorSlope && element.length > 0) {
+        const wall0 = element[0];
+        const w0StartX = wall0.a.x * scale + offsetX;
+        const w0StartY = wall0.a.y * scale + offsetY;
+        const w0EndX = wall0.b.x * scale + offsetX;
+        const w0EndY = wall0.b.y * scale + offsetY;
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff8c00';
+        ctx.lineWidth = 4;
+        ctx.moveTo(w0StartX, w0StartY);
+        ctx.lineTo(w0EndX, w0EndY);
+        ctx.stroke();
+
+        // tick pointing toward higher floor (the direction the slope value adds height in)
+        const dx = wall0.b.x - wall0.a.x;
+        const dy = wall0.b.y - wall0.a.y;
+        const len = Math.sqrt(dx*dx + dy*dy) || 1;
+        const midX = (w0StartX + w0EndX) / 2;
+        const midY = (w0StartY + w0EndY) / 2;
+        const tickLen = 20;
+        const tickX = midX + (dy / len) * tickLen;
+        const tickY = midY + (-dx / len) * tickLen;
+
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(tickX, tickY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(tickX, tickY, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff8c00';
+        ctx.fill();
+
+        ctx.fillStyle = '#ff8c00';
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('wall 0 (slope)', w0StartX + 6, w0StartY + 14);
       }
 
       // Draw sector name
@@ -180,8 +221,8 @@ _lhelpers = {
       ctx.font = '12px Arial';
       ctx.textAlign = 'center';
       // ctx.textBaseline = 'middle';
-      ctx.fillText(`Sector ${i}`, centroidX * scale + 0, centroidY * scale + 0);
-      
+      ctx.fillText(`Sector ${i}`, centroidX * scale + offsetX, centroidY * scale + offsetY);
+
     }
 
 
@@ -190,12 +231,12 @@ _lhelpers = {
       for (const wall of mapdataObj[currentSector]) {
 
         // Retrieve start and end points of the wall segment
-        const startX = wall.a.x * scale + 0;
-        const startY = wall.a.y * scale + 0;
-        const endX = wall.b.x * scale + 0;
-        const endY = wall.b.y * scale + 0;
+        const startX = wall.a.x * scale + offsetX;
+        const startY = wall.a.y * scale + offsetY;
+        const endX = wall.b.x * scale + offsetX;
+        const endY = wall.b.y * scale + offsetY;
 
-        // Print Each Wall 
+        // Print Each Wall
         ctx.strokeStyle = '#a3a';
         if( wall.sC != 0 ){
           ctx.strokeStyle = '#f6c';
@@ -208,12 +249,12 @@ _lhelpers = {
         ctx.lineTo(endX, endY);
         ctx.stroke();
 
-        // Print Coordinates
+        // Print Coordinates (world units, not screen-space, so the label doesn't change under pan/zoom)
         ctx.fillStyle = '#111';
         ctx.font = '10px Arial';
         ctx.textAlign = 'left';
-        ctx.fillText(`(${startX.toFixed(2)/100}, ${startY.toFixed(2)/100})`, startX + 5, startY - 5);
-        ctx.fillText(`(${endX.toFixed(2)/100}, ${endY.toFixed(2)/100})`, endX + 5, endY - 5);
+        ctx.fillText(`(${(wall.a.x/100).toFixed(2)}, ${(wall.a.y/100).toFixed(2)})`, startX + 5, startY - 5);
+        ctx.fillText(`(${(wall.b.x/100).toFixed(2)}, ${(wall.b.y/100).toFixed(2)})`, endX + 5, endY - 5);
 
         // print points
         ctx.beginPath();
@@ -233,8 +274,8 @@ _lhelpers = {
 
         // Begin drawing the line
         ctx.beginPath();
-        ctx.moveTo(wall1.x, wall1.y);
-        ctx.lineTo(wall2.x, wall2.y);
+        ctx.moveTo(wall1.x * scale + offsetX, wall1.y * scale + offsetY);
+        ctx.lineTo(wall2.x * scale + offsetX, wall2.y * scale + offsetY);
         ctx.stroke();
     }
 
@@ -243,8 +284,8 @@ _lhelpers = {
     for (const id in lightsObj) {
       const L = lightsObj[id];
 
-      const lightX = L.x * scale * 100; // same math you use now
-      const lightY = L.y * scale * 100;
+      const lightX = L.x * scale * 100 + offsetX; // same math you use now
+      const lightY = L.y * scale * 100 + offsetY;
 
       // dot
       ctx.beginPath();
@@ -268,14 +309,14 @@ _lhelpers = {
       const label = String(L.id ?? id);
       const fontSize = 11;               // small label
       const pad = 3;
-      const offsetX = 10;                // nudge from the dot
-      const offsetY = -16;
+      const labelOffsetX = 10;           // nudge from the dot (unrelated to the pan offsetX/Y above)
+      const labelOffsetY = -16;
 
       ctx.font = `${fontSize}px Arial, sans-serif`;
       ctx.textBaseline = 'top';
 
-      const tx = lightX + offsetX;
-      const ty = lightY + offsetY;
+      const tx = lightX + labelOffsetX;
+      const ty = lightY + labelOffsetY;
       const tw = ctx.measureText(label).width;
 
       // background for contrast
@@ -285,6 +326,46 @@ _lhelpers = {
       // text
       ctx.fillStyle = 'rgba(0,0,0,0.6)';
       ctx.fillText(label, tx, ty);
+      ctx.restore();
+    }
+
+
+    // draw sprite gizmos
+    for (const key in spritesObject) {
+      const S = spritesObject[key];
+      if (!S) continue;
+
+      const spriteX = S.x * scale * 100 + offsetX;
+      const spriteY = S.y * scale * 100 + offsetY;
+
+      // facing direction
+      const facingLen = 14;
+      const fx = spriteX + Math.cos(S.r || 0) * facingLen;
+      const fy = spriteY + Math.sin(S.r || 0) * facingLen;
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#e91e8c';
+      ctx.lineWidth = 2;
+      ctx.moveTo(spriteX, spriteY);
+      ctx.lineTo(fx, fy);
+      ctx.stroke();
+
+      // marker (diamond)
+      ctx.beginPath();
+      ctx.fillStyle = '#e91e8c';
+      ctx.moveTo(spriteX, spriteY - 6);
+      ctx.lineTo(spriteX + 6, spriteY);
+      ctx.lineTo(spriteX, spriteY + 6);
+      ctx.lineTo(spriteX - 6, spriteY);
+      ctx.closePath();
+      ctx.fill();
+
+      // label
+      ctx.save();
+      ctx.font = '11px Arial, sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillText(S.name ?? key, spriteX + 8, spriteY - 16);
       ctx.restore();
     }
 
@@ -419,6 +500,25 @@ _lhelpers = {
   },
 
 
+  findClickedPoint2S: function( clickX, clickY, spritesObj ){
+    let clickedKey;
+
+    for (const key in spritesObj) {
+      const currentSprite = spritesObj[key];
+
+      // for sprite point
+      const distanceA = Math.sqrt((clickX - currentSprite.x*100) ** 2 + (clickY - currentSprite.y*100) ** 2);
+
+      if (distanceA <= 30) {
+        clickedKey = key;
+      }
+    }
+
+    // returns the KEY of the sprite that was clicked (sprites don't carry a separate .id like lights do)
+    return clickedKey;
+  },
+
+
   findClosestPointsToClick: function  ( clickX, clickY, vertices) {
     // Initialize variables to keep track of the closest points and their distances
     let closestPoints = [];
@@ -526,6 +626,7 @@ _lhelpers = {
         "id": "sector"+i,
         "walls": sectorWalls,
         "floor": parseFloat(mapSecMeta[i].floor),
+        "slope": parseFloat(mapSecMeta[i].slope) || 0,
         "ceil": parseFloat(mapSecMeta[i].ceil),
         "floorTex": mapSecMeta[i].floorTex,
         "ceilTex": mapSecMeta[i].ceilTex
@@ -615,10 +716,17 @@ _lhelpers = {
   },
 
   handleZoom: function(delta) {
-    scale += delta; // Adjust the scale factor
+    const oldScale = scale;
+    scale = Math.max(0.1, Math.min(scale + delta, 10)); // Example bounds
 
-    // Ensure scale is within reasonable bounds
-    scale = Math.max(0.1, Math.min(scale, 10)); // Example bounds
+    // Keep the world point currently at the canvas center fixed while zooming,
+    // so repeated clicks zoom in/out in place instead of drifting toward the corner.
+    const cx = gridCanvas.width / 2;
+    const cy = gridCanvas.height / 2;
+    const worldX = (cx - offsetX) / oldScale;
+    const worldY = (cy - offsetY) / oldScale;
+    offsetX = cx - worldX * scale;
+    offsetY = cy - worldY * scale;
 
     // Redraw the canvas with the updated scale
     _lhelpers.drawGrid();
@@ -726,9 +834,8 @@ _lhelpers = {
     fPlayerH = importedJSON.fPlayerH;
     startingSector = importedJSON.startingSector;
     baseLight = importedJSON.baseLight;
-    // TODO: Sprites
 
-    spritesObject = importedJSON.sprites;
+    spritesObject = importedJSON.sprites || {};
 
 
     // sets global settings
@@ -753,6 +860,7 @@ _lhelpers = {
         "id": curSecFromMap.id,
         "ceil": curSecFromMap.ceil,
         "floor": curSecFromMap.floor,
+        "slope": curSecFromMap.slope || 0,
         "ceilTex": curSecFromMap.ceilTex,
         "floorTex": curSecFromMap.floorTex,
       }
@@ -844,6 +952,45 @@ _lhelpers = {
 
         lightsList.appendChild(lightEl);
         lightCounter = Math.max(lightCounter, parseInt(id) + 1);
+      }
+    }
+
+    // import sprite objects (spritesObject was already set wholesale above; this just builds the UI rows)
+    spritesList.innerHTML = '';
+    for (const key in spritesObject) {
+      const S = spritesObject[key];
+
+      // draw sprite into UI
+      const spriteEl = document.createElement('div');
+      spriteEl.className = 'sector-selector';
+      spriteEl.dataset.id = key;
+      spriteEl.innerHTML = spritesSelectorTemplate.replace(/XXX/g, key);
+
+      // input syncing
+      spriteEl.querySelectorAll('input').forEach(input => {
+        const inputKey = input.dataset.k;
+        input.value = S[inputKey];
+        input.addEventListener('input', (e) => {
+          if (inputKey === 'name') {
+            spritesObject[key][inputKey] = e.target.value;
+          } else {
+            spritesObject[key][inputKey] = parseFloat(e.target.value);
+          }
+          _lhelpers.drawGrid();
+        });
+      });
+
+      // delete button
+      spriteEl.querySelector('[data-act="delete"]').addEventListener('click', () => {
+        delete spritesObject[key];
+        spriteEl.remove();
+        _lhelpers.drawGrid();
+      });
+
+      spritesList.appendChild(spriteEl);
+      const numericKey = parseInt(key);
+      if (!isNaN(numericKey)) {
+        spriteCounter = Math.max(spriteCounter, numericKey + 1);
       }
     }
 

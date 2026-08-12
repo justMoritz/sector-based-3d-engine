@@ -2,6 +2,8 @@
  * Function that handles movement of all sprites
  */
 var _moveSprites = function () {
+  if( EDITMODE ){ return; } // sprite AI movement is a gameplay concern, not something the level editor's live preview should fight with manual dragging
+
   // for each sprite object
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];

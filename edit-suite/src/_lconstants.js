@@ -50,9 +50,15 @@ var lightsObj = {};         // id → { x, y, b, r }
 var lightCounter = 0;       // used to generate new light IDs
 var currentLight = null;    // optional: track currently selected light
 
-const sectorSelectorTemplate = 
-`<div data-id="XXX" class="sector-selector">
-    <span class="sector-name">Sector XXX</span> <div data-remove-id="XXX" class="remove-sector"><span> - </span></div>
+var spriteCounter = 0;      // used to generate new sprite keys
+var currentSprite = null;   // optional: track currently selected sprite
+
+// "sector-row"/"sector-remove-btn" are exclusive to sector rows -- "sector-selector"/"remove-sector"/
+// "sector-name" are shared CSS styling that lights and sprites rows reuse too (same class names,
+// different containers), so JS that needs to target sectors specifically must use the exclusive ones.
+const sectorSelectorTemplate =
+`<div data-id="XXX" class="sector-selector sector-row">
+    <span class="sector-name">Sector XXX</span> <div data-remove-id="XXX" class="remove-sector sector-remove-btn"><span> - </span></div>
 </div>`
 
 const lightsSelectorTemplate = 
@@ -64,6 +70,19 @@ const lightsSelectorTemplate =
     <label>B <input type="number" step="0.05" data-k="b" value="0.25"></label>
     <label>R <input type="number" step="0.1" data-k="r" value="12"></label>
     <div class="remove-sector remove-light" data-act="delete" title="Delete this light">-</div>
+    </div>
+`;
+
+const spritesSelectorTemplate =
+`
+    <span class="sector-name">Sprite XXX</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; font-size: 12px; margin-top: 0.25rem;">
+    <label>X <input type="number" step="0.1" data-k="x" value="0"></label>
+    <label>Y <input type="number" step="0.1" data-k="y" value="0"></label>
+    <label>H <input type="number" step="0.1" data-k="h" value="0"></label>
+    <label>R <input type="number" step="0.1" data-k="r" value="0"></label>
+    <label>Name <input type="text" data-k="name" value="P" style="width: 4rem;"></label>
+    <div class="remove-sector remove-light" data-act="delete" title="Delete this sprite">-</div>
     </div>
 `;
 
@@ -105,6 +124,7 @@ const sectorDefaults = {
     "ceil": 2,
     "floorTex": "Y",
     "ceilTex": "U",
+    "slope": 0,
 }
 
 
@@ -114,6 +134,7 @@ let texScaleXinput;
 let texScaleYinput;
 let sectorconnectorinput;
 let floorInput;
+let slopeInput;
 let ceilInput;
 let ceilTexInput;
 let floorTexInput;

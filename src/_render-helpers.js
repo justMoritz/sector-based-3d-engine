@@ -672,26 +672,37 @@ var _fDrawFrameWithSkew = function (screen, target) {
 
 
 
-function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector){
+function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector, oSlopeRef){
 
   var nStandardHeight = 2;
-  var fPlayerHinSector;
   var fPlayerViewHeight;
   var fAdjustedHeight;
   var fRealDistance;
-  var fDirectDistFloor;
 
-  fPlayerHinSector = fSectorFloorHeight;
-  
+  // Build-style slope: how much higher/lower the floor is where the player stands, and how fast
+  // that changes per unit of ray-distance. Both are zero for flat sectors (oSlopeRef is null),
+  // which makes the formula below collapse to the original flat-floor math.
+  var fSlopeAtPlayer = 0;
+  var fSlopeRatePerRay = 0;
+  if( oSlopeRef ){
+    var fPerpAtPlayer = ((fPlayerX - oSlopeRef.x) * oSlopeRef.dy - (fPlayerY - oSlopeRef.y) * oSlopeRef.dx) / oSlopeRef.len;
+    var fPerpRatePerRay = (fastCos(fRayAngleGlob) * oSlopeRef.dy - fastSin(fRayAngleGlob) * oSlopeRef.dx) / oSlopeRef.len;
+    fSlopeAtPlayer = oSlopeRef.slope * fPerpAtPlayer;
+    fSlopeRatePerRay = oSlopeRef.slope * fPerpRatePerRay;
+  }
 
-  
-  fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+  fAdjustedHeight = nStandardHeight - (fSectorFloorHeight + fSlopeAtPlayer) * 2  ;
   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+
   // Calculate the direct distance from the player to the floor pixel
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
-  fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
-  
-  fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob ) ;
+  var fRowFactor = fscreenHeightFactorFloor / ( j - nScreenHeight / (2 - fFloorLooktimer) );
+  var fCosAngleDiff = fastCos(fPlayerA - fRayAngleGlob );
+
+  // Since floor height is linear along the ray for a planar (possibly sloped) floor, the distance
+  // where the ray crosses it is still solvable directly -- no per-pixel iteration needed.
+  fRealDistance = ( fPlayerViewHeight * fRowFactor ) / ( fCosAngleDiff + 2 * fSlopeRatePerRay * fRowFactor );
+
   fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   
   // Calculate real-world coordinates with the player angle

@@ -161,7 +161,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
+  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue, oSlopeRef){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -203,7 +203,7 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector);
+        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector, oSlopeRef);
       }
 
       // draw
@@ -214,8 +214,6 @@ var gameEngineJS = (function () {
 
     return [nNewScreenStart, nNewScreenEnd];
   }
-
-
 
 
   /**
@@ -266,10 +264,12 @@ var gameEngineJS = (function () {
       var sSectorCeilingTexture = "a";
 
       // per-sector settings for floors and ceilings
-      sectorFloorFactor = oLevel.map[currentSector].floor
-      sectorCeilingFactor = oLevel.map[currentSector].ceil
+      sectorFloorFactor = oLevel.map[currentSector].floor;
+      sectorCeilingFactor = oLevel.map[currentSector].ceil;
       sSectorFloorTexture = oLevel.map[currentSector].floorTex;
       sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
+
+      var oSlopeRef = _makeSlopeRef(sectorWalls, oLevel.map[currentSector].slope);
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -327,7 +327,7 @@ var gameEngineJS = (function () {
           // baked lighting, in various variations :)
           else{
             if( bUseFancyLighting ){
-              /*** use baked light values for the given wall. very good, and very close to live ***/
+              // use baked light values for the given wall. very good, and very close to live
               var oBakedLightingValuesforWall = currentWall.bakedLight;
               var fSampleIndex = wallSamplePosition * (oBakedLightingValuesforWall.length - 1); // corresponding index in the the bakedLight array
               var fSampleIndexLeft = fSampleIndex | 0; // fast floor
@@ -336,23 +336,20 @@ var gameEngineJS = (function () {
               fLightValue = oBakedLightingValuesforWall[fSampleIndexLeft] * (1 - fSampleLerpFactor) + oBakedLightingValuesforWall[fSampleIndexRight] * fSampleLerpFactor;
             }
             else{
-              /*** use baked light values per sector. ***/
+              // use baked light values per sector.
               fLightValue = oMap[currentSector].bakedSectorLight;
             }
           }
 
 
-
-
-
-
-          
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
+          // the floor height right where this ray crosses into the wall/portal (varies across a sloped wall)
+          var fFloorFactorHere = _slopeFloorFactorAt(sectorFloorFactor, oSlopeRef, intersection.x, intersection.y);
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-fFloorFactorHere) + (fPlayerH));
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
           
@@ -375,11 +372,15 @@ var gameEngineJS = (function () {
                 nextSectorFloorFactor = oMap[nextSector].floor;
                 nextSectorCeilingFactor = oMap[nextSector].ceil;
 
+                // evaluate both sectors' floor height at the same shared point, so a sloped
+                // sector's portal window lines up with the tilted wall/floor edge instead of the flat one
+                var oNextSlopeRef = _makeSlopeRef(oMap[nextSector].walls, oMap[nextSector].slope);
+                var fNextFloorFactorHere = _slopeFloorFactorAt(nextSectorFloorFactor, oNextSlopeRef, intersection.x, intersection.y);
 
                 // only recalculate if the next sector floor is higher than the previous
                 // See also note above about floor and ceiling heights in level data
-                if( nextSectorFloorFactor > sectorFloorFactor ){
-                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-nextSectorFloorFactor) + (fPlayerH));
+                if( fNextFloorFactorHere > fFloorFactorHere ){
+                  nNextSectorFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-fNextFloorFactorHere) + (fPlayerH));
                 }
                 nNextSectorCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+nextSectorCeilingFactor - fPlayerH);
 
@@ -409,6 +410,7 @@ var gameEngineJS = (function () {
                 nNextSectorFloor,
                 currentSector,
                 fLightValue,
+                oSlopeRef,
               );
               // for the next iteration of non-portal walls seen through this window.
               nDrawStart = newStartAndEnd[0];
@@ -441,7 +443,8 @@ var gameEngineJS = (function () {
               false,
               false,
               currentSector,
-              fLightValue
+              fLightValue,
+              oSlopeRef
             );
 
           } // end non-portal/portal found
