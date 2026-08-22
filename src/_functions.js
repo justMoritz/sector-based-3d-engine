@@ -632,6 +632,14 @@ function mathMaxBitwise(i, min) {
 }
 
 
+// get Midpoint between two points
+function getMidPointOfWall (input) {
+  return {
+    x: (input[0] + input[2]) / 2,
+    y: (input[1] + input[3]) / 2
+  };
+};
+
 
 
 

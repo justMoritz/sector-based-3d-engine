@@ -272,33 +272,7 @@ var gameEngineJS = (function () {
       sSectorFloorTexture = oLevel.map[currentSector].floorTex;
       sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
       
-      // // TODO: Slope logic?
-      // // We need the height of the floor at intersection-point
-      // // it's the same as texture LERP position, 
-      // // but instead of pixel value at that point in the wall, we need to get the floor-height value at that point of the wall
-      // // height at that point is base-height + slope amount at the signed perpendicular distance from hinge-wall. 
-      // if(typeof oLevel.map[currentSector].slope === 'undefined' ){
-      //   sectorFloorSlope = oLevel.map[currentSector].slope;
-
-      //   var firstWall = sectorWalls[0];
-
-      //   var x1 = firstWall[0];
-      //   var y1 = firstWall[1];
-      //   var x2 = firstWall[2];
-      //   var y2 = firstWall[3];
-        
-      //   // Direction vector of wall 0
-      //   var dx = x2 - x1;
-      //   var dy = y2 - y1;
-
-      //   // intersection between first wall and
-      //   var slopeInter = intersectionPoint(
-      //     { x: fPlayerX, y: fPlayerY },
-      //     { x: fPlayerEndX, y: fPlayerEndY },
-      //     { x: currentWall[0], y: currentWall[1] },
-      //     { x: currentWall[2], y: currentWall[3] }
-      //   );
-      // }
+     
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -343,6 +317,56 @@ var gameEngineJS = (function () {
 
           // get texture sample position, ceiling and floor height (can vary per sector), and pass to renderer. Also used for lighting below
           wallSamplePosition = texSampleLerp( currentWall[0],currentWall[1],  currentWall[2] ,currentWall[3], intersection.x, intersection.y );
+
+
+          // TODO: Slope logic?
+          // We need the height of the floor at intersection-point
+          // it's the same as texture LERP position, 
+          // but instead of pixel value at that point in the wall, we need to get the floor-height value at that point of the wall
+          // height at that point is base-height + slope amount at the signed perpendicular distance from hinge-wall. 
+          
+          // Actually, we could check where our view-ray hits the wall
+          // then, from that point in space, check how far is that point from the hinge-wall (ideally the middle)
+          // once we know that, we can take that number and multiply it by the slope factor?
+
+          var floorSlopeFactor = 1;
+          if(typeof oLevel.map[currentSector].slope !== 'undefined' ){
+            var sectorFloorSlope = oLevel.map[currentSector].slope;
+            // console.log(sectorFloorSlope);
+            
+            if (typeof sectorFloorSlope === 'undefined'){
+              sectorFloorSlope = 1;
+            }
+
+            var firstWall = sectorWalls[0];
+
+            // get middle point of first wall (where we are calculating the distance to)
+            var wallZeroMidpoint = getMidPointOfWall(firstWall);
+
+            // vector from intersection to wall 0  middle point
+            var slopeIntersection = intersectionPoint(
+              { x: intersection.x, y: intersection.y },
+              { x: wallZeroMidpoint.x, y: wallZeroMidpoint.y },
+              { x: firstWall[0], y: firstWall[1] },
+              { x: firstWall[2], y: firstWall[3] }
+            );
+
+
+            if (!isNaN(slopeIntersection.x) && !isNaN(slopeIntersection.y)) {
+              fDistanceToWallZero = Math.sqrt(
+                Math.pow(intersection.x - slopeIntersection.x, 2) +
+                Math.pow(intersection.y - slopeIntersection.y, 2)
+              );
+              // console.log(sectorFloorSlope, slopeIntersection.x);
+              floorSlopeFactor = fDistanceToWallZero + sectorFloorSlope;
+            }
+            
+          }
+          else{
+            floorSlopeFactor = 1;
+          }
+
+
           
           // TODO: Bake the wall angle against the world at load-time. Then adjust the position absed on this. This should give us World-space texture
           // That can repeat over severl/all sectors without needing too many adjustments
@@ -376,9 +400,13 @@ var gameEngineJS = (function () {
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
-          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           
+          var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
+          // var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
+          
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1- (sectorFloorFactor * floorSlopeFactor) ) + (fPlayerH)); 
+          // var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+ (sectorCeilingFactor * floorSlopeFactor) - fPlayerH);d
+
           
           // PORTAL FOUND
           // if the current sector we are looking at has a portal (currentwall[9] !== false)
@@ -514,7 +542,7 @@ var gameEngineJS = (function () {
       bUseFancyLighting = true;
       // sPostProcessing = '10bit';
       sPostProcessing = '';
-      // bTexFiltering = false;
+      bTexFiltering = false;
     }
     else {
       nScreenWidth = 640;

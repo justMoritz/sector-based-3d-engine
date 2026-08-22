@@ -3,7 +3,7 @@ var _testmap =
 {
   "fDepth": 50,
   "fPlayerX": 8.54,
-  "fPlayerY": 4.5,
+  "fPlayerY": 5.5,
   "fPlayerA": 0.66,
   "fPlayerH": 0,
   "startingSector": 1,
@@ -734,8 +734,9 @@ var _testmap =
       ],
       "floor": 0.2,
       "ceil": 6,
-      "floorTex": "C",
-      "ceilTex": "bg"
+      "floorTex": "Y",
+      "ceilTex": "de5",
+      "slope": 2,
     },
     {
       "id": "sector7",
