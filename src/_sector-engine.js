@@ -141,6 +141,7 @@ var gameEngineJS = (function () {
 
       _generateRandomSprites();
       bakeWallLighting(4);
+      bakeFloorHeight(4);
       bakeVoxelPositions();
       prepSprites();
 
@@ -217,7 +218,6 @@ var gameEngineJS = (function () {
 
 
 
-
   /**
    * This function checks and renders a given sector. Then it checks if there are any portals to adjacent sectors
    * It prepares the “window” through which to look into the next sector, and then queues that sector up for rendering
@@ -255,21 +255,46 @@ var gameEngineJS = (function () {
       try {
         var sectorWalls = oMap[currentSector].walls; 
       } catch (error) {
-          console.error(`Sector ${currentSector} Not found`);
+        console.error(`Sector ${currentSector} Not found`);
       }
 
       var sectorWalls = oMap[currentSector].walls; 
 
       var sectorFloorFactor = 1;
+      var sectorFloorSlope = 1;
       var sectorCeilingFactor = 1;
       var sSectorFloorTexture = "Y";
       var sSectorCeilingTexture = "a";
 
       // per-sector settings for floors and ceilings
-      sectorFloorFactor = oLevel.map[currentSector].floor
-      sectorCeilingFactor = oLevel.map[currentSector].ceil
+      sectorFloorFactor = oLevel.map[currentSector].floor;
+      sectorCeilingFactor = oLevel.map[currentSector].ceil;
       sSectorFloorTexture = oLevel.map[currentSector].floorTex;
       sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
+      
+      // // TODO: Slope logic?
+      // if(typeof oLevel.map[currentSector].slope === 'undefined' ){
+      //   sectorFloorSlope = oLevel.map[currentSector].slope;
+
+      //   var firstWall = sectorWalls[0];
+
+      //   var x1 = firstWall[0];
+      //   var y1 = firstWall[1];
+      //   var x2 = firstWall[2];
+      //   var y2 = firstWall[3];
+        
+      //   // Direction vector of wall 0
+      //   var dx = x2 - x1;
+      //   var dy = y2 - y1;
+
+      //   // intersection between first wall and
+      //   var slopeInter = intersectionPoint(
+      //     { x: fPlayerX, y: fPlayerY },
+      //     { x: fPlayerEndX, y: fPlayerEndY },
+      //     { x: currentWall[0], y: currentWall[1] },
+      //     { x: currentWall[2], y: currentWall[3] }
+      //   );
+      // }
 
       // for each wall in a sector
       for( var w = 0; w < sectorWalls.length; w++ ){
@@ -327,7 +352,7 @@ var gameEngineJS = (function () {
           // baked lighting, in various variations :)
           else{
             if( bUseFancyLighting ){
-              /*** use baked light values for the given wall. very good, and very close to live ***/
+              // use baked light values for the given wall. very good, and very close to live
               var oBakedLightingValuesforWall = currentWall.bakedLight;
               var fSampleIndex = wallSamplePosition * (oBakedLightingValuesforWall.length - 1); // corresponding index in the the bakedLight array
               var fSampleIndexLeft = fSampleIndex | 0; // fast floor
@@ -336,17 +361,12 @@ var gameEngineJS = (function () {
               fLightValue = oBakedLightingValuesforWall[fSampleIndexLeft] * (1 - fSampleLerpFactor) + oBakedLightingValuesforWall[fSampleIndexRight] * fSampleLerpFactor;
             }
             else{
-              /*** use baked light values per sector. ***/
+              // use baked light values per sector.
               fLightValue = oMap[currentSector].bakedSectorLight;
             }
           }
 
 
-
-
-
-
-          
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data

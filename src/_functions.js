@@ -412,6 +412,26 @@ function bakeWallLighting(samplesPerWall = 8) {
 }
 
 
+function bakeFloorHeight(samplesPerWall = 8) {
+  for (const sector of oMap) {
+    if (!sector.walls) continue;
+    for (const wall of sector.walls) {
+      const [x1, y1, x2, y2] = wall;
+      wall.floorHeight = [];
+
+      for (let i = 0; i <= samplesPerWall; i++) {
+        const t = i / samplesPerWall;
+        const x = x1 + (x2 - x1) * t;
+        const y = y1 + (y2 - y1) * t;
+        const heightVal = 1;
+        wall.floorHeight.push(heightVal);
+      }
+    }
+
+  }
+}
+
+
 function bakeSectorFlatLight(sector, lights, samplesPerAxis = 4) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const wall of sector.walls) {

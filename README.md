@@ -1,6 +1,6 @@
 # 3D (2.5D) Sector based 3D Engine!
 
-The continuation of the old ASCII-based raycaster engine (with perspective-correct looking up and down!). This is turning into a Build-style engine!
+The continuation of the old ASCII-based raycaster engine (with perspective-correct looking up and down!). Now a fully-fledged Build-style engine!
 
 This new engine uses sector-based rendering which allows such cool features such as:
 
@@ -9,15 +9,57 @@ This new engine uses sector-based rendering which allows such cool features such
 - Windows
 - Platforms
 - Voxel-objects (again, think Build Engine)
-- NES-color pallet (and probably more in the future!)
-- All while retaining the ascii-based renderer :)
+- Any-color pallet (Although I'm limiting it to indexed 256 for textures and sprites each)
+- ❌ All while retaining the ascii-based renderer :) (Sadly no more. It could come back sometime :P)
 
-And so much more! The limits are endless!
+And so much more! The limits are endless! The endlim is itless!
+
+
+
+---
+
+## AI/LLM DISCLOSURE
+- I think of this project as a **NO-AI/NO-LLM** project. The whole point is for me to wrack my brain and think about things
+- That being said, when LLM-assisted coding first was rolled out in a big way a few years ago, I was naturally curious and tested it. Some of the code in this project *was*, at the time, written with Copilot assistance. I didn't think much of it, and it made some things a little easier. It made some things way worse and I probably discarded more than I used in the end. It was, after all, a few years ago.
+- I changed my mind about using LLM code since then, and I don't honestly remember *exactly* what was written with it. A list of my best guesses below:
+  - Edit suite: Some of the edit suite tools were written with LLM assistance. Usually as a quick prototype-starting point. (Although you can tell by the extremely shitty implementation that it's still mostly my code)
+  - Debugging: I used to debug my bilinear filtering algos
+  - Similar to above, I watched a YouTube video on Floyd-Steinberg, and used the LLM to help me write bug-free code. If I could go back and redo it myself without what I know now, I would.
+  - (Please note that the confusing/inconsistent naming-schemes are purely a result of me working on things at different times, and referencing different sources :P)
+- Because it's not exactly clear what was and wasn't written with LLM-assistance, it's probably unreasonable/impossible to remove that code from the codebase. It's just part of the history of this codebase now
+
+----
+
+
+## Texture/Sprites workflow:
+
+1) Convert PNGs to pixel-arrays stored in variables using this tool: 
+   `/edit-suite/png-converter.html`
+   This gives you something like `var de1 = [[197,199,198],[199,201,200],[199,201,200],[…`
+
+2) Move all the variables it generates in a file like textures.tex (example file)
+   Take that file, and load it into the Pallette Quantizer/Median cut tool
+   `/edit-suite/median-cut-generator.html`
+
+3) Paste the results in your final texture file. You will need an array that assigns the textures stored in variabels to keys that will correspond to the names used in editor and render with the following keys. Example:
+    `var textures = {`
+    `  "bg": {`
+    `   "width": [int],`
+    `   "height": [int],`
+    `   "texture": [variable-name],`
+    `   "scale": [int],`
+    ` },`
+    ` …`
+    `}`
+
+// TODO: This could be one workflow eventually :P
+
+
 
 
 ## 👩🏼‍💻 Current TODO: list:
 
-- Convert Textures to 255 indexed pallette (+transparent)
+- ✅ Convert Textures to 255 indexed pallette (+transparent)
 - Add Sprites list to editor
 - ✅ Add Lighting to editor
 - ✅ Add lighting too editor
@@ -35,14 +77,14 @@ And so much more! The limits are endless!
 - Re-implement Sprite rendering (now working officially via intersection method)
   - ✅ Make sure sprites properly face the player (with perspective correction)
   - ✅ Perhaps draw the sprite up-down by default, and the rotate the same direction as the player?
-  - re-implement angles and animation
-  - re-implement moving
+  - ✅ re-implement angles and animation
+  - ✅ re-implement moving
   - ✅ re-implement sorting 
   - ✅ re-implement transparency
   - ✅ refactor checkPlayerInSector function to also work for sprites
 - ✅ Fix Ceiling texture rendering
   - ✅ Re-implmement and refactor skybox
-- Think about slopes. I kinda don't want to open that can of worms, but maybe think about slopes...
+- Think about slopes. I kinda don't want to open that can of worms, but maybe think about slopes... OH NO I'M THINKING ABOUT SLOPES
 
 - ✅ Refactor checkSectors function
 - Rethink variable scope of some variables
@@ -61,7 +103,9 @@ And so much more! The limits are endless!
 - ❓ Better yet, world-coordinates texture mapping?
 
 
-----
+
+
+---
 
 
 ## Lighting Idea
@@ -83,11 +127,8 @@ Alternatively, we could go it in real time by:
 
 All of the below is outdated, I'll write up some docs sometime.
 
-Here is the current TODO:
 - ✅ Level Editor panning (maybe zooming, probably not though (Edit: no zooming))
 - ✅ Build in Texture X and Y offset
-
-
 
 
 OLD!!!!!
@@ -109,7 +150,10 @@ OLD!!!!!
 
 
 
+
+
+
+
 Could be handy https://notisrac.github.io/FileToCArray/
-
-
 mkdir -p sprites && for f in *.png; do magick "$f" -resize 64x64\! -filter point "sprites/$f"; done
+
