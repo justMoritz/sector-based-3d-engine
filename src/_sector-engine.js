@@ -273,6 +273,10 @@ var gameEngineJS = (function () {
       sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
       
       // // TODO: Slope logic?
+      // // We need the height of the floor at intersection-point
+      // // it's the same as texture LERP position, 
+      // // but instead of pixel value at that point in the wall, we need to get the floor-height value at that point of the wall
+      // // height at that point is base-height + slope amount at the signed perpendicular distance from hinge-wall. 
       // if(typeof oLevel.map[currentSector].slope === 'undefined' ){
       //   sectorFloorSlope = oLevel.map[currentSector].slope;
 
