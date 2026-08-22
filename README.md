@@ -1,6 +1,13 @@
 # 3D (2.5D) Sector based 3D Engine!
 
+<<<<<<< HEAD
 The continuation of the old ASCII-based raycaster engine (with perspective-correct looking up and down!). Now a fully-fledged Build-style engine!
+=======
+**Check it out here!**
+[https://sector-engine.moritz.work/](https://sector-engine.moritz.work/)
+
+The continuation of the old ASCII-based raycaster engine (with perspective-correct looking up and down!). This is turning into a Build-style engine!
+>>>>>>> 950cd16d14164ac78599e0af90478f0c9c164437
 
 This new engine uses sector-based rendering which allows such cool features such as:
 
