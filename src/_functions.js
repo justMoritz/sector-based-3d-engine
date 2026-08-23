@@ -632,16 +632,16 @@ function mathMaxBitwise(i, min) {
 }
 
 
-  // TODO: Slope logic?
-  // We need the height of the floor at intersection-point
-  // it's the same as texture LERP position, 
-  // but instead of pixel value at that point in the wall, we need to get the floor-height value at that point of the wall
-  // height at that point is base-height + slope amount at the signed perpendicular distance from hinge-wall. 
-  
-  // Actually, we could check where our view-ray hits the wall
-  // then, from that point in space, check how far is that point from the hinge-wall (ideally the middle)
-  // once we know that, we can take that number and multiply it by the slope factor?
+// TODO: Slope logic?
+// We need the height of the floor at intersection-point
+// (probably not true: it's the same as texture LERP position, 
+// but instead of pixel value at that point in the wall, we need to get the floor-height value at that point of the wall
+// height at that point is base-height + slope amount at the signed perpendicular distance from hinge-wall.)
 
+// Actually, we could check where our view-ray hits the wall
+// then, from that point in space, check how far is that point from the hinge-wall (ideally the middle)
+// once we know that, we can take that number and multiply it by the slope factor?
+// floorSlopeFactor is the height-modyfier for the floor where the camera ray hits the
 function getSlopeFactor (sector, intersection){
   var floorSlopeFactor = 1;
   var sectorWalls = oMap[sector].walls; 

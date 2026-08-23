@@ -2,9 +2,9 @@
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 8.54,
-  "fPlayerY": 5.5,
-  "fPlayerA": 0.66,
+  "fPlayerX": 30,
+  "fPlayerY": 7.5,
+  "fPlayerA": 3.4,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -735,7 +735,7 @@ var _testmap =
       "floor": 0.2,
       "ceil": 6,
       "floorTex": "Y",
-      "ceilTex": "de5",
+      "ceilTex": "bg",
       "slope": 2,
     },
     {

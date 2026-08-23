@@ -162,7 +162,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
+  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue, floorSlopeFactor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -204,7 +204,7 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector);
+        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector, floorSlopeFactor);
       }
 
       // draw
@@ -321,12 +321,11 @@ var gameEngineJS = (function () {
 
           // TODO: runs slope logic (in functions)
           var floorSlopeFactor = getSlopeFactor(currentSector, intersection);
-
-
           
-          // TODO: Bake the wall angle against the world at load-time. Then adjust the position absed on this. This should give us World-space texture
-          // That can repeat over severl/all sectors without needing too many adjustments
-          // wallSamplePosition = texSampleLerp( 0,0,  10 , 10, intersection.x, intersection.y );
+                // TODO: Bake the wall angle against the world at load-time. Then adjust the position absed on this. This should give us World-space texture
+                // That can repeat over severl/all sectors without needing too many adjustments
+                // wallSamplePosition = texSampleLerp( 0,0,  10 , 10, intersection.x, intersection.y );
+                // (I'm not sure what my idea here was)
 
           
           // get accurate, dynamic lighting value, only used in editor, since we need to see it live
@@ -351,14 +350,14 @@ var gameEngineJS = (function () {
           }
 
 
+          // applies the slope factor to the sector's floor height for the given column
+          sectorFloorFactorOriginal = sectorFloorFactor;
+          sectorFloorFactor = sectorFloorFactor * floorSlopeFactor;
           
           // Minus operations required since the sectorCeiling and Floor factors adjust where the wall is rendered. 
           //  Ideally 1 and 1 are the default (since multiplying by 1 won't change anything), but in the level-data
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
-
-          sectorFloorFactor = sectorFloorFactor * floorSlopeFactor;
-          
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
           
@@ -422,6 +421,7 @@ var gameEngineJS = (function () {
                 nNextSectorFloor,
                 currentSector,
                 fLightValue,
+                floorSlopeFactor
               );
               // for the next iteration of non-portal walls seen through this window.
               nDrawStart = newStartAndEnd[0];
@@ -454,7 +454,8 @@ var gameEngineJS = (function () {
               false,
               false,
               currentSector,
-              fLightValue
+              fLightValue,
+              floorSlopeFactor
             );
 
           } // end non-portal/portal found
