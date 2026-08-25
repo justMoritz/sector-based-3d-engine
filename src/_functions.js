@@ -642,21 +642,27 @@ function mathMaxBitwise(i, min) {
 // then, from that point in space, check how far is that point from the hinge-wall (ideally the middle)
 // once we know that, we can take that number and multiply it by the slope factor?
 // floorSlopeFactor is the height-modyfier for the floor where the camera ray hits the
-function getSlopeFactor (sector, intersection){
+function getSlopeFactor (sector, intersection, debug){
   var floorSlopeFactor = 1;
   var sectorWalls = oMap[sector].walls; 
   if(typeof oLevel.map[sector].slope !== 'undefined' ){
     var sectorFloorSlope = oLevel.map[sector].slope;
     
     if (typeof sectorFloorSlope === 'undefined'){
-      sectorFloorSlope = 1;
+      // sectorFloorSlope = 1;
+      return 1;
+    }
+    else{
+      if(debug){console.log( sector )}
     }
 
     var firstWall = sectorWalls[0];
 
+    
     // get middle point of first wall (where we are calculating the distance to)
     var wallZeroMidpoint = getMidPointOfWall(firstWall);
-
+    
+    
     // vector from intersection to wall 0  middle point
     var slopeIntersection = intersectionPoint(
       { x: intersection.x, y: intersection.y },
@@ -664,7 +670,8 @@ function getSlopeFactor (sector, intersection){
       { x: firstWall[0], y: firstWall[1] },
       { x: firstWall[2], y: firstWall[3] }
     );
-
+    
+    if(debug){console.log( slopeIntersection )}
 
     if (!isNaN(slopeIntersection.x) && !isNaN(slopeIntersection.y)) {
       fDistanceToWallZero = Math.sqrt(
