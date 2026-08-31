@@ -2,9 +2,9 @@
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 8.54,
-  "fPlayerY": 4.5,
-  "fPlayerA": 0.66,
+  "fPlayerX": 8,
+  "fPlayerY": 6,
+  "fPlayerA": 0,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -108,11 +108,11 @@ var _testmap =
   // ],
   "sprites": {
       "0": {
-          "x": 10,
-          "y": 20,
-          "h": 0.2,
-          "r": 3.14,
-          "name": "P"
+          "x": 9,
+          "y": 6,
+          "h": 0,
+          "r": 0,
+          "name": "superpogel"
       },
       "0s": {
           "x": 28,
@@ -229,7 +229,7 @@ var _testmap =
     // "2cSP": { "x": 15, "y": 13, "h": -0.2, "r": 1.5, "name": "supertable" },
     
     
-    "123": { "x": 8, "y": 6, "h": 0, "r": 3, "name": "lil" },
+    "123": { "x": 4, "y": 12, "h": 0, "r": 3, "name": "lil" },
 
     // "1234": { "x": 20.2, "y": 8.3, "h": 0, "r": 0, "name": "superpogel" },
 

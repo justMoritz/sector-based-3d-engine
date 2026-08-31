@@ -2,9 +2,16 @@
  * Function that handles movement of all sprites
  */
 var _moveSprites = function () {
+
+
   // for each sprite object
-  for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
+  for (var si = 0; si < Object.keys(oLevelSprites).length - 1; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
+
+    // for spriteZero (player in 3rd person mode, do special logic)
+    if( si === Object.keys(oLevelSprites).length - 1 ){
+      continue;
+    }
 
     // if the sprite"s move flag is set
     if (sprite["move"]) {
@@ -110,11 +117,11 @@ var _moveSprites = function () {
     
 
     // if player hits sprite, prevent moving
-    if (sprite["z"] < 1.25) {
-      bPlayerMayMoveForward = false;
-    } else {
-      bPlayerMayMoveForward = true;
-    }
+    // if (sprite["z"] < 1.25) {
+    //   bPlayerMayMoveForward = false;
+    // } else {
+    //   bPlayerMayMoveForward = true;
+    // }
   }
 };
 

@@ -616,6 +616,8 @@ var _moveHelpers = {
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].x = fNewPlayerX * 1.1;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].y = fNewPlayerY * 1.1;
       }
     }
 
@@ -626,7 +628,9 @@ var _moveHelpers = {
 
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
-        fPlayerY = fNewPlayerY;
+        fPlayerY = fNewPlayerY;        
+        oLevelSprites[Object.keys(oLevelSprites).length -1].x = fNewPlayerX * 1.1;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].y = fNewPlayerY * 1.1;
       }
     }
 
@@ -638,6 +642,9 @@ var _moveHelpers = {
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].x = fNewPlayerX * 1.1;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].y = fNewPlayerY * 1.1;
+        
       }
     }
 
@@ -649,6 +656,8 @@ var _moveHelpers = {
       if( !_moveHelpers.testWallCollision(fNewPlayerX, fNewPlayerY) ){
         fPlayerX = fNewPlayerX;
         fPlayerY = fNewPlayerY;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].x = fNewPlayerX * 1.1;
+        oLevelSprites[Object.keys(oLevelSprites).length -1].y = fNewPlayerY * 1.1;
       }
     }
   },
