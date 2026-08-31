@@ -854,6 +854,7 @@ var _testmap =
     },
     {
       "id": "sector9",
+      "slope": 0.2,
       "walls": [
         [
           17.25,

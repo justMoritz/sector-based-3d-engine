@@ -692,7 +692,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector,
 
   
   fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
-  fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
+  
   
   // Calculate real-world coordinates with the player angle
   var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
@@ -700,6 +700,8 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector,
 
   
   if( floorSlopeFactor !== 1 ){
+    return [100,100,100];
+
     // get the slope factor for this floor-point in space
     // update player fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor
     // recalculate fDirectDistFloor
@@ -729,6 +731,9 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector,
     floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
     floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
     // END RECALC
+  }
+  else{
+    fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
   }
   
 

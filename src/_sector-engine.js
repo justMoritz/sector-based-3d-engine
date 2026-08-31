@@ -361,7 +361,7 @@ var gameEngineJS = (function () {
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
           var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
           
-          // var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1- (sectorFloorFactor * floorSlopeFactor) ) + (fPlayerH)); 
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1- (sectorFloorFactorOriginal * floorSlopeFactor) ) + (fPlayerH)); 
           // var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+ (sectorCeilingFactor * floorSlopeFactor) - fPlayerH);d
 
           
