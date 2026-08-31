@@ -475,6 +475,7 @@ var _testmap =
     },
     {
       "id": "sector3",
+      "slope": 0.2,
       "walls": [
         [
           14.5,
@@ -1048,6 +1049,7 @@ var _testmap =
     },
     {
       "id": "sector12",
+      "slope": 0.2,
       "walls": [
         [
           12.5,
@@ -1093,6 +1095,7 @@ var _testmap =
     },
     {
       "id": "sector13",
+      "slope": 0.2,
       "walls": [
         [
           11.5,
