@@ -681,7 +681,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector,
   var fRealDistance;
   var fDirectDistFloor;
 
-  fPlayerHinSector = fSectorFloorHeight;
+  fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor;
 
   
   fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2 ;
@@ -699,42 +699,44 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector,
   var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
 
   
-  if( floorSlopeFactor !== 1 ){
-    return [100,100,100];
+  // if( floorSlopeFactor !== 1 ){
+  //   // return [100,100,100];
 
-    // get the slope factor for this floor-point in space
-    // update player fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor
-    // recalculate fDirectDistFloor
-    // but honestly this is crazy expensive
+  //   // get the slope factor for this floor-point in space
+  //   // update player fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor
+  //   // recalculate fDirectDistFloor
+  //   // but honestly this is crazy expensive
 
-    // if we have the x,z of the floorpoint, check how far from the 
-    var floorPoint = {
-      x: floorPointX, 
-      y: floorPointY
-    }
+  //   // if we have the x,z of the floorpoint, check how far from the 
+  //   var floorPoint = {
+  //     x: floorPointX, 
+  //     y: floorPointY
+  //   }
     
-    var slopeAtthisPoint = getSlopeFactor(currentSector, floorPoint);
-    // console.log(currentSector)
+  //   // var slopeAtthisPoint = getSlopeFactor(currentSector, floorPoint);
+  //   var slopeAtthisPoint = floorSlopeFactor;
 
-    fPlayerHinSector = fSectorFloorHeight * slopeAtthisPoint;
-    fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-    fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
-    // Calculate the direct distance from the player to the floor pixel+  Adjusts the looktimer here instead of in the fscreenHeightFactor
-    fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
+  //   // console.log(currentSector)
+
+  //   fPlayerHinSector = fSectorFloorHeight * slopeAtthisPoint;
+  //   fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+  //   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+  //   // Calculate the direct distance from the player to the floor pixel+  Adjusts the looktimer here instead of in the fscreenHeightFactor
+  //   fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
 
 
-    fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
-    fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
+  //   fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
+  //   fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
 
     
-    // Calculate real-world coordinates with the player angle
-    floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
-    floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
-    // END RECALC
-  }
-  else{
+  //   // Calculate real-world coordinates with the player angle
+  //   floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+  //   floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
+  //   // END RECALC
+  // }
+  // else{
     fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-  }
+  // }
   
 
 

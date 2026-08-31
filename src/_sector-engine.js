@@ -162,7 +162,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue, floorSlopeFactor){
+  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, nFloorWithSlope, sectorFloorFactor, sectorFloorFactorOriginal, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue, floorSlopeFactor){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -197,14 +197,14 @@ var gameEngineJS = (function () {
       }
 
       // Draw Walls
-      else if (j > nCeiling && j <= nFloor) {
+      else if (j > nCeiling && j <= nFloorWithSlope) {
         var fSampleY = (j - nCeiling) / (nFloor - nCeiling);
         sPixelToRender = _getSamplePixel( oLevelTextures[sWalltype], fSampleX, fSampleY, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, fDistanceToWall, fLightValue, false);
       }
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector, floorSlopeFactor);
+        sPixelToRender = drawFloor(i, j, sectorFloorFactorOriginal, sSectorFloorTexture, currentSector, floorSlopeFactor, nFloorWithSlope);
       }
 
       // draw
@@ -359,9 +359,11 @@ var gameEngineJS = (function () {
           //  makes more intuitive sense to use 0 (floor) and 1 (ceiling) for default heights, and smaller numbers 
           //  mean smaller heights. This adjusts for this :)
           var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+sectorCeilingFactor - fPlayerH);
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
+          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1- (sectorFloorFactorOriginal) ) + (fPlayerH)); 
           
-          var nFloor = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1- (sectorFloorFactorOriginal * floorSlopeFactor) ) + (fPlayerH)); 
+          
+          var nFloorWithSlope = fscreenHeightFactor + nScreenHeight / fDistanceToWall * ((1-sectorFloorFactor) + (fPlayerH)); 
+          
           // var nCeiling = fscreenHeightFactor - nScreenHeight / fDistanceToWall * (-0.5+ (sectorCeilingFactor * floorSlopeFactor) - fPlayerH);d
 
           
@@ -406,7 +408,9 @@ var gameEngineJS = (function () {
                 sWallType, 
                 nCeiling, 
                 nFloor, 
+                nFloorWithSlope,
                 sectorFloorFactor,
+                sectorFloorFactorOriginal,
                 sectorCeilingFactor,
                 wallSamplePosition, 
                 fSampleXScale, 
@@ -440,7 +444,9 @@ var gameEngineJS = (function () {
               sWallType, 
               nCeiling, 
               nFloor, 
+              nFloorWithSlope,
               sectorFloorFactor,
+              sectorFloorFactorOriginal,
               sectorCeilingFactor,
               wallSamplePosition, 
               fSampleXScale, 
