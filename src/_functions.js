@@ -642,6 +642,23 @@ function mathMaxBitwise(i, min) {
 // then, from that point in space, check how far is that point from the hinge-wall (ideally the middle)
 // once we know that, we can take that number and multiply it by the slope factor?
 // floorSlopeFactor is the height-modyfier for the floor where the camera ray hits the
+
+
+// TODO: on implementation:
+// I want to take another stab at the floor logic here. 
+// I know that build engine does it differently, but I'm trying to make my logic work for me here
+//  The getSlopeFactor function should theoretically return a new floor height for the column. 
+// What we need to do is think of rendering not as a actually rendering a slope, 
+// but rather—since we're looking at it column by column, it's almost like 
+// at the given point in column, it's just going to be a slice with a different floor height. 
+// Everything else, collision, textures, etc., should just work automatically, since in that slice 
+// we have instead of the base floor height, a modified floor height. 
+// Again, that makes it technically not a “correct“ slope, but it should work.
+// My implementation is not there though :p
+// I guess we theoretically still have to re-clac collisions etc, so I'm thinking we could bake slope-slices 
+// into the sector at load time? Just a certain amount of fine grain. But that might still require recalcing, too
+// not sure
+
 function getSlopeFactor (sector, intersection, debug){
   var floorSlopeFactor = 1;
   var sectorWalls = oMap[sector].walls; 
@@ -650,7 +667,7 @@ function getSlopeFactor (sector, intersection, debug){
     
     if (typeof sectorFloorSlope === 'undefined'){
       // sectorFloorSlope = 1;
-      return 1;
+      return 0;
     }
     else{
       if(debug){console.log( sector )}
@@ -679,7 +696,7 @@ function getSlopeFactor (sector, intersection, debug){
         Math.pow(intersection.y - slopeIntersection.y, 2)
       );
       // console.log(sectorFloorSlope, slopeIntersection.x);
-      floorSlopeFactor = fDistanceToWallZero + sectorFloorSlope;
+      floorSlopeFactor = fDistanceToWallZero * sectorFloorSlope;
     }
     
   }
