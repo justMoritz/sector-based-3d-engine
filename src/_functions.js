@@ -660,20 +660,23 @@ function mathMaxBitwise(i, min) {
 // not sure
 
 function getSlopeFactor (sector, intersection, debug){
-  var floorSlopeFactor = 1;
+  var floorSlopeFactor = 0;
   var sectorWalls = oMap[sector].walls; 
+  var baseFloorHeight = oMap[sector].floor;
+  var newFloorHeight = baseFloorHeight;
   if(typeof oLevel.map[sector].slope !== 'undefined' ){
     var sectorFloorSlope = oLevel.map[sector].slope;
     
     if (typeof sectorFloorSlope === 'undefined'){
       // sectorFloorSlope = 1;
-      return 0;
+      return baseFloorHeight;
     }
     else{
       if(debug){console.log( sector )}
     }
 
     var firstWall = sectorWalls[0];
+    
 
     
     // get middle point of first wall (where we are calculating the distance to)
@@ -697,10 +700,11 @@ function getSlopeFactor (sector, intersection, debug){
       );
       // console.log(sectorFloorSlope, slopeIntersection.x);
       floorSlopeFactor = fDistanceToWallZero * sectorFloorSlope;
+      newFloorHeight = baseFloorHeight + floorSlopeFactor;
     }
     
   }
-  return floorSlopeFactor; 
+  return newFloorHeight; 
 }
 
 

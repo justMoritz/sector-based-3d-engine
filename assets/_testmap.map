@@ -469,7 +469,7 @@ var _testmap =
       ],
       "floor": 0.2,
       "ceil": 6,
-      "slope": 0.2,
+      "slope": 0.08,
       "floorTex": "C",
       "ceilTex": "bg"
     },
@@ -736,7 +736,7 @@ var _testmap =
       "ceil": 6,
       "floorTex": "Y",
       "ceilTex": "bg",
-      "slope": 2,
+      "slope": 0.1,
     },
     {
       "id": "sector7",
@@ -854,7 +854,7 @@ var _testmap =
     },
     {
       "id": "sector9",
-      "slope": 0.2,
+      "slope": 0.1,
       "walls": [
         [
           17.25,
