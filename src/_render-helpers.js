@@ -671,7 +671,9 @@ var _fDrawFrameWithSkew = function (screen, target) {
 };
 
 
-
+// TODO: Build Engine does this:
+// evaluate 1/Z at two known screen Y limits, 
+// it's either top/bottom of the screen, or the top/bottom position of a portal
 function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector){
 
   var nStandardHeight = 2;
@@ -680,6 +682,7 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   var fAdjustedHeight;
   var fRealDistance;
   var fDirectDistFloor;
+  
   
 
   fPlayerHinSector = fSectorFloorHeight;
@@ -718,23 +721,22 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
     if (typeof oLevel.map[currentSector].slope !== 'undefined'){
       var currentFloorHeightAtPoint = getSlopeFactor(currentSector, floorPoint);
         
-
       if (!isNaN(currentFloorHeightAtPoint)) {
-        fPlayerHinSector = currentFloorHeightAtPoint;
+      
+        nStandardHeight =  nStandardHeight; 
+        fPlayerHinSector = fSectorFloorHeight * currentFloorHeightAtPoint;
 
         fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
         fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
 
+        // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
         fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
         fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
       
-
-
         fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-
-            // Calculate real-world coordinates with the player angle
-      floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
-      floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
+        // Calculate real-world coordinates with the player angle
+        floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+        floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
         
       }else{
         fDepthBufferR[j * nScreenWidth + i] = fRealDistance;

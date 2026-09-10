@@ -139,7 +139,7 @@ var gameEngineJS = (function () {
 
       _moveHelpers.setNewPlayerHeight( oLevel.map[sPlayerSector] );
 
-      _generateRandomSprites();
+      // _generateRandomSprites();
       bakeWallLighting(4);
       bakeFloorHeight(4);
       bakeVoxelPositions();

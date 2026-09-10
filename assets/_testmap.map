@@ -2,9 +2,9 @@
 var _testmap = 
 {
   "fDepth": 50,
-  "fPlayerX": 30,
-  "fPlayerY": 7.5,
-  "fPlayerA": 3.4,
+  "fPlayerX": 16.25,
+  "fPlayerY": 16.25,
+  "fPlayerA": 0.93,
   "fPlayerH": 0,
   "startingSector": 1,
   "baseLight": 0.1,
@@ -854,7 +854,7 @@ var _testmap =
     },
     {
       "id": "sector9",
-      "slope": 0.1,
+      "slope": 0.15,
       "walls": [
         [
           17.25,
