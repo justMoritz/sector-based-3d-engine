@@ -674,7 +674,7 @@ var _fDrawFrameWithSkew = function (screen, target) {
 // TODO: Build Engine does this:
 // evaluate 1/Z at two known screen Y limits, 
 // it's either top/bottom of the screen, or the top/bottom position of a portal
-function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector){
+function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector, fSlopeRate){
 
   var nStandardHeight = 2;
   var fPlayerHinSector;
@@ -690,17 +690,25 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   
   fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2;
   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+
+
+  var fHorizonRow = nScreenHeight / (2 - fFloorLooktimer);
   // Calculate the direct distance from the player to the floor pixel
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
+  // fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactorFloor ) / ( j - fHorizonRow );
   fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
 
+  var fSlopeTerm = 2 * fSlopeRate * fscreenHeightFactorFloor / ( j - fHorizonRow );
   
   fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
+  // fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob ) + fSlopeTerm  ;
   
   
   // Calculate real-world coordinates with the player angle
   var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
+
+
 
   
   // if( floorSlopeFactor !== 1 ){
@@ -711,40 +719,9 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
     // recalculate fDirectDistFloor
     // but honestly this is crazy expensive
 
-    // if we have the x,z of the floorpoint, check how far from the 
-    var floorPoint = {
-      x: floorPointX, 
-      y: floorPointY
-    }
 
+    fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
 
-    if (typeof oLevel.map[currentSector].slope !== 'undefined'){
-      var currentFloorHeightAtPoint = getSlopeFactor(currentSector, floorPoint);
-        
-      if (!isNaN(currentFloorHeightAtPoint)) {
-      
-        nStandardHeight =  nStandardHeight; 
-        fPlayerHinSector = fSectorFloorHeight * currentFloorHeightAtPoint;
-
-        fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-        fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
-
-        // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
-        fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
-        fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
-      
-        fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-        // Calculate real-world coordinates with the player angle
-        floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
-        floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
-        
-      }else{
-        fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-      }
-    }
-    else{
-      fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-    }
   
 
 
@@ -759,6 +736,105 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, fLightValue);
   return sFloorPixelToRender;
 }
+
+// TODO: Build Engine does this:
+// evaluate 1/Z at two known screen Y limits, 
+// it's either top/bottom of the screen, or the top/bottom position of a portal
+function drawFloor2(i, j, fSlopeInitialHeight, sSectorFloorTexture, currentSector, fSlopeRate){
+
+  var nStandardHeight = 2;
+  var fPlayerHinSector;
+  var fPlayerViewHeight;
+  var fAdjustedHeight;
+  var fRealDistance;
+  var fDirectDistFloor;
+  
+  
+
+
+  // fPlayerHinSector = fSectorFloorHeight;
+
+  
+  // fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2;
+  fAdjustedHeight = nStandardHeight - fSlopeInitialHeight * 2;
+
+  fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+
+  // horizon if nothing else changes. Moved here from below
+  // Adjusts the looktimer here instead of in the fscreenHeightFactor
+  var fHorizonRow = nScreenHeight / (2 - fFloorLooktimer);
+
+  // Calculate the direct distance from the player to the floor pixel
+  // Assumeing is the same height at fSlopeInitialHeight the whole way
+  fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactorFloor ) / ( j - fHorizonRow );
+  // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
+
+  // needed to add the slope term, basically how far the height of the floor has grown along the eye-line at the point in space
+  var fSlopeTerm = 2 * fSlopeRate * fscreenHeightFactorFloor / ( j - fHorizonRow );
+  fRealDistance = fDirectDistFloor / ( fastCos(fPlayerA - fRayAngleGlob) + fSlopeTerm );
+  
+  
+  // fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
+  // Calculate real-world coordinates with the player angle
+  var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+  var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
+  
+
+
+  // live lighting in editor, otherwise sector-based lighting
+  if( EDITMODE ){
+    fLightValue = getLightingValue(floorPointX, floorPointY);
+  }
+  else{
+    fLightValue = oMap[currentSector].bakedSectorLight;
+  }
+
+  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX,  floorPointY , 1, 1, 0, 0, fRealDistance, fLightValue);
+  return sFloorPixelToRender;
+}
+
+function drawFloor3(i, j, fSlopeH0, sSectorFloorTexture, currentSector, fSlopeRate){
+
+  var nStandardHeight = 2;
+  var fAdjustedHeight;
+  var fPlayerViewHeight;
+  var fRealDistance;
+  var fDirectDistFloor;
+
+  fAdjustedHeight = nStandardHeight - fSlopeH0 * 2;
+  fPlayerViewHeight = fAdjustedHeight + ( fPlayerH * 2 ); // Adjusts for jumping
+
+  var fHorizonRow = nScreenHeight / (2 - fFloorLooktimer);
+
+  // Direct distance assuming the floor stayed at fSlopeH0 the whole way
+  fDirectDistFloor = ( fPlayerViewHeight * fscreenHeightFactorFloor ) / ( j - fHorizonRow );
+
+  // Closed-form ray/plane intersection: floor height along this ray is
+  // fSlopeH0 + fSlopeRate*d, and the ray's required eye-to-floor gap is linear
+  // in j, so solving for real distance just adds one term to the fisheye
+  // denominator. fSlopeRate is 0 for flat sectors, reducing this to the
+  // original flat-floor formula exactly.
+  var fSlopeTerm = 2 * fSlopeRate * fscreenHeightFactorFloor / ( j - fHorizonRow );
+  fRealDistance = fDirectDistFloor / ( fastCos(fPlayerA - fRayAngleGlob) + fSlopeTerm );
+
+  fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
+
+  // Calculate real-world coordinates with the player angle
+  var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+  var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
+
+  // live lighting in editor, otherwise sector-based lighting
+  if( EDITMODE ){
+    fLightValue = getLightingValue(floorPointX, floorPointY);
+  }
+  else{
+    fLightValue = oMap[currentSector].bakedSectorLight;
+  }
+
+  sFloorPixelToRender = _getSamplePixel( oLevelTextures[sSectorFloorTexture], floorPointX, floorPointY, 1, 1, 0, 0, fRealDistance, fLightValue);
+  return sFloorPixelToRender;
+}
+
 
 
 function drawCeiling(i, j, fSectorCeilingHeight, sSectorCeilTexture, currentSector){

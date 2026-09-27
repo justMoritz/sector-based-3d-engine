@@ -162,7 +162,7 @@ var gameEngineJS = (function () {
   
 
   // TODO:
-  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, sectorFloorFactor, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue){
+  function drawSectorInformation (i , fDistanceToWall, sWalltype, nCeiling, nFloor, fSlopeInitialHeight, sectorCeilingFactor, fSampleX, fSampleXScale, fSampleYScale, fSampleXOffset, fSampleYOffset, sSectorFloorTexture, sSectorCeilingTexture, start, end, nNextSectorCeiling, nNextSectorFloor, currentSector, fLightValue, fSlopeRate){
     // draws (into the pixel buffer) each column one screenheight-pixel at a time
     var bScreenStartSet = false;
     var nNewScreenStart = 0;
@@ -204,7 +204,7 @@ var gameEngineJS = (function () {
 
       // Draw Floor
       else {
-        sPixelToRender = drawFloor(i, j, sectorFloorFactor, sSectorFloorTexture, currentSector);
+        sPixelToRender = drawFloor(i, j, fSlopeInitialHeight, sSectorFloorTexture, currentSector, fSlopeRate);
       }
 
       // draw
@@ -271,6 +271,15 @@ var gameEngineJS = (function () {
       sectorCeilingFactor = oLevel.map[currentSector].ceil;
       sSectorFloorTexture = oLevel.map[currentSector].floorTex;
       sSectorCeilingTexture = oLevel.map[currentSector].ceilTex;
+
+
+      // slope model for this column: floor height along this ray is fSlopeInitialHeight + fSlopeRate * d
+      var currentPlayerXY = {
+        x: fPlayerX,
+        y: fPlayerY
+      }
+      var fSlopeInitialHeight = getSlopeFactor(currentSector, currentPlayerXY);
+      var fSlopeRate = getSlopeRateAtDistance(currentSector, fRayAngleGlob);
       
       // // TODO: Slope logic?
       // // We need the height of the floor at intersection-point

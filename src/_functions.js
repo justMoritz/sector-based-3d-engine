@@ -659,7 +659,7 @@ function mathMaxBitwise(i, min) {
 // into the sector at load time? Just a certain amount of fine grain. But that might still require recalcing, too
 // not sure
 
-function getSlopeFactor (sector, intersection, debug){
+function getSlopeFactorOld (sector, intersection, debug){
   var floorSlopeFactor = 0;
   var sectorWalls = oMap[sector].walls; 
   var baseFloorHeight = oMap[sector].floor;
@@ -707,6 +707,71 @@ function getSlopeFactor (sector, intersection, debug){
   return newFloorHeight; 
 }
 
+
+function getSlopeFactor (sector, intersection){
+  var sectorWalls = oMap[sector].walls; 
+  var baseFloorHeight = oMap[sector].floor;
+  var newFloorHeight = baseFloorHeight;
+
+
+  if(typeof oLevel.map[sector].slope !== 'undefined' ){
+    var sectorFloorSlope = oLevel.map[sector].slope;
+    var slopeHingeWall = sectorWalls[0];
+
+    // get the perpendicular to the first hinge wall
+    var x1 = slopeHingeWall[0]
+    var y1 = slopeHingeWall[1];
+    var x2 = slopeHingeWall[2] 
+    var y2 = slopeHingeWall[3];
+
+    var wallDx = x2 - x1;
+    var wallDy = y2 - y1;
+
+    var wallLength = Math.sqrt(wallDx * wallDx + wallDy * wallDy);
+
+    // signed perpendicular distance from wall0's infinite line. Bit of a magic cross-product, need to understand better
+    var perpDist = ((intersection.x - x1) * wallDy - (intersection.y - y1) * wallDx) / wallLength;
+
+    newFloorHeight = baseFloorHeight + sectorFloorSlope * perpDist;
+  }
+  
+  return newFloorHeight; 
+}
+
+
+// Rate of floor-height change per unit of real distance traveled along a ray.
+// Same cross-product as getSlopeFactor's perpDist, but applied to a direction
+// vector instead of a point.
+function getSlopeRateAtDistance (sector, rayAngle) {
+  var sectorWalls = oMap[sector].walls; 
+  var baseFloorHeight = oMap[sector].floor;
+  var newSectorFloorSlope = 0;
+
+
+  if(typeof oLevel.map[sector].slope !== 'undefined' ){
+    var sectorFloorSlope = oLevel.map[sector].slope;
+    var slopeHingeWall = sectorWalls[0];
+
+    // get the perpendicular to the first hinge wall
+    var x1 = slopeHingeWall[0]
+    var y1 = slopeHingeWall[1];
+    var x2 = slopeHingeWall[2] 
+    var y2 = slopeHingeWall[3];
+
+    var wallDx = x2 - x1;
+    var wallDy = y2 - y1;
+
+    var wallLength = Math.sqrt(wallDx * wallDx + wallDy * wallDy);
+
+    var dirX = fastCos(rayAngle);
+    var dirY = fastSin(rayAngle);
+
+    // again, bit magic
+    newSectorFloorSlope =  sectorFloorSlope * (dirX * wallDy - dirY * wallDx) / wallLength;
+
+  }
+
+}
 
 
 // get Midpoint between two points
