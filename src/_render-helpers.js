@@ -692,7 +692,22 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
   // Calculate the direct distance from the player to the floor pixel
   // Adjusts the looktimer here instead of in the fscreenHeightFactor
-  fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ); 
+
+  var fHorizonLine = nScreenHeight / (2 - fFloorLooktimer);
+
+  // so I think I finally understand the problem:,
+  // What we actually need is the height of a a certain not where the FLOOR point is, but rather where the 
+  // player-ray would SEE the point
+  // What I mean is we technically need to shift the horizon up by however high it is supposed to be at that point.
+  // naturally we can't in this function calculate that, because we don't know where the point is yet. 
+
+
+  // if (typeof oLevel.map[currentSector].slope !== 'undefined'){
+    // fHorizonLine = nScreenHeight / 2 - fFloorLooktimer - XXX;
+  // }
+
+
+  fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - fHorizonLine ); 
 
   
   fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
@@ -730,7 +745,11 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
         fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
 
         // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
-        fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
+        // var fHorizonLine = nScreenHeight / (2 - fFloorLooktimer);
+        // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
+        fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - fHorizonLine ); 
+
+
         fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
       
         fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
