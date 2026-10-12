@@ -717,53 +717,53 @@ function drawFloor(i, j, fSectorFloorHeight, sSectorFloorTexture, currentSector)
   var floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
   var floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
 
-  
-  // if( floorSlopeFactor !== 1 ){
+
+
+  // get the slope factor for this floor-point in space
+  // update player fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor
+  // recalculate fDirectDistFloor
+  // but honestly this is crazy expensive
+
+  // if we have the x,z of the floorpoint, check how far from the 
+  var floorPoint = {
+    x: floorPointX, 
+    y: floorPointY
+  }
+
+
+  if (typeof oLevel.map[currentSector].slope !== 'undefined'){
+    var currentFloorHeightAtPoint = getSlopeFactor(currentSector, floorPoint);
     // return [100,100,100];
-
-    // get the slope factor for this floor-point in space
-    // update player fPlayerHinSector = fSectorFloorHeight * floorSlopeFactor
-    // recalculate fDirectDistFloor
-    // but honestly this is crazy expensive
-
-    // if we have the x,z of the floorpoint, check how far from the 
-    var floorPoint = {
-      x: floorPointX, 
-      y: floorPointY
-    }
-
-
-    if (typeof oLevel.map[currentSector].slope !== 'undefined'){
-      var currentFloorHeightAtPoint = getSlopeFactor(currentSector, floorPoint);
-        
-      if (!isNaN(currentFloorHeightAtPoint)) {
       
-        nStandardHeight =  nStandardHeight; 
-        fPlayerHinSector = fSectorFloorHeight * currentFloorHeightAtPoint;
+    if (!isNaN(currentFloorHeightAtPoint)) {
+    
+      nStandardHeight =  nStandardHeight; 
+      fPlayerHinSector = fSectorFloorHeight * currentFloorHeightAtPoint;
 
-        fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
-        fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
+      fAdjustedHeight = nStandardHeight - fPlayerHinSector * 2  ;
+      fPlayerViewHeight = fAdjustedHeight  + ( fPlayerH * 2  ); // Adjusts for jumping
 
-        // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
-        // var fHorizonLine = nScreenHeight / (2 - fFloorLooktimer);
-        // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
-        fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - fHorizonLine ); 
+      // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
+      var fHorizonLineNew = nScreenHeight / (2 - fFloorLooktimer);
+      // var fHorizonLineNew = nScreenHeight / nScreenHeight;
+      // fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - nScreenHeight / (2 - fFloorLooktimer) ) ;
+      fDirectDistFloor = ( fPlayerViewHeight  * fscreenHeightFactorFloor ) / ( j - fHorizonLineNew ); 
 
 
-        fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
+      fRealDistance = fDirectDistFloor / fastCos(fPlayerA - fRayAngleGlob )  ;
+    
+      fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
+      // Calculate real-world coordinates with the player angle
+      floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
+      floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
       
-        fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-        // Calculate real-world coordinates with the player angle
-        floorPointX = fPlayerX + fastCos(fRayAngleGlob) * fRealDistance;
-        floorPointY = fPlayerY + fastSin(fRayAngleGlob) * fRealDistance;
-        
-      }else{
-        fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
-      }
-    }
-    else{
+    }else{
       fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
     }
+  }
+  else{
+    fDepthBufferR[j * nScreenWidth + i] = fRealDistance;
+  }
   
 
 
