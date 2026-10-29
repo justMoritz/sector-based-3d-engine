@@ -131,7 +131,10 @@ var _moveHelpers = {
   // Casting a ray from the old to the new (projected) coordinates.
   // checks all walls on the way. Since it's a continuous line, if it hits any walls, 
   // the move is illegal and we need to try again :)
-  spriteSectorCheck: function (fOldX, fOldY, fNewX, fNewY) {
+  // sCurrentSector (optional): the sector the sprite is in. A portal exists once in each of the two
+  // sectors it joins, both copies get hit at the same spot, and the neighbour's copy points back here,
+  // so that one is skipped to get the sector the sprite is actually walking into.
+  spriteSectorCheck: function (fOldX, fOldY, fNewX, fNewY, sCurrentSector) {
     var bWasHit = false;
     var oClosestHit = null;
     var nClosestHitLen = 2000; 
@@ -145,7 +148,8 @@ var _moveHelpers = {
       var allCurrentWalls = currentSector.walls;
       for (var wi = 0; wi < allCurrentWalls.length; wi++) {
         var wall = allCurrentWalls[wi];
-  
+        if (sCurrentSector && wall[9] && wall[9] == sCurrentSector) continue;
+
         var intersection = intersectionPoint(
           { x: fOldX, y: fOldY },
           { x: fNewX, y: fNewY },
@@ -364,6 +368,10 @@ var _moveHelpers = {
       if (e.which == 70 && e.altKey) {
         // f + alt
         bTexFiltering = !bTexFiltering;
+      }
+      if (e.which == 86 && !EDITMODE && !e.repeat) {
+        // v
+        bThirdPerson = !bThirdPerson;
       }
     };
 
@@ -713,6 +721,115 @@ var _moveHelpers = {
         nJumptimer = 0;
       }
     }
+  },
+
+
+  // 3rd person camera: casts a boom from the player straight backwards and walks it through
+  // the sectors it crosses (like checkSectors, but along a single line). The boom stops short of
+  // solid walls, of portals into sectors whose floor or ceiling would swallow the camera, and of
+  // sloped floors rising up into it.
+  // Returns where to render from: { x, y, h, sector }
+  // @param {float} fCamA  the camera's angle, which lags behind the player's
+  thirdPersonCamera: function (fCamA) {
+    // keep the eye below the ceiling here; every sector the boom enters is checked against it too
+    var fCamH = Math.min(fPlayerH + fThirdPersonRaise, oMap[sPlayerSector].ceil - 0.6);
+    var fEyeZ = fCamH + 1; // world height of the eye (floors sit at `floor`, ceilings at `ceil + 0.5`)
+    var fMaxFloorZ = fEyeZ - 0.3; // the floor under the camera may come up to here
+
+    var fDirX = -fastCos(fCamA);
+    var fDirY = -fastSin(fCamA);
+    var fBoomEndX = fPlayerX + fDirX * fThirdPersonDistance;
+    var fBoomEndY = fPlayerY + fDirY * fThirdPersonDistance;
+
+    // every sector the boom passes through, and how far along the boom it was entered
+    var aBoomSectors = [{ sector: sPlayerSector, entry: 0 }];
+    var visitedSectors = {};
+    var fCamDist = fThirdPersonDistance;
+
+    var currentSector = sPlayerSector;
+    var entryWall = null;
+    var fEntryDist = 0;
+
+    while (true) {
+      visitedSectors[currentSector] = true;
+      var sectorWalls = oMap[currentSector].walls;
+      var fClosestHit = fThirdPersonDistance;
+      var closestWall = null;
+
+      for (var w = 0; w < sectorWalls.length; w++) {
+        var currentWall = sectorWalls[w];
+
+        // the portal we just came through (this sector's copy of it, in either direction). Matching the
+        // wall itself rather than the distance matters when the boom enters through a corner, where the
+        // exit wall is hit at the same distance; matching the sector would miss a second shared portal.
+        if (entryWall && (
+            (currentWall[0] == entryWall[0] && currentWall[1] == entryWall[1] && currentWall[2] == entryWall[2] && currentWall[3] == entryWall[3]) ||
+            (currentWall[0] == entryWall[2] && currentWall[1] == entryWall[3] && currentWall[2] == entryWall[0] && currentWall[3] == entryWall[1])
+          )) continue;
+
+        var intersection = intersectionPoint(
+          { x: fPlayerX, y: fPlayerY },
+          { x: fBoomEndX, y: fBoomEndY },
+          { x: currentWall[0], y: currentWall[1] },
+          { x: currentWall[2], y: currentWall[3] }
+        );
+        if (!isNaN(intersection.x) && !isNaN(intersection.y)) {
+          var fHitDist = Math.hypot(intersection.x - fPlayerX, intersection.y - fPlayerY);
+          if (fHitDist >= fEntryDist - 0.001 && fHitDist < fClosestHit) {
+            fClosestHit = fHitDist;
+            closestWall = currentWall;
+          }
+        }
+      }
+
+      // a sloped floor may rise up into the boom within this sector. Floors are planar, so along the
+      // boom the floor is linear and highest at one end: if it's too high where the boom leaves the
+      // sector, stop the camera where the floor reaches fMaxFloorZ.
+      // (where it entered was checked at the portal, or is the player's own spot)
+      var fExitDist = closestWall ? fClosestHit : fThirdPersonDistance;
+      var fExitFloor = _sectorFloorAt(currentSector, fPlayerX + fDirX * fExitDist, fPlayerY + fDirY * fExitDist);
+      if (fExitFloor > fMaxFloorZ) {
+        var fEntryFloor = _sectorFloorAt(currentSector, fPlayerX + fDirX * fEntryDist, fPlayerY + fDirY * fEntryDist);
+        var fRiseShare = fEntryFloor < fMaxFloorZ ? (fMaxFloorZ - fEntryFloor) / (fExitFloor - fEntryFloor) : 0;
+        fCamDist = fEntryDist + (fExitDist - fEntryDist) * fRiseShare;
+        break;
+      }
+
+      // boom ends inside this sector
+      if (!closestWall) break;
+
+      // continue through the portal, if the camera fits between the next sector's floor (right at
+      // the crossing point, in case it's sloped) and ceiling
+      var nextSector = closestWall[9];
+      if (nextSector != false && !visitedSectors[nextSector] && typeof oMap[nextSector] !== 'undefined' &&
+          _sectorFloorAt(nextSector, fPlayerX + fDirX * fClosestHit, fPlayerY + fDirY * fClosestHit) < fMaxFloorZ &&
+          oMap[nextSector].ceil + 0.5 > fEyeZ + 0.1) {
+        entryWall = closestWall;
+        currentSector = nextSector;
+        fEntryDist = fClosestHit;
+        aBoomSectors.push({ sector: currentSector, entry: fEntryDist });
+        continue;
+      }
+
+      // blocked: pull the camera in front of the wall
+      fCamDist = Math.max(fClosestHit - fThirdPersonWallBuffer, 0);
+      break;
+    }
+
+    // the wall buffer may have pulled the camera back into an earlier sector
+    var sCamSector = aBoomSectors[0].sector;
+    for (var b = 0; b < aBoomSectors.length; b++) {
+      if (aBoomSectors[b].entry <= fCamDist) {
+        sCamSector = aBoomSectors[b].sector;
+      }
+    }
+
+    return {
+      x: fPlayerX + fDirX * fCamDist,
+      y: fPlayerY + fDirY * fCamDist,
+      h: fCamH,
+      sector: sCamSector,
+    };
   },
 
 

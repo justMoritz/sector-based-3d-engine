@@ -61,6 +61,12 @@ function _slopeFloorFactorAt (fBaseFactor, oSlopeRef, x, y) {
   return fBaseFactor + oSlopeRef.slope * fPerp;
 }
 
+// Shorthand: a sector's floor height at (x,y), sloped or not
+function _sectorFloorAt (sector, x, y) {
+  var oSector = oMap[sector];
+  return _slopeFloorFactorAt(oSector.floor, _makeSlopeRef(oSector.walls, oSector.slope), x, y);
+}
+
 
 // Linear interpolation function to find sample position
 function texSampleLerp( ax,ay, bx ,by, hx, hy ){
@@ -477,7 +483,7 @@ function prepSprites (){
           // set starting sector
           oLevelSprites[si]["sc"] = +sector;
           // set new sprite height
-          oLevelSprites[si]["h"] = oLevel.map[sector].floor;
+          oLevelSprites[si]["h"] = _sectorFloorAt( sector, oLevelSprites[si]["x"], oLevelSprites[si]["y"] );
           break;
         }  
       }

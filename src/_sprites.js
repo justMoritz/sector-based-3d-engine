@@ -8,6 +8,9 @@ var _moveSprites = function () {
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
+    // the player sprite is driven by the player's input, not by sprite AI
+    if (sprite["isPlayer"]) continue;
+
     // if the sprite"s move flag is set
     if (sprite["move"]) {
       // var fMovementSpeed = 0.01;
@@ -22,11 +25,10 @@ var _moveSprites = function () {
 
 
       // check line segment (oldX,oldY → newX,newY) against ALL walls
-      var hasHitAnyWalls = _moveHelpers.spriteSectorCheck(oldX, oldY, newX, newY);
+      var hasHitAnyWalls = _moveHelpers.spriteSectorCheck(oldX, oldY, newX, newY, sprite["sc"]);
 
       var bIsLegelMove = true;
       var bUpdateValues = false;
-      var fheightBuffer = 0;
       var nConnectingSectorBuffer = 0;
     
       // checks if we have a sector that's passable, if so, we allow the move
@@ -34,16 +36,16 @@ var _moveSprites = function () {
         if ( hasHitAnyWalls["connectingSector"]) {
 
           var targetSector = hasHitAnyWalls["connectingSector"];
-          var targetFloor = oMap[targetSector].floor;
-        
+          // the next sector's floor right at the crossing point (a sloped sector's edge isn't at its flat height)
+          var targetFloor = _sectorFloorAt( targetSector, hasHitAnyWalls["coords"]["x"], hasHitAnyWalls["coords"]["y"] );
+
           // sprites can't walk over obstacles that are too high
           if (sprite["h"] - targetFloor < -0.5) {
             bIsLegelMove = false;
-          } 
+          }
           else {
-            bUpdateValues = true;  
+            bUpdateValues = true;
             nConnectingSectorBuffer = targetSector;
-            fheightBuffer = targetFloor;
           }
         }  
         else{
@@ -60,7 +62,6 @@ var _moveSprites = function () {
         sprite["y"] = newY;
 
         if( bUpdateValues ){
-          sprite["h"] = fheightBuffer;
           sprite["sc"] = nConnectingSectorBuffer;
         }
       }
@@ -70,6 +71,9 @@ var _moveSprites = function () {
         sprite["y"] = hasHitAnyWalls["coords"]["y"] - fastSin(sprite["r"]) * 0.01;
         sprite["r"] = (sprite["r"] + PI___) % PIx2 + sinTable[animationTimer*2+50];  // A little bit of randomness here.
       }
+
+      // follow the floor, also while walking across a slope
+      sprite["h"] = _sectorFloorAt( sprite["sc"], sprite["x"], sprite["y"] );
 
       // if sprite is close to the player, and facing the player, turn around
       // if (sprite["z"] < 1 && ( sprite["a"] !== "B" ) ) {
@@ -126,7 +130,8 @@ var _moveSprites = function () {
 // This is expensive, maybe it's only useful for fast sprites
 function _spriteSanityCheck() {
   for(var si in oLevelSprites){
-      
+    if ( oLevelSprites[si]["isPlayer"] ) continue; // follows the player's own sector/height
+
     for (var sector in oMap) {
       if(sector != 0){
         if ( _moveHelpers.testEntityInSector( sector, oLevelSprites[si]["x"], oLevelSprites[si]["y"] )){
@@ -134,7 +139,7 @@ function _spriteSanityCheck() {
           if ( oLevelSprites[si]['sc'] != sector){
             // console.log('not supposed to be here');
             oLevelSprites[si]['sc'] = sector;
-            oLevelSprites[si]["h"] = oLevel.map[sector].floor;
+            oLevelSprites[si]["h"] = _sectorFloorAt( sector, oLevelSprites[si]["x"], oLevelSprites[si]["y"] );
             // oLevelSprites[si]['speed'] = 0.02;
           }
           break;
@@ -201,6 +206,8 @@ function _drawSpritesNew (i) {
   for (var si = 0; si < Object.keys(oLevelSprites).length; si++) {
     var sprite = oLevelSprites[Object.keys(oLevelSprites)[si]];
 
+    if (sprite["hidden"]) continue;
+
     // reference to the global sprite object (texture etc. will need later)
     var currentSpriteObject = allSprites[sprite["name"]];
     // console.log(sprite["name"]);
@@ -229,9 +236,9 @@ function _drawSpritesNew (i) {
       // Fisheye correction
       fDistanceToSprite *= fastCos(fAngleDifferences)
 
-      // to close
+      // to close (skip only this one, the player sprite may still be further down the list)
       if( fDistanceToSprite < 0.5 ){
-          return;
+          continue;
       }
 
       // checks which sprite angle preset to use
@@ -568,6 +575,41 @@ function spriteHitsWall(sprite) {
     return true; // wall is closer than new position
   }
 }
+
+
+/**
+ * Adds the sprite that represents the player in 3rd person
+ */
+var _addPlayerSprite = function () {
+  oPlayerSprite = {
+    x: fPlayerX,
+    y: fPlayerY,
+    h: fPlayerH,
+    r: fPlayerA,
+    name: sPlayerSpriteName,
+    sc: sPlayerSector,
+    isPlayer: true,
+  };
+  oLevelSprites["player"] = oPlayerSprite;
+};
+
+/**
+ * Keeps the player sprite glued to the player, once per frame
+ * @param {boolean} bVisible  only drawn in 3rd person
+ */
+var _syncPlayerSprite = function (bVisible) {
+  if ( !oPlayerSprite ) return;
+
+  // walk animation plays whenever the player actually moved this frame
+  oPlayerSprite["move"] = oPlayerSprite["x"] !== fPlayerX || oPlayerSprite["y"] !== fPlayerY;
+
+  oPlayerSprite["x"] = fPlayerX;
+  oPlayerSprite["y"] = fPlayerY;
+  oPlayerSprite["h"] = fPlayerH;
+  oPlayerSprite["r"] = fPlayerA;
+  oPlayerSprite["sc"] = sPlayerSector;
+  oPlayerSprite["hidden"] = !bVisible;
+};
 
 
 var _randomIntFromInterval = function (min, max) {

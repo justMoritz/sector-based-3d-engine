@@ -143,6 +143,7 @@ var gameEngineJS = (function () {
       bakeWallLighting(4);
       bakeVoxelPositions();
       prepSprites();
+      _addPlayerSprite();
 
       main();
 
@@ -560,8 +561,10 @@ var gameEngineJS = (function () {
         oLevelSprites = oLevel.sprites;
       }
 
-      if( oLevel["cameraPath"] && _moveHelpers._updateCamera(gameTimer) ){  
+      var bIntroRunning = false;
+      if( oLevel["cameraPath"] && _moveHelpers._updateCamera(gameTimer) ){
         // intro-sequence
+        bIntroRunning = true;
       } else {
         _moveHelpers.move();
         _moveHelpers.playerHeight();
@@ -585,6 +588,43 @@ var gameEngineJS = (function () {
       }
       if (fPlayerA > PIx2) {
         fPlayerA -= PIx2;
+      }
+
+      // 3rd person: the renderer reads fPlayerX/Y/H as the eye, so for the duration of the
+      // column loop those are swapped for the camera position, and the player is drawn as a sprite
+      var bThirdPersonActive = !EDITMODE && bThirdPerson && !bIntroRunning;
+      _syncPlayerSprite(bThirdPersonActive);
+
+      var fRealPlayerX = fPlayerX;
+      var fRealPlayerY = fPlayerY;
+      var fRealPlayerH = fPlayerH;
+      var fRealPlayerA = fPlayerA;
+      var sRenderSector = sPlayerSector;
+
+      if ( bThirdPersonActive ) {
+        // camera lag: the camera only catches up part of the way each frame, so when the player
+        // turns, the camera swings around behind them and their side is visible for a moment
+        if ( fCameraA === undefined ) {
+          fCameraA = fPlayerA;
+        }
+        var fCamTurn = fPlayerA - fCameraA;
+        // take the short way around
+        if (fCamTurn > PI___) fCamTurn -= PIx2;
+        if (fCamTurn < -PI___) fCamTurn += PIx2;
+        fCameraA += fCamTurn * fThirdPersonLag;
+        if (fCameraA < 0) fCameraA += PIx2;
+        if (fCameraA > PIx2) fCameraA -= PIx2;
+
+        var oCamera = _moveHelpers.thirdPersonCamera(fCameraA);
+        fPlayerX = oCamera.x;
+        fPlayerY = oCamera.y;
+        fPlayerH = oCamera.h;
+        fPlayerA = fCameraA;
+        sRenderSector = oCamera.sector;
+      }
+      else {
+        // snap back in behind the player when 3rd person is switched (back) on
+        fCameraA = undefined;
       }
 
       // Some constants for each loop
@@ -618,7 +658,7 @@ var gameEngineJS = (function () {
 
         // checks current sector, potentially updates the sector the player might be in, renders all sectors
         setPalette(worldPalette);
-        checkSectors(sPlayerSector, i);
+        checkSectors(sRenderSector, i);
 
         if ( !EDITMODE ) {
           setPalette(spritesPalette);
@@ -628,7 +668,12 @@ var gameEngineJS = (function () {
 
       } // end column loop
 
-      
+      // hand the eye back to the player
+      fPlayerX = fRealPlayerX;
+      fPlayerY = fRealPlayerY;
+      fPlayerH = fRealPlayerH;
+      fPlayerA = fRealPlayerA;
+
       // draws the output
       if ( bUseSkew ) {
         _fDrawFrameWithSkew(screen);

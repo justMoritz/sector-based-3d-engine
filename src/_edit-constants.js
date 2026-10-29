@@ -68,6 +68,11 @@ var bPaused;
 var bRunning = true;
 var bPlayerMayMoveForward = true;
 
+// 3rd person camera is a gameplay feature, the editor preview stays first person
+var bThirdPerson = false;
+var fCameraA;
+var oPlayerSprite;
+
 var nJumptimer = 0;
 var fLooktimer = 0;
 var fHeighttimer = 0;

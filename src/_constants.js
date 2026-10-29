@@ -55,6 +55,16 @@ var bPaused;
 var bRunning = true;
 var bPlayerMayMoveForward = true;
 
+// 3rd person camera (toggle with V)
+var bThirdPerson = true;
+var fThirdPersonDistance = 2.75;    // how far the camera trails behind the player
+var fThirdPersonRaise = 0.5;        // how far above the player's own eye height the camera sits (higher = char sits lower on screen)
+var fThirdPersonWallBuffer = 0.25;  // keeps the camera this far off any wall it gets pushed against
+var fThirdPersonLag = 0.12;         // share of the turn the camera catches up on each frame (1 = no lag)
+var fCameraA;                       // the camera's own, lagging angle
+var sPlayerSpriteName = "superpogel";
+var oPlayerSprite;
+
 var nJumptimer = 0;
 var fLooktimer = 0;
 var fHeighttimer = 0;
